@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>OG</title>
+  <style>
+    @font-face {
+      font-family: "LibSans";
+      src: url("file:///usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "LibSans";
+      src: url("file:///usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      background: #090c10;
+    }
+    .card {
+      position: relative;
+      width: 1200px;
+      height: 630px;
+      background: #090c10;
+      font-family: "LibSans", "Liberation Sans", sans-serif;
+      color: #f4f7fa;
+    }
+    .photo {
+      position: absolute;
+      inset: 0;
+      width: 1200px;
+      height: 630px;
+      object-fit: cover;
+      object-position: 50% 62%;
+    }
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 85% 70% at 50% 68%, rgba(9, 12, 16, 0) 0%, rgba(9, 12, 16, 0.08) 42%, rgba(9, 12, 16, 0.55) 100%),
+        linear-gradient(180deg, rgba(9, 12, 16, 0.78) 0%, rgba(9, 12, 16, 0.22) 28%, rgba(9, 12, 16, 0) 48%, rgba(9, 12, 16, 0.18) 78%, rgba(9, 12, 16, 0.72) 100%);
+    }
+    .accent {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 78px;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(235, 10, 30, 0) 4%, #eb0a1e 22%, #eb0a1e 78%, rgba(235, 10, 30, 0) 96%);
+      box-shadow: 0 0 16px 1px rgba(235, 10, 30, 0.5), 0 0 42px 6px rgba(235, 10, 30, 0.2);
+    }
+    .lockup {
+      position: absolute;
+      left: 50%;
+      top: 168px;
+      transform: translate(-50%, -50%);
+      width: 820px;
+      text-align: center;
+    }
+    .mark-bar {
+      width: 72px;
+      height: 4px;
+      background: #eb0a1e;
+      margin: 0 auto 10px;
+    }
+    .mark {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.62em;
+      padding-left: 0.62em;
+      margin: 0 0 18px;
+      color: #f4f7fa;
+    }
+    .title {
+      margin: 0;
+      font-weight: 700;
+      font-size: 50px;
+      line-height: 1.08;
+      letter-spacing: 0.018em;
+      text-shadow: 0 2px 22px rgba(0, 0, 0, 0.8), 0 0 40px rgba(9, 12, 16, 0.9);
+    }
+    .sub {
+      margin: 14px 0 0;
+      font-weight: 400;
+      font-size: 17px;
+      letter-spacing: 0.36em;
+      padding-left: 0.36em;
+      text-transform: uppercase;
+      color: #f4f7fa;
+      opacity: 0.92;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img class="photo" src="file:///workspace/.grok/rav4-src.png" alt="" />
+    <div class="vignette"></div>
+    <div class="accent"></div>
+    <div class="lockup">
+      <div class="mark-bar"></div>
+      <p class="mark">TOYOTA</p>
+      <h1 class="title">Hendrick Toyota<br />Merriam</h1>
+      <p class="sub">Digital Showroom</p>
+    </div>
+  </div>
+</body>
+</html>
