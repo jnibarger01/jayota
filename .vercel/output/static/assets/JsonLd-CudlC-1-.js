@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-0vZSBttN.js";var t=e();function n({data:e}){return(0,t.jsx)(`script`,{type:`application/ld+json`,dangerouslySetInnerHTML:{__html:JSON.stringify(e)}})}export{n as t};
