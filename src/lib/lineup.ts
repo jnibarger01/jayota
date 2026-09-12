@@ -6,6 +6,8 @@
  * Do not invent trims, horsepower, VINs, or lot counts here.
  */
 
+import { publicUrl } from "@/lib/public-url";
+
 export type LineupTab = "all" | "suv" | "car" | "truck" | "minivan" | "hybrid" | "phev" | "electric" | "performance";
 export type LineupBody = "car" | "suv" | "truck" | "minivan";
 export type Electrified = "hybrid" | "phev" | "bev" | "fcev" | null;
@@ -48,6 +50,14 @@ function tabs(body: LineupBody, electrified: Electrified): LineupTab[] {
   return next;
 }
 
+function withImageUrls(image: LineupImage): LineupImage {
+  return {
+    ...image,
+    src: publicUrl(image.src),
+    ...(image.mobileSrc ? { mobileSrc: publicUrl(image.mobileSrc) } : {}),
+  };
+}
+
 function model(
   partial: Omit<LineupModel, "tabs" | "hasCatalog" | "has3d"> & {
     tabs?: LineupTab[];
@@ -59,12 +69,15 @@ function model(
     hasCatalog: false,
     has3d: false,
     ...partial,
+    image: withImageUrls(partial.image),
+    ...(partial.hero ? { hero: withImageUrls(partial.hero) } : {}),
     tabs: partial.tabs ?? tabs(partial.body, partial.electrified),
     msrpSource: partial.startingMsrp ? (partial.msrpSource ?? TOYOTA_COM) : partial.msrpSource,
   };
 }
 
 export const LINEUP: readonly LineupModel[] = [
+
   model({
     slug: "corolla",
     name: "Corolla",

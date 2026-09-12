@@ -26,6 +26,8 @@ export function pageUrl(segment: string = ""): string {
 }
 
 function withBasePath(url: string): string {
+  if (!url) return url;
+  if (/^(https?:|data:|blob:)/i.test(url)) return url;
   return url.startsWith("/") ? `${basePath}${url}` : url;
 }
 

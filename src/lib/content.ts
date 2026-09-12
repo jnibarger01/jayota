@@ -2,6 +2,8 @@
  * Merchandising / CMS content for surfaces that are not live Toyota feeds.
  * Swap copy here (or later via `content_blocks`) without inventing prices or inventory.
  */
+import { publicUrl } from "@/lib/public-url";
+
 export const HOMEPAGE = {
   heroSlug: "4runner",
   kicker: "Hendrick Toyota Merriam",
@@ -10,7 +12,7 @@ export const HOMEPAGE = {
   primaryCta: { label: "Start your journey", to: "/vehicles/4runner" as const },
   secondaryCta: { label: "Explore vehicles", to: "/vehicles" as const },
   heroImage: {
-    src: "/images/modsnation_7416_final_hero_tweaked.png",
+    src: publicUrl("/images/modsnation_7416_final_hero_tweaked.png"),
     alt: "2024 Toyota 4Runner TRD Pro, front three-quarter view in a dark studio",
   },
 } as const;
