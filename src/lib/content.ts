@@ -2,7 +2,7 @@
  * Merchandising / CMS content for surfaces that are not live Toyota feeds.
  * Swap copy here (or later via `content_blocks`) without inventing prices or inventory.
  */
-import { publicUrl } from "@/lib/public-url";
+import { publicUrl } from "./public-url.ts";
 
 export const HOMEPAGE = {
   heroSlug: "4runner",

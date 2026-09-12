@@ -6,7 +6,7 @@
  * Do not invent trims, horsepower, VINs, or lot counts here.
  */
 
-import { publicUrl } from "@/lib/public-url";
+import { publicUrl } from "./public-url.ts";
 
 export type LineupTab = "all" | "suv" | "car" | "truck" | "minivan" | "hybrid" | "phev" | "electric" | "performance";
 export type LineupBody = "car" | "suv" | "truck" | "minivan";
