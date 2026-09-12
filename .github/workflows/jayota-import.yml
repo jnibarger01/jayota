@@ -61,11 +61,11 @@ jobs:
           status=${PIPESTATUS[0]}
           set -e
           if [ "$status" -eq 0 ]; then exit 0; fi
+          grep -Fq '# tests 35' /tmp/script-tests.log
+          grep -Fq '# pass 33' /tmp/script-tests.log
           grep -Fq '# fail 2' /tmp/script-tests.log
-          grep -Fq 'passes healthy APIs, soft service routing, and configured required route probes' /tmp/script-tests.log
-          grep -Fq 'makes default and explicit additional route probe failures fatal' /tmp/script-tests.log
-          failures=$(grep -Ec '^[[:space:]]*not ok [0-9]+ - ' /tmp/script-tests.log || true)
-          test "$failures" -eq 2
+          test "$(grep -Fc 'passes healthy APIs, soft service routing, and configured required route probes' /tmp/script-tests.log)" -eq 1
+          test "$(grep -Fc 'makes default and explicit additional route probe failures fatal' /tmp/script-tests.log)" -eq 1
 
       - name: Commit validated source update
         shell: bash
