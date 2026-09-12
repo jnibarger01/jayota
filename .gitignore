@@ -1,11 +1,14 @@
 
 .env
+.env*
 .env.*
+.env.local
 .github_repo
 .grok/preview.log
 .grok/preview.pid
 node_modules/
 .output/
 .project_id
+.vercel
 .vercel/
 .vercel/output/
