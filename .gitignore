@@ -1,8 +1,9 @@
-node_modules/
-.project_id
-.github_repo
+
 .env
 .env.*
-
-.vercel/output/
+.github_repo
+node_modules/
 .output/
+.project_id
+.vercel/
+.vercel/output/

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { DEALER, INVENTORY_UNAVAILABLE } from "@/lib/dealer";
-import { loadInventoryState } from "@/lib/catalog-data";
+import { loadInventoryState } from "@/lib/loaders";
 import { Button } from "@/components/ui/button";
 import { filtersToSearch, rankInventoryMatches, applyInventoryFilters, watchDiff, type InventoryFilters } from "@/lib/inventory-match";
 import { saveSearch, useShopper } from "@/lib/shopper";

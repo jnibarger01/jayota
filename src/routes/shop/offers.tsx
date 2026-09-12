@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { DEALER, OFFERS_UNAVAILABLE } from "@/lib/dealer";
-import { loadOffersState } from "@/lib/catalog-data";
+import { loadOffersState } from "@/lib/loaders";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/shop/offers")({

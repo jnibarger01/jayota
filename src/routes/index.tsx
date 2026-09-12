@@ -12,7 +12,7 @@ import { DEALER } from "@/lib/dealer";
 import { type LineupModel, type LineupTab } from "@/lib/lineup";
 import { toggleCompareSlug, useCompareSlugs } from "@/lib/compare-tray";
 import { clearRecent, rememberView, removeRecent, toggleLocalFavorite, useShopper } from "@/lib/shopper";
-import { loadInventoryState } from "@/lib/catalog-data";
+import { loadInventoryState } from "@/lib/loaders";
 import { autoDealerJsonLd, pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
