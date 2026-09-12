@@ -2,6 +2,8 @@
 .env
 .env.*
 .github_repo
+.grok/preview.log
+.grok/preview.pid
 node_modules/
 .output/
 .project_id
