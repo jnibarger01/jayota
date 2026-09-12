@@ -9,7 +9,7 @@ export function CompareTray({ slugs }: { slugs: string[] }) {
   const models = slugs.map((slug) => getLineupBySlug(slug)).filter((item) => Boolean(item));
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 border-t border-border bg-surface/95 px-4 py-3 backdrop-blur-md md:bottom-0">
+    <div className="fixed inset-x-0 bottom-[var(--tabbar-total)] z-[var(--z-tray)] border-t border-border bg-surface/95 px-4 py-3 backdrop-blur-md md:bottom-0">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3">
         <p className="text-sm">
           Compare {slugs.length} of {MAX_COMPARE}

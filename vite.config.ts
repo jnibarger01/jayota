@@ -145,7 +145,10 @@ function authPopupPlugin(): Plugin {
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
-export default defineConfig(({ command, isPreview }) => ({
+export default defineConfig(({ command, isPreview }) => {
+  const pagesBase = process.env.GITHUB_PAGES === "1" ? "/jayota/" : "/";
+  return {
+  base: pagesBase,
   server: {
     host: "0.0.0.0",
     port: 8080,
@@ -166,10 +169,19 @@ export default defineConfig(({ command, isPreview }) => ({
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart(
+      process.env.GITHUB_PAGES === "1"
+        ? {
+            client: { entry: "client" },
+            router: { basepath: "/jayota" },
+          }
+        : undefined,
+    ),
     ...(command === "build" || isPreview
       ? [
           nitro({
+            // Vercel remains the primary full-stack target. GitHub Pages uses
+            // the client static assets under .vercel/output/static with base /jayota/.
             preset: "vercel",
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
@@ -180,4 +192,5 @@ export default defineConfig(({ command, isPreview }) => ({
       : []),
     viteReact(),
   ],
-}));
+};
+});

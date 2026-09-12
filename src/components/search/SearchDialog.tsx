@@ -1,11 +1,7 @@
-import { useEffect, useId, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { searchSite } from "@/lib/server/catalog";
-import type { VehicleSummary } from "@/showroom/types/vehicle";
+import { useEffect, useId, useMemo, useState } from "react";
+import { highlightMatch, searchShowroom } from "@/lib/search-engine";
+import { rememberQuery, useShopper } from "@/lib/shopper";
 import { track } from "@/lib/analytics";
-
-type LineupHit = { slug: string; name: string; tagline: string };
-type ResourceHit = { href: string; title: string; blurb: string };
 
 export function SearchDialog({
   open,
@@ -16,53 +12,44 @@ export function SearchDialog({
 }) {
   const titleId = useId();
   const [query, setQuery] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [vehicles, setVehicles] = useState<VehicleSummary[]>([]);
-  const [lineup, setLineup] = useState<LineupHit[]>([]);
-  const [resources, setResources] = useState<ResourceHit[]>([]);
+  const [active, setActive] = useState(0);
+  const shopper = useShopper();
+  const results = useMemo(() => searchShowroom(query), [query]);
+  const flat = [...results.vehicles, ...results.destinations];
 
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onOpenChange(false);
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActive((n) => Math.min(n + 1, Math.max(flat.length - 1, 0)));
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActive((n) => Math.max(n - 1, 0));
+      }
+      if (event.key === "Enter" && flat[active]) {
+        event.preventDefault();
+        rememberQuery(query);
+        onOpenChange(false);
+        window.location.assign(flat[active]!.href);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
+  }, [open, onOpenChange, flat, active, query]);
 
   useEffect(() => {
-    if (!open) return;
-    const handle = window.setTimeout(() => {
-      const q = query.trim();
-      if (!q) {
-        setVehicles([]);
-        setLineup([]);
-        setResources([]);
-        setBusy(false);
-        return;
-      }
-      setBusy(true);
-      void searchSite({ data: { q } })
-        .then((result) => {
-          setVehicles(result.vehicles);
-          setLineup(result.lineup);
-          setResources(result.resources);
-          track("search_performed", {
-            qLength: q.length,
-            hits: result.vehicles.length + result.lineup.length + result.resources.length,
-          });
-        })
-        .finally(() => setBusy(false));
-    }, 220);
-    return () => window.clearTimeout(handle);
-  }, [query, open]);
+    if (query.trim().length >= 2) track("search_performed", { qLength: query.trim().length, hits: flat.length });
+  }, [query, flat.length]);
 
   if (!open) return null;
 
-  const empty = !busy && query.trim() && vehicles.length === 0 && lineup.length === 0 && resources.length === 0;
+  const empty = query.trim().length >= 2 && flat.length === 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-ink/60 p-4 pt-[12vh]" role="presentation">
+    <div className="mobile-dialog-layer flex items-start justify-center bg-ink/60 p-4 pt-[12vh] md:inset-0" role="presentation">
       <div
         role="dialog"
         aria-modal="true"
@@ -75,65 +62,84 @@ export function SearchDialog({
         <input
           autoFocus
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search models, service, finance…"
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setActive(0);
+          }}
+          placeholder="Search models, hybrid AWD SUV, finance, service…"
           className="h-12 w-full rounded-xl border border-border bg-bg px-3 text-base text-fg placeholder:text-muted"
           aria-label="Search"
         />
+        {shopper.recentQueries.length > 0 && !query.trim() ? (
+          <div className="mt-3">
+            <p className="text-xs uppercase tracking-widest text-muted">Recent</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {shopper.recentQueries.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className="min-h-11 rounded-full border border-border px-3 text-sm"
+                  onClick={() => setQuery(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
         <div className="mt-4 max-h-80 overflow-auto">
-          {busy ? <p className="text-sm text-muted">Searching…</p> : null}
           {empty ? <p className="text-sm text-muted">No matches for “{query.trim()}”.</p> : null}
-          {vehicles.length > 0 ? (
-            <ul className="space-y-1">
-              {vehicles.map((vehicle) => (
-                <li key={vehicle.slug}>
-                  <Link
-                    to="/vehicles/$slug"
-                    params={{ slug: vehicle.slug }}
-                    className="flex min-h-11 items-center justify-between rounded-lg px-2 hover:bg-surface-2"
-                    onClick={() => onOpenChange(false)}
-                  >
-                    <span>
-                      {vehicle.year} {vehicle.model}
-                    </span>
-                    <span className="text-xs uppercase tracking-widest text-muted">{vehicle.bodyStyle}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {results.vehicles.length > 0 ? (
+            <section>
+              <h3 className="text-xs uppercase tracking-widest text-muted">Vehicles</h3>
+              <ul className="mt-1 space-y-1">
+                {results.vehicles.map((hit, index) => (
+                  <li key={hit.href}>
+                    <a
+                      href={hit.href}
+                      className={`flex min-h-11 items-center justify-between rounded-lg px-2 ${index === active ? "bg-surface-2" : "hover:bg-surface-2"}`}
+                      onClick={() => {
+                        rememberQuery(query);
+                        onOpenChange(false);
+                      }}
+                    >
+                      <span>
+                        <Highlighted text={hit.title} query={query} />
+                      </span>
+                      <span className="text-xs text-muted">
+                        <Highlighted text={hit.blurb} query={query} />
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
-          {lineup.length > 0 ? (
-            <ul className="space-y-1">
-              {lineup.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    to="/vehicles/$slug"
-                    params={{ slug: item.slug }}
-                    className="flex min-h-11 items-center justify-between rounded-lg px-2 hover:bg-surface-2"
-                    onClick={() => onOpenChange(false)}
-                  >
-                    <span>{item.name}</span>
-                    <span className="text-xs text-muted">{item.tagline}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          {resources.length > 0 ? (
-            <ul className="mt-3 space-y-1 border-t border-border pt-3">
-              {resources.map((resource) => (
-                <li key={resource.href}>
-                  <a
-                    href={resource.href}
-                    className="block min-h-11 rounded-lg px-2 py-2 hover:bg-surface-2"
-                    onClick={() => onOpenChange(false)}
-                  >
-                    <strong className="block text-sm">{resource.title}</strong>
-                    <span className="text-xs text-muted">{resource.blurb}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {results.destinations.length > 0 ? (
+            <section className="mt-3 border-t border-border pt-3">
+              <h3 className="text-xs uppercase tracking-widest text-muted">Destinations</h3>
+              <ul className="mt-1 space-y-1">
+                {results.destinations.map((hit, index) => (
+                  <li key={hit.href}>
+                    <a
+                      href={hit.href}
+                      className={`block min-h-11 rounded-lg px-2 py-2 ${results.vehicles.length + index === active ? "bg-surface-2" : "hover:bg-surface-2"}`}
+                      onClick={() => {
+                        rememberQuery(query);
+                        onOpenChange(false);
+                      }}
+                    >
+                      <strong className="block text-sm">
+                        <Highlighted text={hit.title} query={query} />
+                      </strong>
+                      <span className="text-xs text-muted">
+                        <Highlighted text={hit.blurb} query={query} />
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
         </div>
         <div className="mt-3 flex justify-end">
@@ -143,5 +149,23 @@ export function SearchDialog({
         </div>
       </div>
     </div>
+  );
+}
+
+function Highlighted({ text, query }: { text: string; query: string }) {
+  const marked = highlightMatch(text, query);
+  const parts = marked.split(/(«[^»]+»)/);
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.startsWith("«") && part.endsWith("»") ? (
+          <mark key={index} className="rounded-sm bg-accent/30 text-fg">
+            {part.slice(1, -1)}
+          </mark>
+        ) : (
+          <span key={index}>{part}</span>
+        ),
+      )}
+    </>
   );
 }

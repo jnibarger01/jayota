@@ -16,10 +16,12 @@
     "preview:stop": "node scripts/preview.mjs stop",
     "typecheck": "tsc --noEmit",
     "check:auth": "node scripts/check-auth-invariant.mjs",
-    "test": "node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/validators/forms.test.ts src/showroom/api/query.test.ts src/lib/http/rate-limit.test.ts src/lib/dealer.test.ts src/lib/providers/inventory.test.ts src/lib/lineup.test.ts",
+    "test": "node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/validators/forms.test.ts src/showroom/api/query.test.ts src/lib/http/rate-limit.test.ts src/lib/dealer.test.ts src/lib/providers/inventory.test.ts src/lib/lineup.test.ts src/lib/mobile-nav.test.ts src/lib/showroom-features.test.ts",
+    "test:mobile-nav": "node scripts/mobile-nav-smoke.mjs http://127.0.0.1:8080/",
     "test:scripts": "node --test 'scripts/**/*.test.mjs'",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build:pages": "bash scripts/build-github-pages.sh"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",

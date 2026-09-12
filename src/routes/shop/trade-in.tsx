@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ContactFields, Field, FormStatus } from "@/components/forms/IntakeForm";
 import { submitTradeIn } from "@/lib/server/intakes";
 import { tradeInSchema } from "@/lib/validators/forms";
+import { decodeVinLocal } from "@/lib/vin";
+import { patchWorkspace } from "@/lib/shopper";
 import { track } from "@/lib/analytics";
 import { newRequestId } from "@/lib/utils";
 
@@ -46,6 +48,7 @@ function TradeInPage() {
     try {
       const saved = await submitTradeIn({ data: parsed.data });
       setResult(saved);
+      patchWorkspace({ tradeNote: `Request ${saved.id}` });
       track("trade_in_started", { hasVin: Boolean(parsed.data.vin) });
     } catch (err) {
       setErrors({ form: err instanceof Error ? err.message : "Could not submit. Please retry." });
@@ -78,6 +81,11 @@ function TradeInPage() {
             />
             <Field id="vin" label="VIN (optional)" error={errors.vin}>
               <Input id="vin" value={values.vin} onChange={(e) => setValues((c) => ({ ...c, vin: e.target.value }))} />
+              {values.vin.trim().length >= 8 ? (
+                <VinHint raw={values.vin} />
+              ) : (
+                <p className="mt-1 text-xs text-muted">VIN decode is a format/WMI check only. We will not invent a trade value.</p>
+              )}
             </Field>
             <div className="grid gap-4 md:grid-cols-3">
               <Field id="year" label="Year" error={errors.year}>
@@ -119,5 +127,16 @@ function TradeInPage() {
         )}
       </section>
     </SiteShell>
+  );
+}
+
+function VinHint({ raw }: { raw: string }) {
+  const decoded = decodeVinLocal(raw);
+  return (
+    <p className="mt-2 text-xs text-muted">
+      {decoded.valid
+        ? `${decoded.manufacturer ?? "Unknown WMI"} · model year ${decoded.modelYear ?? "unknown"}. ${decoded.note}`
+        : decoded.note}
+    </p>
   );
 }

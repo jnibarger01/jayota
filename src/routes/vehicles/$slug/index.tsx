@@ -3,6 +3,8 @@ import { ChevronRight } from "lucide-react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/vehicles/FavoriteButton";
+import { PaymentChip } from "@/components/vehicles/PaymentChip";
+import { TrimMatrix } from "@/components/vehicles/TrimMatrix";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { CATALOG_DISCLAIMER } from "@/lib/dealer";
 import { formatUsd } from "@/lib/utils";
@@ -12,6 +14,7 @@ import { getVehicleBySlug } from "@/showroom/data/vehicles";
 import type { Vehicle } from "@/showroom/types/vehicle";
 import { track } from "@/lib/analytics";
 import { useEffect } from "react";
+import { rememberView, patchWorkspace } from "@/lib/shopper";
 
 type PageData =
   | { kind: "catalog"; vehicle: Vehicle; lineup?: LineupModel }
@@ -51,6 +54,8 @@ function VehicleDetailPage() {
 function LineupOnlyPage({ model }: { model: LineupModel }) {
   useEffect(() => {
     track("vehicle_view", { slug: model.slug, source: "lineup" });
+    rememberView(model.slug);
+    patchWorkspace({ slug: model.slug });
   }, [model.slug]);
 
   return (
@@ -114,6 +119,8 @@ function LineupOnlyPage({ model }: { model: LineupModel }) {
 function CatalogVehiclePage({ vehicle, lineup }: { vehicle: Vehicle; lineup?: LineupModel }) {
   useEffect(() => {
     track("vehicle_view", { slug: vehicle.slug });
+    rememberView(vehicle.slug);
+    patchWorkspace({ slug: vehicle.slug });
   }, [vehicle.slug]);
 
   const starting = Math.min(vehicle.pricing.baseMsrp, ...vehicle.grades.map((g) => g.msrp));
@@ -148,6 +155,7 @@ function CatalogVehiclePage({ vehicle, lineup }: { vehicle: Vehicle; lineup?: Li
             : `Catalog starting figure ${formatUsd(starting)}*`}
         </p>
         {lineup?.msrpSource ? <p className="mt-1 text-xs text-muted">{lineup.msrpSource}</p> : null}
+        {lineup?.startingMsrp ? <div className="mt-2"><PaymentChip msrp={lineup.startingMsrp} /></div> : <div className="mt-2"><PaymentChip msrp={starting} /></div>}
 
         <div className="mt-8 overflow-hidden rounded-2xl bg-surface-2">
           {hero.url ? (
@@ -232,6 +240,7 @@ function CatalogVehiclePage({ vehicle, lineup }: { vehicle: Vehicle; lineup?: Li
             </dl>
           </div>
         </div>
+        <TrimMatrix vehicle={vehicle} />
         <p className="price-note mt-8">{CATALOG_DISCLAIMER}</p>
       </section>
     </SiteShell>

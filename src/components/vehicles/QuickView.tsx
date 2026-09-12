@@ -22,13 +22,13 @@ export function QuickView({
   const compareFull = !comparing && compareCount >= MAX_COMPARE;
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="mobile-dialog-layer md:inset-0 md:z-[var(--z-sheet)]">
       <button type="button" className="absolute inset-0 bg-ink/70" aria-label="Close" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="quickview-title"
-        className="absolute inset-x-0 bottom-0 max-h-[90svh] overflow-auto rounded-t-3xl border-t border-border bg-surface px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4 md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl md:border md:pb-6"
+        className="absolute inset-x-0 bottom-0 max-h-full overflow-auto rounded-t-3xl border-t border-border bg-surface px-5 pb-6 pt-4 md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl md:border"
       >
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-border md:hidden" />
         <div className="mb-3 flex items-start justify-between gap-3">

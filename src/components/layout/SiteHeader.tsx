@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { SignedIn, SignedOut } from "@/lib/auth/gates";
 import { ToyotaMark } from "@/components/brand/ToyotaMark";
 import { SearchDialog } from "@/components/search/SearchDialog";
+import { LocaleControls } from "@/components/layout/LocaleControls";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -13,9 +14,11 @@ const NAV = [
 ] as const;
 
 const MORE = [
+  { href: "/quiz", label: "Find My Toyota" },
   { href: "/shop", label: "Shop" },
   { href: "/owners", label: "Owners" },
   { href: "/owners/saved", label: "Garage" },
+  { href: "/workspace", label: "Deal workspace" },
   { href: "/shop/test-drive", label: "Test drive" },
   { href: "/owners/service", label: "Service" },
   { href: "/vehicles/compare", label: "Compare" },
@@ -65,13 +68,33 @@ export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [desktopNav, setDesktopNav] = useState(true);
   const home = pathname === "/";
   const moreActive = moreIsActive(pathname);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => setDesktopNav(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <>
       {home ? (
-        <header className="absolute inset-x-0 top-0 z-40 md:hidden">
+        <header className="absolute inset-x-0 top-0 z-[var(--z-header)] md:hidden">
           <div className="flex h-[calc(3.5rem+env(safe-area-inset-top))] items-center justify-between px-4 pt-[env(safe-area-inset-top)]">
             <BrandLockup />
             <SearchButton onClick={() => setSearchOpen(true)} />
@@ -79,7 +102,11 @@ export function SiteHeader() {
         </header>
       ) : null}
 
-      <header className="sticky top-0 z-40 hidden border-b border-border bg-bg md:block">
+      <header
+        className="sticky top-0 z-[var(--z-header)] hidden border-b border-border bg-bg md:block"
+        inert={desktopNav ? undefined : true}
+        aria-hidden={desktopNav ? undefined : true}
+      >
         <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-6">
           <BrandLockup />
           <nav className="flex h-full items-center gap-1" aria-label="Primary">
@@ -160,7 +187,10 @@ export function SiteHeader() {
               ) : null}
             </div>
           </nav>
-          <div className="justify-self-end">
+          <div className="flex items-center justify-self-end gap-1">
+            <div className="hidden lg:block">
+              <LocaleControls />
+            </div>
             <SearchButton onClick={() => setSearchOpen(true)} />
           </div>
         </div>

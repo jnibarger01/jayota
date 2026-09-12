@@ -32,6 +32,11 @@ test("category filters", () => {
   assert.ok(filterLineup("hybrid").length > 5);
 });
 
+test("PHEV tab is empty until a plug-in hybrid nameplate is catalogued", () => {
+  assert.equal(filterLineup("phev").length, 0);
+  assert.ok(filterLineup("performance").every((item) => item.slug.startsWith("gr") || item.name.startsWith("GR")));
+});
+
 test("3d configure only on packaged models", () => {
   assert.equal(lineupConfigure(getLineupBySlug("rav4")!).kind, "3d");
   assert.equal(lineupConfigure(getLineupBySlug("4runner")!).kind, "3d");
