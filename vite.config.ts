@@ -170,9 +170,11 @@ export default defineConfig(({ command, isPreview }) => {
     grokPwaPlugin(),
     tailwindcss(),
     tanstackStart(
+      // Pages-only: never ship this as src/client.tsx — that name becomes the
+      // default SSR client for ALL builds and breaks Vercel hydration.
       process.env.GITHUB_PAGES === "1"
         ? {
-            client: { entry: "client" },
+            client: { entry: "client.pages" },
             router: { basepath: "/jayota" },
           }
         : undefined,
