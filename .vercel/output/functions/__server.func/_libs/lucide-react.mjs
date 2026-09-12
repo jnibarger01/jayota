@@ -521,6 +521,46 @@ var Landmark = createLucideIcon("landmark", [
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var LayoutGrid = createLucideIcon("layout-grid", [
+	["rect", {
+		width: "7",
+		height: "7",
+		x: "3",
+		y: "3",
+		rx: "1",
+		key: "1g98yp"
+	}],
+	["rect", {
+		width: "7",
+		height: "7",
+		x: "14",
+		y: "3",
+		rx: "1",
+		key: "6d4xhi"
+	}],
+	["rect", {
+		width: "7",
+		height: "7",
+		x: "14",
+		y: "14",
+		rx: "1",
+		key: "nxv5o0"
+	}],
+	["rect", {
+		width: "7",
+		height: "7",
+		x: "3",
+		y: "14",
+		rx: "1",
+		key: "1bb6yr"
+	}]
+]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var Lightbulb = createLucideIcon("lightbulb", [
 	["path", {
 		d: "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5",
@@ -669,6 +709,20 @@ var Printer = createLucideIcon("printer", [
 		key: "1ue0tg"
 	}]
 ]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var RectangleHorizontal = createLucideIcon("rectangle-horizontal", [["rect", {
+	width: "20",
+	height: "12",
+	x: "2",
+	y: "6",
+	rx: "2",
+	key: "9lu3g6"
+}]]);
 /**
 * @license lucide-react v0.510.0 - ISC
 *
@@ -1011,4 +1065,4 @@ var ZoomIn = createLucideIcon("zoom-in", [
 	}]
 ]);
 //#endregion
-export { CloudSun as A, Armchair as B, Landmark as C, Ellipsis as D, Expand as E, ChevronLeft as F, Check as I, Car as L, ClipboardCheck as M, CircleGauge as N, Download as O, ChevronRight as P, Camera as R, Lightbulb as S, Heart as T, PaintBucket as _, TriangleAlert as a, MapPin as b, Share2 as c, Save as d, RotateCcw as f, Pause as g, Play as h, Truck as i, CloudOff as j, Cog as k, Settings2 as l, Printer as m, X as n, SlidersHorizontal as o, Redo2 as p, Undo2 as r, Shuffle as s, ZoomIn as t, Search as u, Mountain as v, House as w, LoaderCircle as x, Map as y, Box as z };
+export { Download as A, Camera as B, Lightbulb as C, Heart as D, House as E, CircleGauge as F, Armchair as H, ChevronRight as I, ChevronLeft as L, CloudSun as M, CloudOff as N, Expand as O, ClipboardCheck as P, Check as R, LoaderCircle as S, Landmark as T, Box as V, Pause as _, TriangleAlert as a, Map as b, Share2 as c, Save as d, RotateCcw as f, Play as g, Printer as h, Truck as i, Cog as j, Ellipsis as k, Settings2 as l, RectangleHorizontal as m, X as n, SlidersHorizontal as o, Redo2 as p, Undo2 as r, Shuffle as s, ZoomIn as t, Search as u, PaintBucket as v, LayoutGrid as w, MapPin as x, Mountain as y, Car as z };

@@ -17,6 +17,11 @@ export const HOMEPAGE = {
 
 export const SHOP_TOOLS = [
   {
+    to: "/quiz" as const,
+    title: "Find My Toyota",
+    body: "A transparent matcher against this showroom’s lineup — not invented specs.",
+  },
+  {
     to: "/vehicles" as const,
     title: "Build & Price",
     body: "Configure a catalog vehicle in 3D. Prices are project catalog figures, not live quotes.",
@@ -65,8 +70,13 @@ export const OWNER_TOOLS = [
     body: "Manuals, recalls, and connected services via official sources.",
   },
   {
+    to: "/workspace" as const,
+    title: "Deal workspace",
+    body: "Keep your model, build, trade notes, and test-drive request in one jacket.",
+  },
+  {
     to: "/owners/saved" as const,
-    title: "Saved vehicles",
-    body: "Pin models and 3D builds to your account.",
+    title: "Garage",
+    body: "Favorites, builds, and recently viewed models.",
   },
 ] as const;

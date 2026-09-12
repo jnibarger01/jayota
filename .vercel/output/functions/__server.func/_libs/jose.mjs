@@ -900,10 +900,8 @@ function omitUndefinedProperties(jwk) {
 	return Object.fromEntries(Object.entries(jwk).filter(([, value]) => value !== void 0));
 }
 async function keyToJWK(key) {
-	if (isKeyObject(key)) {
-		if (key.type === "secret") key = key.export();
-		else return key.export({ format: "jwk" });
-	}
+	if (isKeyObject(key)) if (key.type === "secret") key = key.export();
+	else return key.export({ format: "jwk" });
 	if (key instanceof Uint8Array) return {
 		kty: "oct",
 		k: encode$1(key)

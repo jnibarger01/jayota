@@ -92,6 +92,9 @@
 .tour-card kbd { padding: 2px 5px; border: 1px solid #4d4146; border-radius: 4px; background: #110e10; }
 .tour-close { position: absolute; top: 8px; right: 8px; border: 0; background: transparent; }
 
+.feature-explorer { pointer-events: auto; }
+.feature-explorer button { background: rgba(12,16,21,.9); color: var(--fg, #f4f7fa); }
+
 .workspace { height: calc(100vh - 72px); display: grid; grid-template-columns: 238px minmax(0, 1fr) 304px; }
 .left-rail, .right-panel { background: rgba(12,16,21,.95); overflow: auto; }
 .left-rail { border-right: 1px solid #202731; padding: 24px 16px; }

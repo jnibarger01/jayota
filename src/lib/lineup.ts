@@ -6,7 +6,7 @@
  * Do not invent trims, horsepower, VINs, or lot counts here.
  */
 
-export type LineupTab = "all" | "suv" | "car" | "truck" | "minivan" | "hybrid" | "electric";
+export type LineupTab = "all" | "suv" | "car" | "truck" | "minivan" | "hybrid" | "phev" | "electric" | "performance";
 export type LineupBody = "car" | "suv" | "truck" | "minivan";
 export type Electrified = "hybrid" | "phev" | "bev" | "fcev" | null;
 
@@ -339,12 +339,14 @@ const SLUG_ALIASES: Record<string, string> = {
 
 export const LINEUP_TABS: ReadonlyArray<{ id: LineupTab; label: string }> = [
   { id: "all", label: "All" },
-  { id: "suv", label: "SUV" },
-  { id: "car", label: "Car" },
-  { id: "truck", label: "Truck" },
-  { id: "minivan", label: "Minivan" },
+  { id: "car", label: "Cars" },
+  { id: "suv", label: "SUVs/Crossovers" },
+  { id: "truck", label: "Trucks" },
+  { id: "minivan", label: "Vans" },
   { id: "hybrid", label: "Hybrid" },
+  { id: "phev", label: "Plug-in Hybrid" },
   { id: "electric", label: "Electric" },
+  { id: "performance", label: "GR / Specialty" },
 ];
 
 export function getLineupBySlug(slug: string): LineupModel | undefined {
@@ -354,6 +356,10 @@ export function getLineupBySlug(slug: string): LineupModel | undefined {
 
 export function filterLineup(tab: LineupTab): LineupModel[] {
   if (tab === "all") return [...LINEUP];
+  if (tab === "performance") {
+    return LINEUP.filter((item) => item.slug.startsWith("gr") || item.name.startsWith("GR"));
+  }
+  if (tab === "phev") return LINEUP.filter((item) => item.electrified === "phev");
   return LINEUP.filter((item) => item.tabs.includes(tab));
 }
 

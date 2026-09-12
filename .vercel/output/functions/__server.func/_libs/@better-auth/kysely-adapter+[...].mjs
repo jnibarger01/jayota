@@ -1,5 +1,5 @@
 import { r as __exportAll } from "../../_runtime.mjs";
-import { Et as capitalizeFirstLetter, Kt as logger, Ot as createAdapterFactory } from "./core+[...].mjs";
+import { St as createAdapterFactory, ln as logger, nn as capitalizeFirstLetter } from "./core+[...].mjs";
 //#region node_modules/kysely/dist/esm/util/object-utils.js
 function isUndefined(obj) {
 	return typeof obj === "undefined" || obj === void 0;
@@ -5688,10 +5688,8 @@ var WithSchemaTransformer = class extends OperationNodeTransformer {
 		if ("into" in node && node.into) this.#collectSchemableIdsFromTableExpr(node.into, schemableIds);
 		if ("table" in node && node.table) this.#collectSchemableIdsFromTableExpr(node.table, schemableIds);
 		if ("joins" in node && node.joins) for (const join of node.joins) this.#collectSchemableIdsFromTableExpr(join.table, schemableIds);
-		if ("using" in node && node.using) {
-			if (JoinNode.is(node.using)) this.#collectSchemableIdsFromTableExpr(node.using.table, schemableIds);
-			else this.#collectSchemableIdsFromTableExpr(node.using, schemableIds);
-		}
+		if ("using" in node && node.using) if (JoinNode.is(node.using)) this.#collectSchemableIdsFromTableExpr(node.using.table, schemableIds);
+		else this.#collectSchemableIdsFromTableExpr(node.using, schemableIds);
 		return schemableIds;
 	}
 	#collectCTEs(node) {
@@ -12025,14 +12023,12 @@ function defaultLogger(event) {
 		const prefix = `kysely:query:${event.isStream ? "stream:" : ""}`;
 		console.log(`${prefix} ${event.query.sql}`);
 		console.log(`${prefix} duration: ${event.queryDurationMillis.toFixed(1)}ms`);
-	} else if (event.level === "error") {
-		if (event.error instanceof Error) console.error(`kysely:error: ${event.error.stack ?? event.error.message}`);
-		else console.error(`kysely:error: ${JSON.stringify({
-			error: event.error,
-			query: event.query.sql,
-			queryDurationMillis: event.queryDurationMillis
-		})}`);
-	}
+	} else if (event.level === "error") if (event.error instanceof Error) console.error(`kysely:error: ${event.error.stack ?? event.error.message}`);
+	else console.error(`kysely:error: ${JSON.stringify({
+		error: event.error,
+		query: event.query.sql,
+		queryDurationMillis: event.queryDurationMillis
+	})}`);
 }
 //#endregion
 //#region node_modules/kysely/dist/esm/util/compilable.js
@@ -13802,14 +13798,10 @@ var DefaultQueryCompiler = class extends OperationNodeVisitor {
 		this.buildDeferrable(node);
 	}
 	buildDeferrable(node) {
-		if (node.deferrable !== void 0) {
-			if (node.deferrable) this.append(" deferrable");
-			else this.append(" not deferrable");
-		}
-		if (node.initiallyDeferred !== void 0) {
-			if (node.initiallyDeferred) this.append(" initially deferred");
-			else this.append(" initially immediate");
-		}
+		if (node.deferrable !== void 0) if (node.deferrable) this.append(" deferrable");
+		else this.append(" not deferrable");
+		if (node.initiallyDeferred !== void 0) if (node.initiallyDeferred) this.append(" initially deferred");
+		else this.append(" initially immediate");
 	}
 	visitUniqueConstraint(node) {
 		if (node.name) {
@@ -15475,10 +15467,8 @@ var MssqlRequest = class {
 	}
 	#getTediousDataType(value) {
 		if (isNull(value) || isUndefined(value) || isString(value)) return this.#tedious.TYPES.NVarChar;
-		if (isBigInt(value) || isNumber(value) && value % 1 === 0) {
-			if (value < -2147483648 || value > 2147483647) return this.#tedious.TYPES.BigInt;
-			else return this.#tedious.TYPES.Int;
-		}
+		if (isBigInt(value) || isNumber(value) && value % 1 === 0) if (value < -2147483648 || value > 2147483647) return this.#tedious.TYPES.BigInt;
+		else return this.#tedious.TYPES.Int;
 		if (isNumber(value)) return this.#tedious.TYPES.Float;
 		if (isBoolean(value)) return this.#tedious.TYPES.Bit;
 		if (isDate(value)) return this.#tedious.TYPES.DateTime;

@@ -1608,12 +1608,10 @@ var Timeline = /*#__PURE__*/ function(_Animation) {
 		if (ignoreBeforeTime === void 0) ignoreBeforeTime = -_bigNum$1;
 		var a = [], child = this._first;
 		while (child) {
-			if (child._start >= ignoreBeforeTime) {
-				if (child instanceof Tween) tweens && a.push(child);
-				else {
-					timelines && a.push(child);
-					nested && a.push.apply(a, child.getChildren(true, tweens, timelines));
-				}
+			if (child._start >= ignoreBeforeTime) if (child instanceof Tween) tweens && a.push(child);
+			else {
+				timelines && a.push(child);
+				nested && a.push.apply(a, child.getChildren(true, tweens, timelines));
 			}
 			child = child._next;
 		}
@@ -3023,8 +3021,8 @@ var _removeIndependentTransforms = function _removeIndependentTransforms(style) 
 	}
 };
 var _revertStyle = function _revertStyle() {
-	var props = this.props, target = this.target, style = target.style, cache = target._gsap, i = 0, p;
-	for (; i < props.length; i += 3) if (!props[i + 1]) props[i + 2] ? style[props[i]] = props[i + 2] : style.removeProperty(props[i].substr(0, 2) === "--" ? props[i] : props[i].replace(_capsExp, "-$1").toLowerCase());
+	var props = this.props, target = this.target, style = target.style, cache = target._gsap, i, p;
+	for (i = 0; i < props.length; i += 3) if (!props[i + 1]) props[i + 2] ? style[props[i]] = props[i + 2] : style.removeProperty(props[i].substr(0, 2) === "--" ? props[i] : props[i].replace(_capsExp, "-$1").toLowerCase());
 	else if (props[i + 1] === 2) target[props[i]](props[i + 2]);
 	else target[props[i]] = props[i + 2];
 	if (this.tfm) {
@@ -3521,15 +3519,13 @@ var _parseTransform = function _parseTransform(target, uncache) {
 			t1 && target.setAttribute("transform", t1);
 		}
 	}
-	if (Math.abs(skewX) > 90 && Math.abs(skewX) < 270) {
-		if (invertedScaleX) {
-			scaleX *= -1;
-			skewX += rotation <= 0 ? 180 : -180;
-			rotation += rotation <= 0 ? 180 : -180;
-		} else {
-			scaleY *= -1;
-			skewX += skewX <= 0 ? 180 : -180;
-		}
+	if (Math.abs(skewX) > 90 && Math.abs(skewX) < 270) if (invertedScaleX) {
+		scaleX *= -1;
+		skewX += rotation <= 0 ? 180 : -180;
+		rotation += rotation <= 0 ? 180 : -180;
+	} else {
+		scaleY *= -1;
+		skewX += skewX <= 0 ? 180 : -180;
 	}
 	uncache = uncache || cache.uncache;
 	cache.x = x - ((cache.xPercent = x && (!uncache && cache.xPercent || (Math.round(target.offsetWidth / 2) === Math.round(-x) ? -50 : 0))) ? target.offsetWidth * cache.xPercent / 100 : 0) + px;

@@ -313,16 +313,14 @@ function getErrorOptions(error, features) {
 	const names = Object.getOwnPropertyNames(error);
 	for (let i = 0, len = names.length, name; i < len; i++) {
 		name = names[i];
-		if (name !== "name" && name !== "message") {
-			if (name === "stack") {
-				if (features & 4) {
-					options = options || {};
-					options[name] = error[name];
-				}
-			} else {
+		if (name !== "name" && name !== "message") if (name === "stack") {
+			if (features & 4) {
 				options = options || {};
 				options[name] = error[name];
 			}
+		} else {
+			options = options || {};
+			options[name] = error[name];
 		}
 	}
 	return options;
@@ -1817,10 +1815,9 @@ function serializeStringKeyAssignment(ctx, source, mainAssignments, key, value) 
 	const serialized = serialize$1(ctx, value);
 	const check = Number(key);
 	const isIdentifier = check >= 0 && check.toString() === key || isValidIdentifier(key);
-	if (isIndexedValueInStack(base, value)) {
-		if (isIdentifier && check !== check) createObjectAssign(ctx, source.i, key, serialized);
-		else createArrayAssign(ctx, source.i, isIdentifier ? key : "\"" + key + "\"", serialized);
-	} else {
+	if (isIndexedValueInStack(base, value)) if (isIdentifier && check !== check) createObjectAssign(ctx, source.i, key, serialized);
+	else createArrayAssign(ctx, source.i, isIdentifier ? key : "\"" + key + "\"", serialized);
+	else {
 		const parentAssignment = base.assignments;
 		base.assignments = mainAssignments;
 		if (isIdentifier && check !== check) createObjectAssign(ctx, source.i, key, serialized);

@@ -266,10 +266,8 @@ function getOptimalSplit(nodeBoundingData, centroidBoundingData, primitiveBounds
 					const binCount = bin.count;
 					const bounds = bin.bounds;
 					const rightBounds = sahBins[i + 1].rightCacheBounds;
-					if (binCount !== 0) {
-						if (leftCount === 0) copyBounds(bounds, leftBounds);
-						else unionBounds(bounds, leftBounds, leftBounds);
-					}
+					if (binCount !== 0) if (leftCount === 0) copyBounds(bounds, leftBounds);
+					else unionBounds(bounds, leftBounds, leftBounds);
 					leftCount += binCount;
 					let leftProb = 0;
 					let rightProb = 0;
@@ -357,17 +355,16 @@ function _populateBuffer(byteOffset, node) {
 	const isLeaf = "count" in node;
 	const boundingData = node.boundingData;
 	for (let i = 0; i < 6; i++) float32Array[node32Index + i] = boundingData[i];
-	if (isLeaf) {
-		if (node.buffer) {
-			uint8Array.set(new Uint8Array(node.buffer), byteOffset);
-			return byteOffset + node.buffer.byteLength;
-		} else {
-			uint32Array[node32Index + 6] = node.offset;
-			uint16Array[node16Index + 14] = node.count;
-			uint16Array[node16Index + 15] = IS_LEAFNODE_FLAG;
-			return byteOffset + 32;
-		}
+	if (isLeaf) if (node.buffer) {
+		uint8Array.set(new Uint8Array(node.buffer), byteOffset);
+		return byteOffset + node.buffer.byteLength;
 	} else {
+		uint32Array[node32Index + 6] = node.offset;
+		uint16Array[node16Index + 14] = node.count;
+		uint16Array[node16Index + 15] = IS_LEAFNODE_FLAG;
+		return byteOffset + 32;
+	}
+	else {
 		const { left, right, splitAxis } = node;
 		let rightByteOffset = _populateBuffer(byteOffset + 32, left);
 		const currentNodeIndex = byteOffset / 32;
@@ -648,10 +645,9 @@ function _traverse(node1Index32, node2Index32, matrix2to1, matrix1to2, intersect
 	const isLeaf1 = IS_LEAF(node1Index16, uint16Array1);
 	const isLeaf2 = IS_LEAF(node2Index16, uint16Array2);
 	let result = false;
-	if (isLeaf2 && isLeaf1) {
-		if (reversed) result = intersectsRangesFunc(OFFSET(node2Index32, uint32Array2), COUNT(node2Index32 * 2, uint16Array2), OFFSET(node1Index32, uint32Array1), COUNT(node1Index32 * 2, uint16Array1), depth2, node2IndexOffset + node2Index32 / 8, depth1, node1IndexOffset + node1Index32 / 8);
-		else result = intersectsRangesFunc(OFFSET(node1Index32, uint32Array1), COUNT(node1Index32 * 2, uint16Array1), OFFSET(node2Index32, uint32Array2), COUNT(node2Index32 * 2, uint16Array2), depth1, node1IndexOffset + node1Index32 / 8, depth2, node2IndexOffset + node2Index32 / 8);
-	} else if (isLeaf2) {
+	if (isLeaf2 && isLeaf1) if (reversed) result = intersectsRangesFunc(OFFSET(node2Index32, uint32Array2), COUNT(node2Index32 * 2, uint16Array2), OFFSET(node1Index32, uint32Array1), COUNT(node1Index32 * 2, uint16Array1), depth2, node2IndexOffset + node2Index32 / 8, depth1, node1IndexOffset + node1Index32 / 8);
+	else result = intersectsRangesFunc(OFFSET(node1Index32, uint32Array1), COUNT(node1Index32 * 2, uint16Array1), OFFSET(node2Index32, uint32Array2), COUNT(node2Index32 * 2, uint16Array2), depth1, node1IndexOffset + node1Index32 / 8, depth2, node2IndexOffset + node2Index32 / 8);
+	else if (isLeaf2) {
 		const newBox = _boxPool.getPrimitive();
 		arrayToBox(BOUNDING_DATA_INDEX(node2Index32), float32Array2, newBox);
 		newBox.applyMatrix4(matrix2to1);
@@ -671,34 +667,31 @@ function _traverse(node1Index32, node2Index32, matrix2to1, matrix1to2, intersect
 		const leftIntersects = currBox.intersectsBox(_leftBox2);
 		const rightIntersects = currBox.intersectsBox(_rightBox2);
 		if (leftIntersects && rightIntersects) result = _traverse(node1Index32, cl2, matrix2to1, matrix1to2, intersectsRangesFunc, node1IndexOffset, node2IndexOffset, depth1, depth2 + 1, currBox, reversed) || _traverse(node1Index32, cr2, matrix2to1, matrix1to2, intersectsRangesFunc, node1IndexOffset, node2IndexOffset, depth1, depth2 + 1, currBox, reversed);
-		else if (leftIntersects) {
-			if (isLeaf1) result = _traverse(node1Index32, cl2, matrix2to1, matrix1to2, intersectsRangesFunc, node1IndexOffset, node2IndexOffset, depth1, depth2 + 1, currBox, reversed);
-			else {
-				const newBox = _boxPool.getPrimitive();
-				newBox.copy(_leftBox2).applyMatrix4(matrix2to1);
-				const cl1 = LEFT_NODE(node1Index32);
-				const cr1 = RIGHT_NODE(node1Index32, uint32Array1);
-				arrayToBox(BOUNDING_DATA_INDEX(cl1), float32Array1, _leftBox1);
-				arrayToBox(BOUNDING_DATA_INDEX(cr1), float32Array1, _rightBox1);
-				const intersectCl1 = newBox.intersectsBox(_leftBox1);
-				const intersectCr1 = newBox.intersectsBox(_rightBox1);
-				result = intersectCl1 && _traverse(cl2, cl1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed) || intersectCr1 && _traverse(cl2, cr1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed);
-				_boxPool.releasePrimitive(newBox);
-			}
-		} else if (rightIntersects) {
-			if (isLeaf1) result = _traverse(node1Index32, cr2, matrix2to1, matrix1to2, intersectsRangesFunc, node1IndexOffset, node2IndexOffset, depth1, depth2 + 1, currBox, reversed);
-			else {
-				const newBox = _boxPool.getPrimitive();
-				newBox.copy(_rightBox2).applyMatrix4(matrix2to1);
-				const cl1 = LEFT_NODE(node1Index32);
-				const cr1 = RIGHT_NODE(node1Index32, uint32Array1);
-				arrayToBox(BOUNDING_DATA_INDEX(cl1), float32Array1, _leftBox1);
-				arrayToBox(BOUNDING_DATA_INDEX(cr1), float32Array1, _rightBox1);
-				const intersectCl1 = newBox.intersectsBox(_leftBox1);
-				const intersectCr1 = newBox.intersectsBox(_rightBox1);
-				result = intersectCl1 && _traverse(cr2, cl1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed) || intersectCr1 && _traverse(cr2, cr1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed);
-				_boxPool.releasePrimitive(newBox);
-			}
+		else if (leftIntersects) if (isLeaf1) result = _traverse(node1Index32, cl2, matrix2to1, matrix1to2, intersectsRangesFunc, node1IndexOffset, node2IndexOffset, depth1, depth2 + 1, currBox, reversed);
+		else {
+			const newBox = _boxPool.getPrimitive();
+			newBox.copy(_leftBox2).applyMatrix4(matrix2to1);
+			const cl1 = LEFT_NODE(node1Index32);
+			const cr1 = RIGHT_NODE(node1Index32, uint32Array1);
+			arrayToBox(BOUNDING_DATA_INDEX(cl1), float32Array1, _leftBox1);
+			arrayToBox(BOUNDING_DATA_INDEX(cr1), float32Array1, _rightBox1);
+			const intersectCl1 = newBox.intersectsBox(_leftBox1);
+			const intersectCr1 = newBox.intersectsBox(_rightBox1);
+			result = intersectCl1 && _traverse(cl2, cl1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed) || intersectCr1 && _traverse(cl2, cr1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed);
+			_boxPool.releasePrimitive(newBox);
+		}
+		else if (rightIntersects) if (isLeaf1) result = _traverse(node1Index32, cr2, matrix2to1, matrix1to2, intersectsRangesFunc, node1IndexOffset, node2IndexOffset, depth1, depth2 + 1, currBox, reversed);
+		else {
+			const newBox = _boxPool.getPrimitive();
+			newBox.copy(_rightBox2).applyMatrix4(matrix2to1);
+			const cl1 = LEFT_NODE(node1Index32);
+			const cr1 = RIGHT_NODE(node1Index32, uint32Array1);
+			arrayToBox(BOUNDING_DATA_INDEX(cl1), float32Array1, _leftBox1);
+			arrayToBox(BOUNDING_DATA_INDEX(cr1), float32Array1, _rightBox1);
+			const intersectCl1 = newBox.intersectsBox(_leftBox1);
+			const intersectCr1 = newBox.intersectsBox(_rightBox1);
+			result = intersectCl1 && _traverse(cr2, cl1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed) || intersectCr1 && _traverse(cr2, cr1, matrix1to2, matrix2to1, intersectsRangesFunc, node2IndexOffset, node1IndexOffset, depth2, depth1 + 1, newBox, !reversed);
+			_boxPool.releasePrimitive(newBox);
 		}
 	}
 	return result;
@@ -1001,14 +994,12 @@ var BVH = class {
 				if (!originalIntersectsRange(offset, count, contained, depth, nodeIndex)) return iterate(offset, count, this, intersectsPrimitive, contained, depth, scratchPrimitive);
 				return true;
 			};
-		} else if (!intersectsRange) {
-			if (intersectsPrimitive) intersectsRange = (offset, count, contained, depth) => {
-				return iterate(offset, count, this, intersectsPrimitive, contained, depth, scratchPrimitive);
-			};
-			else intersectsRange = (offset, count, contained) => {
-				return contained;
-			};
-		}
+		} else if (!intersectsRange) if (intersectsPrimitive) intersectsRange = (offset, count, contained, depth) => {
+			return iterate(offset, count, this, intersectsPrimitive, contained, depth, scratchPrimitive);
+		};
+		else intersectsRange = (offset, count, contained) => {
+			return contained;
+		};
 		let result = false;
 		let nodeOffset = 0;
 		const roots = this._roots;
@@ -1448,21 +1439,19 @@ var ExtendedTriangle = class extends Triangle {
 		const lengthCA = axis3.length();
 		this.isDegenerateIntoPoint = false;
 		this.isDegenerateIntoSegment = false;
-		if (lengthAB < ZERO_EPSILON) {
-			if (lengthBC < ZERO_EPSILON || lengthCA < ZERO_EPSILON) this.isDegenerateIntoPoint = true;
-			else {
-				this.isDegenerateIntoSegment = true;
-				this.degenerateSegment.start.copy(a);
-				this.degenerateSegment.end.copy(c);
-			}
-		} else if (lengthBC < ZERO_EPSILON) {
-			if (lengthCA < ZERO_EPSILON) this.isDegenerateIntoPoint = true;
-			else {
-				this.isDegenerateIntoSegment = true;
-				this.degenerateSegment.start.copy(b);
-				this.degenerateSegment.end.copy(a);
-			}
-		} else if (lengthCA < ZERO_EPSILON) {
+		if (lengthAB < ZERO_EPSILON) if (lengthBC < ZERO_EPSILON || lengthCA < ZERO_EPSILON) this.isDegenerateIntoPoint = true;
+		else {
+			this.isDegenerateIntoSegment = true;
+			this.degenerateSegment.start.copy(a);
+			this.degenerateSegment.end.copy(c);
+		}
+		else if (lengthBC < ZERO_EPSILON) if (lengthCA < ZERO_EPSILON) this.isDegenerateIntoPoint = true;
+		else {
+			this.isDegenerateIntoSegment = true;
+			this.degenerateSegment.start.copy(b);
+			this.degenerateSegment.end.copy(a);
+		}
+		else if (lengthCA < ZERO_EPSILON) {
 			this.isDegenerateIntoSegment = true;
 			this.degenerateSegment.start.copy(c);
 			this.degenerateSegment.end.copy(b);
@@ -1602,16 +1591,15 @@ ExtendedTriangle.prototype.intersectsTriangle = (function() {
 		const segment = degenerateTriangle.degenerateSegment;
 		const startDist = triangle.plane.distanceToPoint(segment.start);
 		const endDist = triangle.plane.distanceToPoint(segment.end);
-		if (isNearZero(startDist)) {
-			if (isNearZero(endDist)) return coplanarIntersectsTriangle(triangle, degenerateTriangle, target, suppressLog);
-			else {
-				if (target) {
-					target.start.copy(segment.start);
-					target.end.copy(segment.start);
-				}
-				return triangle.containsPoint(segment.start);
+		if (isNearZero(startDist)) if (isNearZero(endDist)) return coplanarIntersectsTriangle(triangle, degenerateTriangle, target, suppressLog);
+		else {
+			if (target) {
+				target.start.copy(segment.start);
+				target.end.copy(segment.start);
 			}
-		} else if (isNearZero(endDist)) {
+			return triangle.containsPoint(segment.start);
+		}
+		else if (isNearZero(endDist)) {
 			if (target) {
 				target.start.copy(segment.end);
 				target.end.copy(segment.end);
@@ -1648,41 +1636,38 @@ ExtendedTriangle.prototype.intersectsTriangle = (function() {
 		} else return false;
 	}
 	function handleDegenerateCases(self, other, target, suppressLog) {
-		if (self.isDegenerateIntoSegment) {
-			if (other.isDegenerateIntoSegment) {
-				const segment1 = self.degenerateSegment;
-				const segment2 = other.degenerateSegment;
-				const delta1 = dir1;
-				const delta2 = dir2;
-				segment1.delta(delta1);
-				segment2.delta(delta2);
-				const startDelta = tmpVec.subVectors(segment2.start, segment1.start);
-				const denom = delta1.x * delta2.y - delta1.y * delta2.x;
-				if (isNearZero(denom)) return false;
-				const t = (startDelta.x * delta2.y - startDelta.y * delta2.x) / denom;
-				const u = -(delta1.x * startDelta.y - delta1.y * startDelta.x) / denom;
-				if (t < 0 || t > 1 || u < 0 || u > 1) return false;
-				if (isNearZero(segment1.start.z + delta1.z * t - (segment2.start.z + delta2.z * u))) {
-					if (target) {
-						target.start.copy(segment1.start).addScaledVector(delta1, t);
-						target.end.copy(segment1.start).addScaledVector(delta1, t);
-					}
-					return true;
-				} else return false;
-			} else if (other.isDegenerateIntoPoint) return intersectSegmentPoint(self, other, target);
-			else return intersectTriangleSegment(other, self, target, suppressLog);
-		} else if (self.isDegenerateIntoPoint) {
-			if (other.isDegenerateIntoPoint) {
-				if (other.a.distanceToSquared(self.a) < ZERO_EPSILON_SQR) {
-					if (target) {
-						target.start.copy(self.a);
-						target.end.copy(self.a);
-					}
-					return true;
-				} else return false;
-			} else if (other.isDegenerateIntoSegment) return intersectSegmentPoint(other, self, target);
-			else return intersectTrianglePoint(other, self, target);
-		} else if (other.isDegenerateIntoPoint) return intersectTrianglePoint(self, other, target);
+		if (self.isDegenerateIntoSegment) if (other.isDegenerateIntoSegment) {
+			const segment1 = self.degenerateSegment;
+			const segment2 = other.degenerateSegment;
+			const delta1 = dir1;
+			const delta2 = dir2;
+			segment1.delta(delta1);
+			segment2.delta(delta2);
+			const startDelta = tmpVec.subVectors(segment2.start, segment1.start);
+			const denom = delta1.x * delta2.y - delta1.y * delta2.x;
+			if (isNearZero(denom)) return false;
+			const t = (startDelta.x * delta2.y - startDelta.y * delta2.x) / denom;
+			const u = -(delta1.x * startDelta.y - delta1.y * startDelta.x) / denom;
+			if (t < 0 || t > 1 || u < 0 || u > 1) return false;
+			if (isNearZero(segment1.start.z + delta1.z * t - (segment2.start.z + delta2.z * u))) {
+				if (target) {
+					target.start.copy(segment1.start).addScaledVector(delta1, t);
+					target.end.copy(segment1.start).addScaledVector(delta1, t);
+				}
+				return true;
+			} else return false;
+		} else if (other.isDegenerateIntoPoint) return intersectSegmentPoint(self, other, target);
+		else return intersectTriangleSegment(other, self, target, suppressLog);
+		else if (self.isDegenerateIntoPoint) if (other.isDegenerateIntoPoint) if (other.a.distanceToSquared(self.a) < ZERO_EPSILON_SQR) {
+			if (target) {
+				target.start.copy(self.a);
+				target.end.copy(self.a);
+			}
+			return true;
+		} else return false;
+		else if (other.isDegenerateIntoSegment) return intersectSegmentPoint(other, self, target);
+		else return intersectTrianglePoint(other, self, target);
+		else if (other.isDegenerateIntoPoint) return intersectTrianglePoint(self, other, target);
 		else if (other.isDegenerateIntoSegment) return intersectTriangleSegment(self, other, target, suppressLog);
 	}
 	return function intersectsTriangle(other, target = null, suppressLog = false) {

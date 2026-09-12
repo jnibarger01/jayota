@@ -1027,7 +1027,7 @@ var Dr = (() => {
 			return f;
 		}, newDSO = (e, r, t) => {
 			var n = {
-				refcount: 1 / 0,
+				refcount: Infinity,
 				name: e,
 				exports: t,
 				global: !0
@@ -1280,8 +1280,8 @@ var Dr = (() => {
 			nodelete: !0
 		}, t, n) {
 			var o = LDSO.loadedLibsByName[e];
-			if (o) return r.global ? o.global || (o.global = !0, mergeLibSymbols(o.exports, e)) : t && Object.assign(t, o.exports), r.nodelete && o.refcount !== 1 / 0 && (o.refcount = 1 / 0), o.refcount++, n && (LDSO.loadedLibsByHandle[n] = o), r.loadAsync ? Promise.resolve(!0) : !0;
-			o = newDSO(e, n, "loading"), o.refcount = r.nodelete ? 1 / 0 : 1, o.global = r.global;
+			if (o) return r.global ? o.global || (o.global = !0, mergeLibSymbols(o.exports, e)) : t && Object.assign(t, o.exports), r.nodelete && o.refcount !== Infinity && (o.refcount = Infinity), o.refcount++, n && (LDSO.loadedLibsByHandle[n] = o), r.loadAsync ? Promise.resolve(!0) : !0;
+			o = newDSO(e, n, "loading"), o.refcount = r.nodelete ? Infinity : 1, o.global = r.global;
 			function a() {
 				if (n) {
 					var u = HEAPU32[n + 28 >> 2], d = HEAPU32[n + 32 >> 2];
@@ -2422,8 +2422,8 @@ var Dr = (() => {
 				return n.node_ops.symlink(n, o, e);
 			},
 			rename(e, r) {
-				var t = PATH.dirname(e), n = PATH.dirname(r), o = PATH.basename(e), a = PATH.basename(r), s = FS.lookupPath(e, { parent: !0 }), l = s.node, u;
-				if (s = FS.lookupPath(r, { parent: !0 }), u = s.node, !l || !u) throw new FS.ErrnoError(44);
+				var t = PATH.dirname(e), n = PATH.dirname(r), o = PATH.basename(e), a = PATH.basename(r), s, l, u;
+				if (s = FS.lookupPath(e, { parent: !0 }), l = s.node, s = FS.lookupPath(r, { parent: !0 }), u = s.node, !l || !u) throw new FS.ErrnoError(44);
 				if (l.mount !== u.mount) throw new FS.ErrnoError(75);
 				var d = FS.lookupNode(l, o), c = PATH_FS.relative(e, n);
 				if (c.charAt(0) !== ".") throw new FS.ErrnoError(28);
@@ -2988,7 +2988,8 @@ var Dr = (() => {
 						var o = syscallGetVarargI();
 						if (o < 0) return -28;
 						for (; FS.streams[o];) o++;
-						return FS.dupStream(n, o).fd;
+						var a;
+						return a = FS.dupStream(n, o), a.fd;
 					case 1:
 					case 2: return 0;
 					case 3: return n.flags;
@@ -3213,7 +3214,7 @@ var Dr = (() => {
 		};
 		__emscripten_runtime_keepalive_clear.sig = "v";
 		var __emscripten_throw_longjmp = () => {
-			throw 1 / 0;
+			throw Infinity;
 		};
 		__emscripten_throw_longjmp.sig = "v";
 		var isLeapYear = (e) => e % 4 === 0 && (e % 100 !== 0 || e % 400 === 0), MONTH_DAYS_LEAP_CUMULATIVE = [
@@ -3580,8 +3581,8 @@ var Dr = (() => {
 		}, _getaddrinfo = (e, r, t, n) => {
 			var o = 0, a = 0, s = 0, l = 0, u = 0, d = 0, c;
 			function p(f, m, _, g, E, y) {
-				var A, S = f === 10 ? 28 : 16, v, h;
-				return E = f === 10 ? inetNtop6(E) : inetNtop4(E), A = _malloc(S), h = writeSockaddr(A, f, E, y), assert(!h), v = _malloc(32), HEAP32[v + 4 >> 2] = f, HEAP32[v + 8 >> 2] = m, HEAP32[v + 12 >> 2] = _, HEAPU32[v + 24 >> 2] = g, HEAPU32[v + 20 >> 2] = A, f === 10 ? HEAP32[v + 16 >> 2] = 28 : HEAP32[v + 16 >> 2] = 16, HEAP32[v + 28 >> 2] = 0, v;
+				var A, S, v, h;
+				return S = f === 10 ? 28 : 16, E = f === 10 ? inetNtop6(E) : inetNtop4(E), A = _malloc(S), h = writeSockaddr(A, f, E, y), assert(!h), v = _malloc(32), HEAP32[v + 4 >> 2] = f, HEAP32[v + 8 >> 2] = m, HEAP32[v + 12 >> 2] = _, HEAPU32[v + 24 >> 2] = g, HEAPU32[v + 20 >> 2] = A, f === 10 ? HEAP32[v + 16 >> 2] = 28 : HEAP32[v + 16 >> 2] = 16, HEAP32[v + 28 >> 2] = 0, v;
 			}
 			if (t && (s = HEAP32[t >> 2], l = HEAP32[t + 4 >> 2], u = HEAP32[t + 8 >> 2], d = HEAP32[t + 12 >> 2]), u && !d && (d = u === 2 ? 17 : 6), !u && d && (u = d === 17 ? 2 : 1), d === 0 && (d = 6), u === 0 && (u = 1), !e && !r) return -2;
 			if (s & -1088 || t !== 0 && HEAP32[t >> 2] & 2 && !e) return -1;
@@ -9891,7 +9892,7 @@ var ht = (() => {
 		}
 		var newDSO = (e, t, r) => {
 			var a = {
-				refcount: 1 / 0,
+				refcount: Infinity,
 				name: e,
 				exports: r,
 				global: !0
@@ -10144,8 +10145,8 @@ var ht = (() => {
 			nodelete: !0
 		}, r, a) {
 			var o = LDSO.loadedLibsByName[e];
-			if (o) return t.global ? o.global || (o.global = !0, mergeLibSymbols(o.exports, e)) : r && Object.assign(r, o.exports), t.nodelete && o.refcount !== 1 / 0 && (o.refcount = 1 / 0), o.refcount++, a && (LDSO.loadedLibsByHandle[a] = o), t.loadAsync ? Promise.resolve(!0) : !0;
-			o = newDSO(e, a, "loading"), o.refcount = t.nodelete ? 1 / 0 : 1, o.global = t.global;
+			if (o) return t.global ? o.global || (o.global = !0, mergeLibSymbols(o.exports, e)) : r && Object.assign(r, o.exports), t.nodelete && o.refcount !== Infinity && (o.refcount = Infinity), o.refcount++, a && (LDSO.loadedLibsByHandle[a] = o), t.loadAsync ? Promise.resolve(!0) : !0;
+			o = newDSO(e, a, "loading"), o.refcount = t.nodelete ? Infinity : 1, o.global = t.global;
 			function _() {
 				if (a) {
 					var l = HEAPU32[a + 28 >> 2], d = HEAPU32[a + 32 >> 2];
@@ -11695,8 +11696,8 @@ var ht = (() => {
 				return a.node_ops.symlink(a, o, e);
 			},
 			rename(e, t) {
-				var r = PATH.dirname(e), a = PATH.dirname(t), o = PATH.basename(e), _ = PATH.basename(t), s = FS.lookupPath(e, { parent: !0 }), n = s.node, l;
-				if (s = FS.lookupPath(t, { parent: !0 }), l = s.node, !n || !l) throw new FS.ErrnoError(44);
+				var r = PATH.dirname(e), a = PATH.dirname(t), o = PATH.basename(e), _ = PATH.basename(t), s, n, l;
+				if (s = FS.lookupPath(e, { parent: !0 }), n = s.node, s = FS.lookupPath(t, { parent: !0 }), l = s.node, !n || !l) throw new FS.ErrnoError(44);
 				if (n.mount !== l.mount) throw new FS.ErrnoError(75);
 				var d = FS.lookupNode(n, o), p = PATH_FS.relative(e, a);
 				if (p.charAt(0) !== ".") throw new FS.ErrnoError(28);
@@ -12796,7 +12797,8 @@ var ht = (() => {
 						var o = syscallGetVarargI();
 						if (o < 0) return -28;
 						for (; FS.streams[o];) o++;
-						return FS.dupStream(a, o).fd;
+						var _;
+						return _ = FS.dupStream(a, o), _.fd;
 					case 1:
 					case 2: return 0;
 					case 3: return a.flags;
@@ -13290,7 +13292,7 @@ ${n}`), 0;
 		};
 		__emscripten_runtime_keepalive_clear.sig = "v";
 		var __emscripten_throw_longjmp = () => {
-			throw 1 / 0;
+			throw Infinity;
 		};
 		__emscripten_throw_longjmp.sig = "v";
 		function __gmtime_js(e, t) {
@@ -13595,8 +13597,8 @@ ${n}`), 0;
 		var _getaddrinfo = (e, t, r, a) => {
 			var o = 0, _ = 0, s = 0, n = 0, l = 0, d = 0, p;
 			function m(g, u, f, c, w, S) {
-				var k, E = g === 10 ? 28 : 16, y, M;
-				return w = g === 10 ? inetNtop6(w) : inetNtop4(w), k = _malloc(E), M = writeSockaddr(k, g, w, S), assert(!M), y = _malloc(32), HEAP32[y + 4 >> 2] = g, HEAP32[y + 8 >> 2] = u, HEAP32[y + 12 >> 2] = f, HEAPU32[y + 24 >> 2] = c, HEAPU32[y + 20 >> 2] = k, g === 10 ? HEAP32[y + 16 >> 2] = 28 : HEAP32[y + 16 >> 2] = 16, HEAP32[y + 28 >> 2] = 0, y;
+				var k, E, y, M;
+				return E = g === 10 ? 28 : 16, w = g === 10 ? inetNtop6(w) : inetNtop4(w), k = _malloc(E), M = writeSockaddr(k, g, w, S), assert(!M), y = _malloc(32), HEAP32[y + 4 >> 2] = g, HEAP32[y + 8 >> 2] = u, HEAP32[y + 12 >> 2] = f, HEAPU32[y + 24 >> 2] = c, HEAPU32[y + 20 >> 2] = k, g === 10 ? HEAP32[y + 16 >> 2] = 28 : HEAP32[y + 16 >> 2] = 16, HEAP32[y + 28 >> 2] = 0, y;
 			}
 			if (r && (s = HEAP32[r >> 2], n = HEAP32[r + 4 >> 2], l = HEAP32[r + 8 >> 2], d = HEAP32[r + 12 >> 2]), l && !d && (d = l === 2 ? 17 : 6), !l && d && (l = d === 17 ? 2 : 1), d === 0 && (d = 6), l === 0 && (l = 1), !e && !t) return -2;
 			if (s & -1088 || r !== 0 && HEAP32[r >> 2] & 2 && !e) return -1;

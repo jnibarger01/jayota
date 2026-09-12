@@ -52,25 +52,25 @@ export function HeroCarousel({
           key={`${current.slug}-m`}
           src={hero.mobileSrc}
           alt={hero.alt}
-          className="absolute inset-0 h-full w-full object-cover object-center md:hidden"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center md:hidden"
         />
       ) : (
         <img
           key={`${current.slug}-m`}
           src={hero.src}
           alt={hero.alt}
-          className="absolute inset-0 h-full w-full object-cover object-center md:hidden"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center md:hidden"
         />
       )}
       <img
         key={`${current.slug}-d`}
         src={hero.src}
         alt=""
-        className="absolute inset-0 hidden h-full w-full object-cover object-[70%_center] md:block"
+        className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover object-[70%_center] md:block"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-transparent to-ink/80 md:bg-gradient-to-r md:from-ink/75 md:via-ink/30 md:to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink/55 via-transparent to-ink/80 md:bg-gradient-to-r md:from-ink/75 md:via-ink/30 md:to-transparent" />
 
-      <div className="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col px-5 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[calc(4.25rem+env(safe-area-inset-top))] md:min-h-[min(32rem,calc(100svh-4rem))] md:justify-center md:px-6 md:pb-16 md:pt-12">
+      <div className="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col px-5 pb-[calc(var(--tabbar-total)+1.5rem)] pt-[calc(4.25rem+env(safe-area-inset-top))] md:min-h-[min(32rem,calc(100svh-4rem))] md:justify-center md:px-6 md:pb-16 md:pt-12">
         <div className="max-w-xl">
           <h1 className="text-balance text-4xl font-light leading-tight tracking-tight text-fg md:text-6xl">
             Move a

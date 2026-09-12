@@ -15,6 +15,8 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as DealershipRouteImport } from './routes/dealership'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as LegalDisclosuresRouteImport } from './routes/legal/disclosures'
 import { Route as OwnersIndexRouteImport } from './routes/owners/index'
@@ -64,6 +66,16 @@ const LoginRoute = LoginRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkspaceRoute = WorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -176,6 +188,8 @@ export interface FileRoutesByFullPath {
   '/dealership': typeof DealershipRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/quiz': typeof QuizRoute
+  '/workspace': typeof WorkspaceRoute
   '/api/health': typeof ApiHealthRoute
   '/legal/disclosures': typeof LegalDisclosuresRoute
   '/owners/maintenance': typeof OwnersMaintenanceRoute
@@ -204,6 +218,8 @@ export interface FileRoutesByTo {
   '/dealership': typeof DealershipRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/quiz': typeof QuizRoute
+  '/workspace': typeof WorkspaceRoute
   '/api/health': typeof ApiHealthRoute
   '/legal/disclosures': typeof LegalDisclosuresRoute
   '/owners/maintenance': typeof OwnersMaintenanceRoute
@@ -233,6 +249,8 @@ export interface FileRoutesById {
   '/dealership': typeof DealershipRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/quiz': typeof QuizRoute
+  '/workspace': typeof WorkspaceRoute
   '/api/health': typeof ApiHealthRoute
   '/legal/disclosures': typeof LegalDisclosuresRoute
   '/owners/maintenance': typeof OwnersMaintenanceRoute
@@ -263,6 +281,8 @@ export interface FileRouteTypes {
     | '/dealership'
     | '/login'
     | '/privacy'
+    | '/quiz'
+    | '/workspace'
     | '/api/health'
     | '/legal/disclosures'
     | '/owners/maintenance'
@@ -291,6 +311,8 @@ export interface FileRouteTypes {
     | '/dealership'
     | '/login'
     | '/privacy'
+    | '/quiz'
+    | '/workspace'
     | '/api/health'
     | '/legal/disclosures'
     | '/owners/maintenance'
@@ -319,6 +341,8 @@ export interface FileRouteTypes {
     | '/dealership'
     | '/login'
     | '/privacy'
+    | '/quiz'
+    | '/workspace'
     | '/api/health'
     | '/legal/disclosures'
     | '/owners/maintenance'
@@ -348,6 +372,8 @@ export interface RootRouteChildren {
   DealershipRoute: typeof DealershipRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  QuizRoute: typeof QuizRoute
+  WorkspaceRoute: typeof WorkspaceRoute
   ApiHealthRoute: typeof ApiHealthRoute
   LegalDisclosuresRoute: typeof LegalDisclosuresRoute
   OwnersMaintenanceRoute: typeof OwnersMaintenanceRoute
@@ -412,6 +438,20 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workspace': {
+      id: '/workspace'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof WorkspaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -564,6 +604,8 @@ const rootRouteChildren: RootRouteChildren = {
   DealershipRoute: DealershipRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
+  QuizRoute: QuizRoute,
+  WorkspaceRoute: WorkspaceRoute,
   ApiHealthRoute: ApiHealthRoute,
   LegalDisclosuresRoute: LegalDisclosuresRoute,
   OwnersMaintenanceRoute: OwnersMaintenanceRoute,

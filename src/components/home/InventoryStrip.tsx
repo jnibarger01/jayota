@@ -11,7 +11,7 @@ export function InventoryStrip({
   count: number;
 }) {
   return (
-    <section className="border-t border-border bg-surface px-5 py-10 pb-[calc(7rem+env(safe-area-inset-bottom))] md:px-6 md:pb-16">
+    <section className="border-t border-border bg-surface px-5 py-10 md:px-6 md:pb-16">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-2xl font-semibold tracking-tight">Inventory & pricing</h2>
         {status === "unavailable" ? (

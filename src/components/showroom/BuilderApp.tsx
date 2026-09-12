@@ -72,6 +72,9 @@ import {
 } from "@/showroom/showroom/deepLink";
 import { pinConfigurationToGarage } from "@/showroom/showroom/garage";
 import { PAINT_CUSTOM_OPTION_ID } from "@/showroom/data/paintStudio";
+import { FeatureExplorer } from "@/components/showroom/FeatureExplorer";
+import { saveBuild, patchWorkspace, useShopper } from "@/lib/shopper";
+import { type Hotspot } from "@/lib/hotspots";
 
 /**
  * Three.js (core + the WebGPU renderer + loaders + gsap) is the single heaviest dependency this
@@ -171,6 +174,8 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
   /** Mirrors `VehicleSceneController.selectedPartId` — a click/tap/keyboard selection in the 3D
    * viewport, surfaced here so the configurator chrome can react without touching Three.js. */
   const [selectedPart, setSelectedPart] = useState<SceneRegistryEntry | undefined>(undefined);
+  const [hotspot, setHotspot] = useState<Hotspot | null>(null);
+  const shopper = useShopper();
 
   const { configuration, catalog, status, error } = useConfiguration();
   const persistenceMode = usePersistenceMode();
@@ -509,13 +514,32 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
 
   const share = async () => {
     if (!configuration) return;
-    // Encode selections + camera into `?c=…` so the link restores without a D1/localStorage id.
     const url = createBuildDeepLinkUrl(window.location.origin, window.location.pathname, {
       gradeId: configuration.gradeId,
       selections: configuration.selections,
       cameraState: configuration.cameraState,
       paintStudio: configuration.paintStudio,
     });
+    saveBuild({
+      id: configuration.configurationId,
+      slug: vehicleSlug,
+      label: `${bootstrap?.vehicle.model ?? vehicleSlug} build`,
+      href: url.replace(window.location.origin, "") || url,
+    });
+    patchWorkspace({
+      slug: vehicleSlug,
+      configurationHref: url.replace(window.location.origin, "") || url,
+    });
+    const payload = { title: `${bootstrap?.vehicle.model ?? "Toyota"} build`, text: "Shared showroom configuration — not a dealer quote.", url };
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share(payload);
+        setGarageMessage("Build shared");
+        return;
+      }
+    } catch {
+      /* fall through to clipboard */
+    }
     try {
       await navigator.clipboard.writeText(url);
       setGarageMessage(
@@ -524,8 +548,6 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
           : "Share link copied to clipboard",
       );
     } catch {
-      // Set feedback before prompt: headless / permission-denied environments can hang on
-      // `window.prompt`, and the e2e assertion only needs the garage message.
       setGarageMessage(
         isLocalPersistence
           ? "Share link ready to copy — deep link works without Worker/D1"
@@ -574,7 +596,9 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
           </div>
         </div>
         <nav>
-          <button className="active">Build</button>
+          <button className="active" type="button" aria-current="page">
+            Build
+          </button>
           <button onClick={() => window.location.assign(pageUrl("explore"))}>Explore</button>
           <button onClick={() => window.location.assign(pageUrl("garage"))}>Garage</button>
         </nav>
@@ -587,6 +611,19 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
           <SaveIndicator status={status} local={isLocalPersistence} />
           <button className="primary" onClick={() => void share()}>
             <Share2 size={16} /> Share
+          </button>
+          <button
+            className="ghost"
+            onClick={() => {
+              const params = new URLSearchParams({ model: vehicle.model, build: "buy" });
+              if (configuration?.gradeId) params.set("trim", configuration.gradeId);
+              const paint = configuration?.selections?.paint?.[0];
+              if (paint) params.set("color", paint);
+              patchWorkspace({ slug: vehicleSlug });
+              window.location.assign(`/shop/inventory?${params.toString()}`);
+            }}
+          >
+            Find matching inventory
           </button>
         </div>
       </header>
@@ -747,6 +784,12 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
             * throws from the Suspense boundary itself, so a boundary nested within it never sees it.
             */}
           <CanvasErrorBoundary fallbackImage={vehicle.media.hero} onError={(error) => setLoadError(error.message)}>
+            {shopper.a11yMode ? (
+              <div className="vehicle-canvas" style={{ overflow: "auto" }}>
+                <img src={vehicle.media.hero.url} alt={vehicle.media.hero.alt} style={{ width: "100%", objectFit: "contain" }} />
+                <p className="p-4 text-sm">Accessibility mode uses still photography instead of the 3D scene.</p>
+              </div>
+            ) : (
             <Suspense fallback={<div className="vehicle-canvas vehicle-canvas-loading"><Loader2 size={28} className="spin" /></div>}>
             <VehicleCanvas
               threeDConfig={vehicle.threeDConfig}
@@ -766,7 +809,36 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
               onPartSelect={setSelectedPart}
             />
             </Suspense>
+            )}
           </CanvasErrorBoundary>
+          <div className="absolute bottom-20 left-4 right-4 z-10 md:bottom-8">
+            <FeatureExplorer
+              slug={vehicle.slug}
+              controller={controllerRef.current}
+              onSelect={(spot) => {
+                setHotspot(spot);
+                if (!spot.cameraPresetHint) return;
+                const hint = spot.cameraPresetHint.toLowerCase();
+                const match = cameraPresets.find(
+                  (item) => item.id.toLowerCase().includes(hint) || item.label.toLowerCase().includes(hint),
+                );
+                if (!match) return;
+                if (cinematicTourStatus !== "idle") dispatchCinematicTour("cancel");
+                setPreset(match);
+                configurationStore.setCameraState({
+                  presetId: match.id,
+                  position: match.position,
+                  target: match.target,
+                });
+              }}
+            />
+            {hotspot ? (
+              <div className="mt-2 max-w-md rounded-xl border border-border bg-surface/95 p-3 text-sm">
+                <strong>{hotspot.label}</strong>
+                <p className="mt-1 text-muted">{hotspot.copy}</p>
+              </div>
+            ) : null}
+          </div>
           {selectedPart && (
             <div className="selected-part-badge">
               <span>{selectedPart.label}</span>

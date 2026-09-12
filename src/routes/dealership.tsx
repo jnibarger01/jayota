@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ContactFields, Field, FormStatus } from "@/components/forms/IntakeForm";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { DEALER, formatAddress, formatHour } from "@/lib/dealer";
+import { allDepartmentStatus } from "@/lib/hours";
 import { submitLead } from "@/lib/server/intakes";
 import { leadSchema } from "@/lib/validators/forms";
 import { track } from "@/lib/analytics";
@@ -71,9 +72,14 @@ function DealershipPage() {
               </a>
             </p>
             <div className="mt-8 grid gap-6 sm:grid-cols-3">
-              {(["sales", "service", "parts"] as const).map((dept) => (
+              {(["sales", "service", "parts"] as const).map((dept) => {
+                const status = allDepartmentStatus().find((s) => s.department === dept);
+                return (
                 <div key={dept}>
                   <h2 className="text-xs uppercase tracking-[0.16em] text-muted">{dept}</h2>
+                  <p className={`mt-2 text-sm ${status?.open ? "text-accent" : "text-muted"}`}>
+                    {status?.label} · {status?.todayHours}
+                  </p>
                   <ul className="mt-3 space-y-1 text-sm">
                     {DEALER.hours[dept].map((row) => (
                       <li key={row.day} className="flex justify-between gap-2">
@@ -83,7 +89,8 @@ function DealershipPage() {
                     ))}
                   </ul>
                 </div>
-              ))}
+                );
+              })}
             </div>
             <p className="price-note mt-4">{DEALER.hoursSource}</p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -94,7 +101,7 @@ function DealershipPage() {
                 <Button variant="secondary">Call</Button>
               </a>
             </div>
-            <iframe title="Map of Hendrick Toyota Merriam" src={DEALER.osmEmbed} className="mt-8 h-72 w-full border border-border grayscale" />
+            <iframe title="Map of Hendrick Toyota Merriam" src={DEALER.osmEmbed} className="relative z-0 isolate mt-8 h-72 w-full border border-border grayscale" />
           </div>
           <div>
             <h2 className="font-display text-2xl">Contact</h2>

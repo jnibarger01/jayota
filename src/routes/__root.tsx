@@ -10,7 +10,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: APP_NAME },
       {
         name: "description",
@@ -51,7 +51,7 @@ function RootComponent() {
         <PreviewHostBridge />
         <AuthProvider>
           <Outlet />
-          <Toaster theme="dark" richColors={false} />
+          <Toaster theme="dark" richColors={false} position="top-center" />
         </AuthProvider>
         <Scripts />
       </body>

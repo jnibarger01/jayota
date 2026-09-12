@@ -652,20 +652,16 @@ var Toast = (props) => {
 				return 1 / (1.5 + Math.abs(delta) / 20);
 			};
 			if (swipeDirection === "y") {
-				if (swipeDirections.includes("top") || swipeDirections.includes("bottom")) {
-					if (swipeDirections.includes("top") && yDelta < 0 || swipeDirections.includes("bottom") && yDelta > 0) swipeAmount.y = yDelta;
-					else {
-						const dampenedDelta = yDelta * getDampening(yDelta);
-						swipeAmount.y = Math.abs(dampenedDelta) < Math.abs(yDelta) ? dampenedDelta : yDelta;
-					}
+				if (swipeDirections.includes("top") || swipeDirections.includes("bottom")) if (swipeDirections.includes("top") && yDelta < 0 || swipeDirections.includes("bottom") && yDelta > 0) swipeAmount.y = yDelta;
+				else {
+					const dampenedDelta = yDelta * getDampening(yDelta);
+					swipeAmount.y = Math.abs(dampenedDelta) < Math.abs(yDelta) ? dampenedDelta : yDelta;
 				}
 			} else if (swipeDirection === "x") {
-				if (swipeDirections.includes("left") || swipeDirections.includes("right")) {
-					if (swipeDirections.includes("left") && xDelta < 0 || swipeDirections.includes("right") && xDelta > 0) swipeAmount.x = xDelta;
-					else {
-						const dampenedDelta = xDelta * getDampening(xDelta);
-						swipeAmount.x = Math.abs(dampenedDelta) < Math.abs(xDelta) ? dampenedDelta : xDelta;
-					}
+				if (swipeDirections.includes("left") || swipeDirections.includes("right")) if (swipeDirections.includes("left") && xDelta < 0 || swipeDirections.includes("right") && xDelta > 0) swipeAmount.x = xDelta;
+				else {
+					const dampenedDelta = xDelta * getDampening(xDelta);
+					swipeAmount.x = Math.abs(dampenedDelta) < Math.abs(xDelta) ? dampenedDelta : xDelta;
 				}
 			}
 			if (Math.abs(swipeAmount.x) > 0 || Math.abs(swipeAmount.y) > 0) setIsSwiped(true);
@@ -813,10 +809,8 @@ var Toaster = /*#__PURE__*/ import_react.forwardRef(function Toaster(props, ref)
 			setActualTheme(theme);
 			return;
 		}
-		if (theme === "system") {
-			if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) setActualTheme("dark");
-			else setActualTheme("light");
-		}
+		if (theme === "system") if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) setActualTheme("dark");
+		else setActualTheme("light");
 		if (typeof window === "undefined") return;
 		const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 		try {

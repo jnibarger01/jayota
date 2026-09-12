@@ -5875,27 +5875,25 @@ var Vector4 = class Vector4 {
 			const xy = (m12 + m21) / 4;
 			const xz = (m13 + m31) / 4;
 			const yz = (m23 + m32) / 4;
-			if (xx > yy && xx > zz) {
-				if (xx < epsilon) {
-					x = 0;
-					y = .707106781;
-					z = .707106781;
-				} else {
-					x = Math.sqrt(xx);
-					y = xy / x;
-					z = xz / x;
-				}
-			} else if (yy > zz) {
-				if (yy < epsilon) {
-					x = .707106781;
-					y = 0;
-					z = .707106781;
-				} else {
-					y = Math.sqrt(yy);
-					x = xy / y;
-					z = yz / y;
-				}
-			} else if (zz < epsilon) {
+			if (xx > yy && xx > zz) if (xx < epsilon) {
+				x = 0;
+				y = .707106781;
+				z = .707106781;
+			} else {
+				x = Math.sqrt(xx);
+				y = xy / x;
+				z = xz / x;
+			}
+			else if (yy > zz) if (yy < epsilon) {
+				x = .707106781;
+				y = 0;
+				z = .707106781;
+			} else {
+				y = Math.sqrt(yy);
+				x = xy / y;
+				z = yz / y;
+			}
+			else if (zz < epsilon) {
 				x = .707106781;
 				y = .707106781;
 				z = 0;
@@ -8996,10 +8994,8 @@ var Object3D = class Object3D extends EventDispatcher {
 	updateMatrixWorld(force) {
 		if (this.matrixAutoUpdate) this.updateMatrix();
 		if (this.matrixWorldNeedsUpdate || force) {
-			if (this.matrixWorldAutoUpdate === true) {
-				if (this.parent === null) this.matrixWorld.copy(this.matrix);
-				else this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
-			}
+			if (this.matrixWorldAutoUpdate === true) if (this.parent === null) this.matrixWorld.copy(this.matrix);
+			else this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
 			this.matrixWorldNeedsUpdate = false;
 			force = true;
 		}
@@ -9020,10 +9016,8 @@ var Object3D = class Object3D extends EventDispatcher {
 		if (updateParents === true && parent !== null) parent.updateWorldMatrix(true, false);
 		if (this.matrixAutoUpdate) this.updateMatrix();
 		if (this.matrixWorldNeedsUpdate || force) {
-			if (this.matrixWorldAutoUpdate === true) {
-				if (this.parent === null) this.matrixWorld.copy(this.matrix);
-				else this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
-			}
+			if (this.matrixWorldAutoUpdate === true) if (this.parent === null) this.matrixWorld.copy(this.matrix);
+			else this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
 			this.matrixWorldNeedsUpdate = false;
 			force = true;
 		}
@@ -9140,13 +9134,11 @@ var Object3D = class Object3D extends EventDispatcher {
 				object.skeleton = this.skeleton.uuid;
 			}
 		}
-		if (this.material !== void 0) {
-			if (Array.isArray(this.material)) {
-				const uuids = [];
-				for (let i = 0, l = this.material.length; i < l; i++) uuids.push(serialize(meta.materials, this.material[i]));
-				object.material = uuids;
-			} else object.material = serialize(meta.materials, this.material);
-		}
+		if (this.material !== void 0) if (Array.isArray(this.material)) {
+			const uuids = [];
+			for (let i = 0, l = this.material.length; i < l; i++) uuids.push(serialize(meta.materials, this.material[i]));
+			object.material = uuids;
+		} else object.material = serialize(meta.materials, this.material);
 		if (this.children.length > 0) {
 			object.children = [];
 			for (let i = 0; i < this.children.length; i++) object.children.push(this.children[i].toJSON(meta).object);
@@ -14694,10 +14686,8 @@ var Material = class extends EventDispatcher {
 		if (json.visible !== void 0) this.visible = json.visible;
 		if (json.toneMapped !== void 0) this.toneMapped = json.toneMapped;
 		if (json.userData !== void 0) this.userData = json.userData;
-		if (json.vertexColors !== void 0) {
-			if (typeof json.vertexColors === "number") this.vertexColors = json.vertexColors > 0;
-			else this.vertexColors = json.vertexColors;
-		}
+		if (json.vertexColors !== void 0) if (typeof json.vertexColors === "number") this.vertexColors = json.vertexColors > 0;
+		else this.vertexColors = json.vertexColors;
 		if (json.size !== void 0) this.size = json.size;
 		if (json.sizeAttenuation !== void 0) this.sizeAttenuation = json.sizeAttenuation;
 		if (json.map !== void 0) this.map = textures[json.map] || null;
@@ -15099,24 +15089,22 @@ var Ray = class {
 			s0 = a01 * b1 - b0;
 			s1 = a01 * b0 - b1;
 			extDet = segExtent * det;
-			if (s0 >= 0) {
-				if (s1 >= -extDet) {
-					if (s1 <= extDet) {
-						const invDet = 1 / det;
-						s0 *= invDet;
-						s1 *= invDet;
-						sqrDist = s0 * (s0 + a01 * s1 + 2 * b0) + s1 * (a01 * s0 + s1 + 2 * b1) + c;
-					} else {
-						s1 = segExtent;
-						s0 = Math.max(0, -(a01 * s1 + b0));
-						sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
-					}
-				} else {
-					s1 = -segExtent;
-					s0 = Math.max(0, -(a01 * s1 + b0));
-					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
-				}
-			} else if (s1 <= -extDet) {
+			if (s0 >= 0) if (s1 >= -extDet) if (s1 <= extDet) {
+				const invDet = 1 / det;
+				s0 *= invDet;
+				s1 *= invDet;
+				sqrDist = s0 * (s0 + a01 * s1 + 2 * b0) + s1 * (a01 * s0 + s1 + 2 * b1) + c;
+			} else {
+				s1 = segExtent;
+				s0 = Math.max(0, -(a01 * s1 + b0));
+				sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
+			}
+			else {
+				s1 = -segExtent;
+				s0 = Math.max(0, -(a01 * s1 + b0));
+				sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
+			}
+			else if (s1 <= -extDet) {
 				s0 = Math.max(0, -(-a01 * segExtent + b0));
 				s1 = s0 > 0 ? -segExtent : Math.min(Math.max(-segExtent, -b1), segExtent);
 				sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
@@ -15729,68 +15717,65 @@ var Mesh = class extends Object3D {
 		const normal = geometry.attributes.normal;
 		const groups = geometry.groups;
 		const drawRange = geometry.drawRange;
-		if (index !== null) {
-			if (Array.isArray(material)) for (let i = 0, il = groups.length; i < il; i++) {
-				const group = groups[i];
-				const groupMaterial = material[group.materialIndex];
-				const start = Math.max(group.start, drawRange.start);
-				const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-				for (let j = start, jl = end; j < jl; j += 3) {
-					const a = index.getX(j);
-					const b = index.getX(j + 1);
-					const c = index.getX(j + 2);
-					intersection = checkGeometryIntersection(this, groupMaterial, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
-					if (intersection) {
-						intersection.faceIndex = Math.floor(j / 3);
-						intersection.face.materialIndex = group.materialIndex;
-						intersects.push(intersection);
-					}
+		if (index !== null) if (Array.isArray(material)) for (let i = 0, il = groups.length; i < il; i++) {
+			const group = groups[i];
+			const groupMaterial = material[group.materialIndex];
+			const start = Math.max(group.start, drawRange.start);
+			const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
+			for (let j = start, jl = end; j < jl; j += 3) {
+				const a = index.getX(j);
+				const b = index.getX(j + 1);
+				const c = index.getX(j + 2);
+				intersection = checkGeometryIntersection(this, groupMaterial, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
+				if (intersection) {
+					intersection.faceIndex = Math.floor(j / 3);
+					intersection.face.materialIndex = group.materialIndex;
+					intersects.push(intersection);
 				}
 			}
-			else {
-				const start = Math.max(0, drawRange.start);
-				const end = Math.min(index.count, drawRange.start + drawRange.count);
-				for (let i = start, il = end; i < il; i += 3) {
-					const a = index.getX(i);
-					const b = index.getX(i + 1);
-					const c = index.getX(i + 2);
-					intersection = checkGeometryIntersection(this, material, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
-					if (intersection) {
-						intersection.faceIndex = Math.floor(i / 3);
-						intersects.push(intersection);
-					}
+		}
+		else {
+			const start = Math.max(0, drawRange.start);
+			const end = Math.min(index.count, drawRange.start + drawRange.count);
+			for (let i = start, il = end; i < il; i += 3) {
+				const a = index.getX(i);
+				const b = index.getX(i + 1);
+				const c = index.getX(i + 2);
+				intersection = checkGeometryIntersection(this, material, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
+				if (intersection) {
+					intersection.faceIndex = Math.floor(i / 3);
+					intersects.push(intersection);
 				}
 			}
-		} else if (position !== void 0) {
-			if (Array.isArray(material)) for (let i = 0, il = groups.length; i < il; i++) {
-				const group = groups[i];
-				const groupMaterial = material[group.materialIndex];
-				const start = Math.max(group.start, drawRange.start);
-				const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-				for (let j = start, jl = end; j < jl; j += 3) {
-					const a = j;
-					const b = j + 1;
-					const c = j + 2;
-					intersection = checkGeometryIntersection(this, groupMaterial, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
-					if (intersection) {
-						intersection.faceIndex = Math.floor(j / 3);
-						intersection.face.materialIndex = group.materialIndex;
-						intersects.push(intersection);
-					}
+		}
+		else if (position !== void 0) if (Array.isArray(material)) for (let i = 0, il = groups.length; i < il; i++) {
+			const group = groups[i];
+			const groupMaterial = material[group.materialIndex];
+			const start = Math.max(group.start, drawRange.start);
+			const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
+			for (let j = start, jl = end; j < jl; j += 3) {
+				const a = j;
+				const b = j + 1;
+				const c = j + 2;
+				intersection = checkGeometryIntersection(this, groupMaterial, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
+				if (intersection) {
+					intersection.faceIndex = Math.floor(j / 3);
+					intersection.face.materialIndex = group.materialIndex;
+					intersects.push(intersection);
 				}
 			}
-			else {
-				const start = Math.max(0, drawRange.start);
-				const end = Math.min(position.count, drawRange.start + drawRange.count);
-				for (let i = start, il = end; i < il; i += 3) {
-					const a = i;
-					const b = i + 1;
-					const c = i + 2;
-					intersection = checkGeometryIntersection(this, material, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
-					if (intersection) {
-						intersection.faceIndex = Math.floor(i / 3);
-						intersects.push(intersection);
-					}
+		}
+		else {
+			const start = Math.max(0, drawRange.start);
+			const end = Math.min(position.count, drawRange.start + drawRange.count);
+			for (let i = start, il = end; i < il; i += 3) {
+				const a = i;
+				const b = i + 1;
+				const c = i + 2;
+				intersection = checkGeometryIntersection(this, material, raycaster, rayLocalSpace, uv, uv1, normal, a, b, c);
+				if (intersection) {
+					intersection.faceIndex = Math.floor(i / 3);
+					intersects.push(intersection);
 				}
 			}
 		}
@@ -17919,10 +17904,9 @@ var BatchedMesh = class extends Mesh {
 	*/
 	getColorAt(instanceId, color) {
 		this.validateInstanceId(instanceId);
-		if (this._colorsTexture === null) {
-			if (color.isVector4) return color.set(1, 1, 1, 1);
-			else return color.setRGB(1, 1, 1);
-		} else return color.fromArray(this._colorsTexture.image.data, instanceId * 4);
+		if (this._colorsTexture === null) if (color.isVector4) return color.set(1, 1, 1, 1);
+		else return color.setRGB(1, 1, 1);
+		else return color.fromArray(this._colorsTexture.image.data, instanceId * 4);
 	}
 	/**
 	* Sets the visibility of the instance.
@@ -18159,12 +18143,10 @@ var BatchedMesh = class extends Mesh {
 		const indirectTexture = this._indirectTexture;
 		const indirectArray = indirectTexture.image.data;
 		const frustum = camera.isArrayCamera ? _frustumArray$1 : _frustum$1;
-		if (perObjectFrustumCulled) {
-			if (camera.isArrayCamera) frustum.setFromArrayCamera(camera);
-			else {
-				_matrix$1.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse).multiply(this.matrixWorld);
-				frustum.setFromProjectionMatrix(_matrix$1, camera.coordinateSystem, camera.reversedDepth);
-			}
+		if (perObjectFrustumCulled) if (camera.isArrayCamera) frustum.setFromArrayCamera(camera);
+		else {
+			_matrix$1.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse).multiply(this.matrixWorld);
+			frustum.setFromProjectionMatrix(_matrix$1, camera.coordinateSystem, camera.reversedDepth);
 		}
 		let multiDrawCount = 0;
 		if (this.sortObjects) {
@@ -20090,14 +20072,10 @@ var EllipseCurve = class extends Curve {
 		const samePoints = Math.abs(deltaAngle) < Number.EPSILON;
 		while (deltaAngle < 0) deltaAngle += twoPi;
 		while (deltaAngle > twoPi) deltaAngle -= twoPi;
-		if (deltaAngle < Number.EPSILON) {
-			if (samePoints) deltaAngle = 0;
-			else deltaAngle = twoPi;
-		}
-		if (this.aClockwise === true && !samePoints) {
-			if (deltaAngle === twoPi) deltaAngle = -twoPi;
-			else deltaAngle = deltaAngle - twoPi;
-		}
+		if (deltaAngle < Number.EPSILON) if (samePoints) deltaAngle = 0;
+		else deltaAngle = twoPi;
+		if (this.aClockwise === true && !samePoints) if (deltaAngle === twoPi) deltaAngle = -twoPi;
+		else deltaAngle = deltaAngle - twoPi;
 		const angle = this.aStartAngle + t * deltaAngle;
 		let x = this.aX + this.xRadius * Math.cos(angle);
 		let y = this.aY + this.yRadius * Math.sin(angle);
@@ -23003,18 +22981,16 @@ function cloneUniforms(src) {
 		dst[u] = {};
 		for (const p in src[u]) {
 			const property = src[u][p];
-			if (isThreeObject(property)) {
-				if (property.isRenderTargetTexture) {
-					warn("UniformsUtils: Textures of render targets cannot be cloned via cloneUniforms() or mergeUniforms().");
-					dst[u][p] = null;
-				} else dst[u][p] = property.clone();
-			} else if (Array.isArray(property)) {
-				if (isThreeObject(property[0])) {
-					const clonedProperty = [];
-					for (let i = 0, l = property.length; i < l; i++) clonedProperty[i] = property[i].clone();
-					dst[u][p] = clonedProperty;
-				} else dst[u][p] = property.slice();
-			} else dst[u][p] = property;
+			if (isThreeObject(property)) if (property.isRenderTargetTexture) {
+				warn("UniformsUtils: Textures of render targets cannot be cloned via cloneUniforms() or mergeUniforms().");
+				dst[u][p] = null;
+			} else dst[u][p] = property.clone();
+			else if (Array.isArray(property)) if (isThreeObject(property[0])) {
+				const clonedProperty = [];
+				for (let i = 0, l = property.length; i < l; i++) clonedProperty[i] = property[i].clone();
+				dst[u][p] = clonedProperty;
+			} else dst[u][p] = property.slice();
+			else dst[u][p] = property;
 		}
 	}
 	return dst;
@@ -26620,10 +26596,8 @@ var KeyframeTrack = class {
 		}
 		if (factoryMethod === void 0) {
 			const message = "unsupported interpolation for " + this.ValueTypeName + " keyframe track named " + this.name;
-			if (this.createInterpolant === void 0) {
-				if (interpolation !== this.DefaultInterpolation) this.setInterpolation(this.DefaultInterpolation);
-				else throw new Error(message);
-			}
+			if (this.createInterpolant === void 0) if (interpolation !== this.DefaultInterpolation) this.setInterpolation(this.DefaultInterpolation);
+			else throw new Error(message);
 			warn("KeyframeTrack:", message);
 			return this;
 		}
@@ -26761,18 +26735,16 @@ var KeyframeTrack = class {
 		for (let i = 1; i < lastIndex; ++i) {
 			let keep = false;
 			const time = times[i];
-			if (time !== times[i + 1] && (i !== 1 || time !== times[0])) {
-				if (!smoothInterpolation) {
-					const offset = i * stride, offsetP = offset - stride, offsetN = offset + stride;
-					for (let j = 0; j !== stride; ++j) {
-						const value = values[offset + j];
-						if (value !== values[offsetP + j] || value !== values[offsetN + j]) {
-							keep = true;
-							break;
-						}
+			if (time !== times[i + 1] && (i !== 1 || time !== times[0])) if (!smoothInterpolation) {
+				const offset = i * stride, offsetP = offset - stride, offsetN = offset + stride;
+				for (let j = 0; j !== stride; ++j) {
+					const value = values[offset + j];
+					if (value !== values[offsetP + j] || value !== values[offsetN + j]) {
+						keep = true;
+						break;
 					}
-				} else keep = true;
-			}
+				}
+			} else keep = true;
 			if (keep) {
 				if (i !== writeIndex) {
 					times[writeIndex] = times[i];
@@ -31711,10 +31683,8 @@ function getTextureTypeByteLength(type) {
 	throw new Error(`THREE.TextureUtils: Unknown texture type ${type}.`);
 }
 if (typeof __THREE_DEVTOOLS__ !== "undefined") __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("register", { detail: { revision: "185" } }));
-if (typeof window !== "undefined") {
-	if (window.__THREE__) warn("WARNING: Multiple instances of Three.js being imported.");
-	else window.__THREE__ = "185";
-}
+if (typeof window !== "undefined") if (window.__THREE__) warn("WARNING: Multiple instances of Three.js being imported.");
+else window.__THREE__ = "185";
 //#endregion
 //#region node_modules/three/build/three.module.js
 /**
@@ -31764,10 +31734,9 @@ function WebGLAttributes(gl) {
 		let type;
 		if (array instanceof Float32Array) type = gl.FLOAT;
 		else if (typeof Float16Array !== "undefined" && array instanceof Float16Array) type = gl.HALF_FLOAT;
-		else if (array instanceof Uint16Array) {
-			if (attribute.isFloat16BufferAttribute) type = gl.HALF_FLOAT;
-			else type = gl.UNSIGNED_SHORT;
-		} else if (array instanceof Int16Array) type = gl.SHORT;
+		else if (array instanceof Uint16Array) if (attribute.isFloat16BufferAttribute) type = gl.HALF_FLOAT;
+		else type = gl.UNSIGNED_SHORT;
+		else if (array instanceof Int16Array) type = gl.SHORT;
 		else if (array instanceof Uint32Array) type = gl.UNSIGNED_INT;
 		else if (array instanceof Int32Array) type = gl.INT;
 		else if (array instanceof Int8Array) type = gl.BYTE;
@@ -33008,10 +32977,9 @@ function WebGLClipping(properties) {
 	this.setState = function(material, camera, useCache) {
 		const planes = material.clippingPlanes, clipIntersection = material.clipIntersection, clipShadows = material.clipShadows;
 		const materialProperties = properties.get(material);
-		if (!localClippingEnabled || planes === null || planes.length === 0 || renderingShadows && !clipShadows) {
-			if (renderingShadows) projectPlanes(null);
-			else resetGlobalState();
-		} else {
+		if (!localClippingEnabled || planes === null || planes.length === 0 || renderingShadows && !clipShadows) if (renderingShadows) projectPlanes(null);
+		else resetGlobalState();
+		else {
 			const nGlobal = renderingShadows ? 0 : numGlobalPlanes, lGlobal = nGlobal * 4;
 			let dstArray = materialProperties.clippingState || null;
 			uniform.value = dstArray;
@@ -34021,20 +33989,18 @@ function WebGLEnvironments(renderer) {
 	function getCube(texture) {
 		if (texture && texture.isTexture) {
 			const mapping = texture.mapping;
-			if (mapping === 303 || mapping === 304) {
-				if (cubeMaps.has(texture)) {
-					const cubemap = cubeMaps.get(texture).texture;
-					return mapTextureMapping(cubemap, texture.mapping);
-				} else {
-					const image = texture.image;
-					if (image && image.height > 0) {
-						const renderTarget = new WebGLCubeRenderTarget(image.height);
-						renderTarget.fromEquirectangularTexture(renderer, texture);
-						cubeMaps.set(texture, renderTarget);
-						texture.addEventListener("dispose", onCubemapDispose);
-						return mapTextureMapping(renderTarget.texture, texture.mapping);
-					} else return null;
-				}
+			if (mapping === 303 || mapping === 304) if (cubeMaps.has(texture)) {
+				const cubemap = cubeMaps.get(texture).texture;
+				return mapTextureMapping(cubemap, texture.mapping);
+			} else {
+				const image = texture.image;
+				if (image && image.height > 0) {
+					const renderTarget = new WebGLCubeRenderTarget(image.height);
+					renderTarget.fromEquirectangularTexture(renderer, texture);
+					cubeMaps.set(texture, renderTarget);
+					texture.addEventListener("dispose", onCubemapDispose);
+					return mapTextureMapping(renderTarget.texture, texture.mapping);
+				} else return null;
 			}
 		}
 		return texture;
@@ -36556,10 +36522,8 @@ function WebGLLights(extensions) {
 			const intensity = light.intensity;
 			const distance = light.distance;
 			let shadowMap = null;
-			if (light.shadow && light.shadow.map) {
-				if (light.shadow.map.texture.format === 1030) shadowMap = light.shadow.map.texture;
-				else shadowMap = light.shadow.map.depthTexture || light.shadow.map.texture;
-			}
+			if (light.shadow && light.shadow.map) if (light.shadow.map.texture.format === 1030) shadowMap = light.shadow.map.texture;
+			else shadowMap = light.shadow.map.depthTexture || light.shadow.map.texture;
 			if (light.isAmbientLight) {
 				r += color.r * intensity;
 				g += color.g * intensity;
@@ -36651,14 +36615,12 @@ function WebGLLights(extensions) {
 				hemiLength++;
 			}
 		}
-		if (rectAreaLength > 0) {
-			if (extensions.has("OES_texture_float_linear") === true) {
-				state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
-				state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
-			} else {
-				state.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
-				state.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
-			}
+		if (rectAreaLength > 0) if (extensions.has("OES_texture_float_linear") === true) {
+			state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+			state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+		} else {
+			state.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
+			state.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
 		}
 		state.ambient[0] = r;
 		state.ambient[1] = g;
@@ -36898,10 +36860,8 @@ function WebGLShadowMap(renderer, objects, capabilities) {
 		_state.setScissorTest(false);
 		const typeChanged = _previousType !== this.type;
 		if (typeChanged) scene.traverse(function(object) {
-			if (object.material) {
-				if (Array.isArray(object.material)) object.material.forEach((mat) => mat.needsUpdate = true);
-				else object.material.needsUpdate = true;
-			}
+			if (object.material) if (Array.isArray(object.material)) object.material.forEach((mat) => mat.needsUpdate = true);
+			else object.material.needsUpdate = true;
 		});
 		for (let i = 0, il = lights.length; i < il; i++) {
 			const light = lights[i];
@@ -37261,10 +37221,8 @@ function WebGLState$1(gl, extensions) {
 		let currentStencilClear = null;
 		return {
 			setTest: function(stencilTest) {
-				if (!locked) {
-					if (stencilTest) enable(gl.STENCIL_TEST);
-					else disable(gl.STENCIL_TEST);
-				}
+				if (!locked) if (stencilTest) enable(gl.STENCIL_TEST);
+				else disable(gl.STENCIL_TEST);
 			},
 			setMask: function(stencilMask) {
 				if (currentStencilMask !== stencilMask && !locked) {
@@ -37566,11 +37524,9 @@ function WebGLState$1(gl, extensions) {
 	function setCullFace(cullFace) {
 		if (cullFace !== 0) {
 			enable(gl.CULL_FACE);
-			if (cullFace !== currentCullFace) {
-				if (cullFace === 1) gl.cullFace(gl.BACK);
-				else if (cullFace === 2) gl.cullFace(gl.FRONT);
-				else gl.cullFace(gl.FRONT_AND_BACK);
-			}
+			if (cullFace !== currentCullFace) if (cullFace === 1) gl.cullFace(gl.BACK);
+			else if (cullFace === 2) gl.cullFace(gl.FRONT);
+			else gl.cullFace(gl.FRONT_AND_BACK);
 		} else disable(gl.CULL_FACE);
 		currentCullFace = cullFace;
 	}
@@ -37603,10 +37559,8 @@ function WebGLState$1(gl, extensions) {
 		}
 	}
 	function bindTexture(webglType, webglTexture, webglSlot) {
-		if (webglSlot === void 0) {
-			if (currentTextureSlot === null) webglSlot = gl.TEXTURE0 + maxTextures - 1;
-			else webglSlot = currentTextureSlot;
-		}
+		if (webglSlot === void 0) if (currentTextureSlot === null) webglSlot = gl.TEXTURE0 + maxTextures - 1;
+		else webglSlot = currentTextureSlot;
 		let boundTexture = currentBoundTextures[webglSlot];
 		if (boundTexture === void 0) {
 			boundTexture = {
@@ -37879,21 +37833,19 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
 		let scale = 1;
 		const dimensions = getDimensions(image);
 		if (dimensions.width > maxSize || dimensions.height > maxSize) scale = maxSize / Math.max(dimensions.width, dimensions.height);
-		if (scale < 1) {
-			if (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement || typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement || typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap || typeof VideoFrame !== "undefined" && image instanceof VideoFrame) {
-				const width = Math.floor(scale * dimensions.width);
-				const height = Math.floor(scale * dimensions.height);
-				if (_canvas === void 0) _canvas = createCanvas(width, height);
-				const canvas = needsNewCanvas ? createCanvas(width, height) : _canvas;
-				canvas.width = width;
-				canvas.height = height;
-				canvas.getContext("2d").drawImage(image, 0, 0, width, height);
-				warn("WebGLRenderer: Texture has been resized from (" + dimensions.width + "x" + dimensions.height + ") to (" + width + "x" + height + ").");
-				return canvas;
-			} else {
-				if ("data" in image) warn("WebGLRenderer: Image in DataTexture is too big (" + dimensions.width + "x" + dimensions.height + ").");
-				return image;
-			}
+		if (scale < 1) if (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement || typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement || typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap || typeof VideoFrame !== "undefined" && image instanceof VideoFrame) {
+			const width = Math.floor(scale * dimensions.width);
+			const height = Math.floor(scale * dimensions.height);
+			if (_canvas === void 0) _canvas = createCanvas(width, height);
+			const canvas = needsNewCanvas ? createCanvas(width, height) : _canvas;
+			canvas.width = width;
+			canvas.height = height;
+			canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+			warn("WebGLRenderer: Texture has been resized from (" + dimensions.width + "x" + dimensions.height + ") to (" + width + "x" + height + ").");
+			return canvas;
+		} else {
+			if ("data" in image) warn("WebGLRenderer: Image in DataTexture is too big (" + dimensions.width + "x" + dimensions.height + ").");
+			return image;
 		}
 		return image;
 	}
@@ -38298,92 +38250,76 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
 			const levels = getMipLevels(texture, image);
 			if (texture.isDepthTexture) {
 				glInternalFormat = getInternalDepthFormat(texture.format === DepthStencilFormat, texture.type);
-				if (allocateMemory) {
-					if (useTexStorage) state.texStorage2D(_gl.TEXTURE_2D, 1, glInternalFormat, image.width, image.height);
-					else state.texImage2D(_gl.TEXTURE_2D, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
+				if (allocateMemory) if (useTexStorage) state.texStorage2D(_gl.TEXTURE_2D, 1, glInternalFormat, image.width, image.height);
+				else state.texImage2D(_gl.TEXTURE_2D, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
+			} else if (texture.isDataTexture) if (mipmaps.length > 0) {
+				if (useTexStorage && allocateMemory) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
+				for (let i = 0, il = mipmaps.length; i < il; i++) {
+					mipmap = mipmaps[i];
+					if (useTexStorage) {
+						if (dataReady) state.texSubImage2D(_gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+					} else state.texImage2D(_gl.TEXTURE_2D, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
 				}
-			} else if (texture.isDataTexture) {
-				if (mipmaps.length > 0) {
-					if (useTexStorage && allocateMemory) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
-					for (let i = 0, il = mipmaps.length; i < il; i++) {
-						mipmap = mipmaps[i];
-						if (useTexStorage) {
-							if (dataReady) state.texSubImage2D(_gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
-						} else state.texImage2D(_gl.TEXTURE_2D, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
-					}
-					texture.generateMipmaps = false;
-				} else if (useTexStorage) {
-					if (allocateMemory) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, image.width, image.height);
-					if (dataReady) updateTexture(texture, image, glFormat, glType);
-				} else state.texImage2D(_gl.TEXTURE_2D, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
-			} else if (texture.isCompressedTexture) {
-				if (texture.isCompressedArrayTexture) {
-					if (useTexStorage && allocateMemory) state.texStorage3D(_gl.TEXTURE_2D_ARRAY, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height, image.depth);
-					for (let i = 0, il = mipmaps.length; i < il; i++) {
-						mipmap = mipmaps[i];
-						if (texture.format !== 1023) {
-							if (glFormat !== null) {
-								if (useTexStorage) {
-									if (dataReady) {
-										if (texture.layerUpdates.size > 0) {
-											const layerByteLength = getByteLength(mipmap.width, mipmap.height, texture.format, texture.type);
-											for (const layerIndex of texture.layerUpdates) {
-												const layerData = mipmap.data.subarray(layerIndex * layerByteLength / mipmap.data.BYTES_PER_ELEMENT, (layerIndex + 1) * layerByteLength / mipmap.data.BYTES_PER_ELEMENT);
-												state.compressedTexSubImage3D(_gl.TEXTURE_2D_ARRAY, i, 0, 0, layerIndex, mipmap.width, mipmap.height, 1, glFormat, layerData);
-											}
-											texture.clearLayerUpdates();
-										} else state.compressedTexSubImage3D(_gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, mipmap.data);
-									}
-								} else state.compressedTexImage3D(_gl.TEXTURE_2D_ARRAY, i, glInternalFormat, mipmap.width, mipmap.height, image.depth, 0, mipmap.data, 0, 0);
-							} else warn("WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
-						} else if (useTexStorage) {
-							if (dataReady) state.texSubImage3D(_gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, glType, mipmap.data);
-						} else state.texImage3D(_gl.TEXTURE_2D_ARRAY, i, glInternalFormat, mipmap.width, mipmap.height, image.depth, 0, glFormat, glType, mipmap.data);
-					}
-				} else {
-					if (useTexStorage && allocateMemory) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
-					for (let i = 0, il = mipmaps.length; i < il; i++) {
-						mipmap = mipmaps[i];
-						if (texture.format !== 1023) {
-							if (glFormat !== null) {
-								if (useTexStorage) {
-									if (dataReady) state.compressedTexSubImage2D(_gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
-								} else state.compressedTexImage2D(_gl.TEXTURE_2D, i, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
-							} else warn("WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
-						} else if (useTexStorage) {
-							if (dataReady) state.texSubImage2D(_gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
-						} else state.texImage2D(_gl.TEXTURE_2D, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
-					}
-				}
-			} else if (texture.isDataArrayTexture) {
-				if (useTexStorage) {
-					if (allocateMemory) state.texStorage3D(_gl.TEXTURE_2D_ARRAY, levels, glInternalFormat, image.width, image.height, image.depth);
-					if (dataReady) {
-						if (texture.layerUpdates.size > 0) {
-							const layerByteLength = getByteLength(image.width, image.height, texture.format, texture.type);
+				texture.generateMipmaps = false;
+			} else if (useTexStorage) {
+				if (allocateMemory) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, image.width, image.height);
+				if (dataReady) updateTexture(texture, image, glFormat, glType);
+			} else state.texImage2D(_gl.TEXTURE_2D, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
+			else if (texture.isCompressedTexture) if (texture.isCompressedArrayTexture) {
+				if (useTexStorage && allocateMemory) state.texStorage3D(_gl.TEXTURE_2D_ARRAY, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height, image.depth);
+				for (let i = 0, il = mipmaps.length; i < il; i++) {
+					mipmap = mipmaps[i];
+					if (texture.format !== 1023) if (glFormat !== null) if (useTexStorage) {
+						if (dataReady) if (texture.layerUpdates.size > 0) {
+							const layerByteLength = getByteLength(mipmap.width, mipmap.height, texture.format, texture.type);
 							for (const layerIndex of texture.layerUpdates) {
-								const layerData = image.data.subarray(layerIndex * layerByteLength / image.data.BYTES_PER_ELEMENT, (layerIndex + 1) * layerByteLength / image.data.BYTES_PER_ELEMENT);
-								state.texSubImage3D(_gl.TEXTURE_2D_ARRAY, 0, 0, 0, layerIndex, image.width, image.height, 1, glFormat, glType, layerData);
+								const layerData = mipmap.data.subarray(layerIndex * layerByteLength / mipmap.data.BYTES_PER_ELEMENT, (layerIndex + 1) * layerByteLength / mipmap.data.BYTES_PER_ELEMENT);
+								state.compressedTexSubImage3D(_gl.TEXTURE_2D_ARRAY, i, 0, 0, layerIndex, mipmap.width, mipmap.height, 1, glFormat, layerData);
 							}
 							texture.clearLayerUpdates();
-						} else state.texSubImage3D(_gl.TEXTURE_2D_ARRAY, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
+						} else state.compressedTexSubImage3D(_gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, mipmap.data);
+					} else state.compressedTexImage3D(_gl.TEXTURE_2D_ARRAY, i, glInternalFormat, mipmap.width, mipmap.height, image.depth, 0, mipmap.data, 0, 0);
+					else warn("WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
+					else if (useTexStorage) {
+						if (dataReady) state.texSubImage3D(_gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, glType, mipmap.data);
+					} else state.texImage3D(_gl.TEXTURE_2D_ARRAY, i, glInternalFormat, mipmap.width, mipmap.height, image.depth, 0, glFormat, glType, mipmap.data);
+				}
+			} else {
+				if (useTexStorage && allocateMemory) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
+				for (let i = 0, il = mipmaps.length; i < il; i++) {
+					mipmap = mipmaps[i];
+					if (texture.format !== 1023) if (glFormat !== null) if (useTexStorage) {
+						if (dataReady) state.compressedTexSubImage2D(_gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+					} else state.compressedTexImage2D(_gl.TEXTURE_2D, i, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+					else warn("WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
+					else if (useTexStorage) {
+						if (dataReady) state.texSubImage2D(_gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+					} else state.texImage2D(_gl.TEXTURE_2D, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+				}
+			}
+			else if (texture.isDataArrayTexture) if (useTexStorage) {
+				if (allocateMemory) state.texStorage3D(_gl.TEXTURE_2D_ARRAY, levels, glInternalFormat, image.width, image.height, image.depth);
+				if (dataReady) if (texture.layerUpdates.size > 0) {
+					const layerByteLength = getByteLength(image.width, image.height, texture.format, texture.type);
+					for (const layerIndex of texture.layerUpdates) {
+						const layerData = image.data.subarray(layerIndex * layerByteLength / image.data.BYTES_PER_ELEMENT, (layerIndex + 1) * layerByteLength / image.data.BYTES_PER_ELEMENT);
+						state.texSubImage3D(_gl.TEXTURE_2D_ARRAY, 0, 0, 0, layerIndex, image.width, image.height, 1, glFormat, glType, layerData);
 					}
-				} else state.texImage3D(_gl.TEXTURE_2D_ARRAY, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
-			} else if (texture.isData3DTexture) {
-				if (useTexStorage) {
-					if (allocateMemory) state.texStorage3D(_gl.TEXTURE_3D, levels, glInternalFormat, image.width, image.height, image.depth);
-					if (dataReady) state.texSubImage3D(_gl.TEXTURE_3D, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
-				} else state.texImage3D(_gl.TEXTURE_3D, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
-			} else if (texture.isFramebufferTexture) {
-				if (allocateMemory) {
-					if (useTexStorage) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, image.width, image.height);
-					else {
-						let width = image.width, height = image.height;
-						for (let i = 0; i < levels; i++) {
-							state.texImage2D(_gl.TEXTURE_2D, i, glInternalFormat, width, height, 0, glFormat, glType, null);
-							width >>= 1;
-							height >>= 1;
-						}
+					texture.clearLayerUpdates();
+				} else state.texSubImage3D(_gl.TEXTURE_2D_ARRAY, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
+			} else state.texImage3D(_gl.TEXTURE_2D_ARRAY, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
+			else if (texture.isData3DTexture) if (useTexStorage) {
+				if (allocateMemory) state.texStorage3D(_gl.TEXTURE_3D, levels, glInternalFormat, image.width, image.height, image.depth);
+				if (dataReady) state.texSubImage3D(_gl.TEXTURE_3D, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
+			} else state.texImage3D(_gl.TEXTURE_3D, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
+			else if (texture.isFramebufferTexture) {
+				if (allocateMemory) if (useTexStorage) state.texStorage2D(_gl.TEXTURE_2D, levels, glInternalFormat, image.width, image.height);
+				else {
+					let width = image.width, height = image.height;
+					for (let i = 0; i < levels; i++) {
+						state.texImage2D(_gl.TEXTURE_2D, i, glInternalFormat, width, height, 0, glFormat, glType, null);
+						width >>= 1;
+						height >>= 1;
 					}
 				}
 			} else if (texture.isHTMLTexture) {
@@ -38473,13 +38409,11 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
 					mipmaps = cubeImage[i].mipmaps;
 					for (let j = 0; j < mipmaps.length; j++) {
 						const mipmap = mipmaps[j];
-						if (texture.format !== 1023) {
-							if (glFormat !== null) {
-								if (useTexStorage) {
-									if (dataReady) state.compressedTexSubImage2D(_gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, j, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
-								} else state.compressedTexImage2D(_gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
-							} else warn("WebGLRenderer: Attempt to load unsupported compressed texture format in .setTextureCube()");
-						} else if (useTexStorage) {
+						if (texture.format !== 1023) if (glFormat !== null) if (useTexStorage) {
+							if (dataReady) state.compressedTexSubImage2D(_gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, j, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+						} else state.compressedTexImage2D(_gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+						else warn("WebGLRenderer: Attempt to load unsupported compressed texture format in .setTextureCube()");
+						else if (useTexStorage) {
 							if (dataReady) state.texSubImage2D(_gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, j, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
 						} else state.texImage2D(_gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
 					}
@@ -38594,13 +38528,11 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
 		const samples = getRenderTargetSamples(renderTarget);
 		const glTextureType = isCube ? _gl.TEXTURE_CUBE_MAP_POSITIVE_X + cubeFace : _gl.TEXTURE_2D;
 		const glAttachmentType = renderTarget.depthTexture.format === 1027 ? _gl.DEPTH_STENCIL_ATTACHMENT : _gl.DEPTH_ATTACHMENT;
-		if (renderTarget.depthTexture.format === 1026) {
-			if (useMultisampledRTT(renderTarget)) multisampledRTTExt.framebufferTexture2DMultisampleEXT(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0, samples);
-			else _gl.framebufferTexture2D(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0);
-		} else if (renderTarget.depthTexture.format === 1027) {
-			if (useMultisampledRTT(renderTarget)) multisampledRTTExt.framebufferTexture2DMultisampleEXT(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0, samples);
-			else _gl.framebufferTexture2D(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0);
-		} else throw new Error("THREE.WebGLTextures: Unknown depthTexture format.");
+		if (renderTarget.depthTexture.format === 1026) if (useMultisampledRTT(renderTarget)) multisampledRTTExt.framebufferTexture2DMultisampleEXT(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0, samples);
+		else _gl.framebufferTexture2D(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0);
+		else if (renderTarget.depthTexture.format === 1027) if (useMultisampledRTT(renderTarget)) multisampledRTTExt.framebufferTexture2DMultisampleEXT(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0, samples);
+		else _gl.framebufferTexture2D(_gl.FRAMEBUFFER, glAttachmentType, glTextureType, webglDepthTexture, 0);
+		else throw new Error("THREE.WebGLTextures: Unknown depthTexture format.");
 	}
 	function setupDepthRenderbuffer(renderTarget) {
 		const renderTargetProperties = properties.get(renderTarget);
@@ -38619,14 +38551,13 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
 			}
 			renderTargetProperties.__boundDepthTexture = depthTexture;
 		}
-		if (renderTarget.depthTexture && !renderTargetProperties.__autoAllocateDepthBuffer) {
-			if (isCube) for (let i = 0; i < 6; i++) setupDepthTexture(renderTargetProperties.__webglFramebuffer[i], renderTarget, i);
-			else {
-				const mipmaps = renderTarget.texture.mipmaps;
-				if (mipmaps && mipmaps.length > 0) setupDepthTexture(renderTargetProperties.__webglFramebuffer[0], renderTarget, 0);
-				else setupDepthTexture(renderTargetProperties.__webglFramebuffer, renderTarget, 0);
-			}
-		} else if (isCube) {
+		if (renderTarget.depthTexture && !renderTargetProperties.__autoAllocateDepthBuffer) if (isCube) for (let i = 0; i < 6; i++) setupDepthTexture(renderTargetProperties.__webglFramebuffer[i], renderTarget, i);
+		else {
+			const mipmaps = renderTarget.texture.mipmaps;
+			if (mipmaps && mipmaps.length > 0) setupDepthTexture(renderTargetProperties.__webglFramebuffer[0], renderTarget, 0);
+			else setupDepthTexture(renderTargetProperties.__webglFramebuffer, renderTarget, 0);
+		}
+		else if (isCube) {
 			renderTargetProperties.__webglDepthbuffer = [];
 			for (let i = 0; i < 6; i++) {
 				state.bindFramebuffer(_gl.FRAMEBUFFER, renderTargetProperties.__webglFramebuffer[i]);
@@ -38839,11 +38770,9 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
 		const format = texture.format;
 		const type = texture.type;
 		if (texture.isCompressedTexture === true || texture.isVideoTexture === true) return image;
-		if (colorSpace !== "srgb-linear" && colorSpace !== "") {
-			if (ColorManagement.getTransfer(colorSpace) === "srgb") {
-				if (format !== 1023 || type !== 1009) warn("WebGLTextures: sRGB encoded textures have to use RGBAFormat and UnsignedByteType.");
-			} else error("WebGLTextures: Unsupported texture color space:", colorSpace);
-		}
+		if (colorSpace !== "srgb-linear" && colorSpace !== "") if (ColorManagement.getTransfer(colorSpace) === "srgb") {
+			if (format !== 1023 || type !== 1009) warn("WebGLTextures: sRGB encoded textures have to use RGBAFormat and UnsignedByteType.");
+		} else error("WebGLTextures: Unsupported texture color space:", colorSpace);
 		return image;
 	}
 	function getDimensions(image) {
@@ -38904,24 +38833,22 @@ function WebGLUtils$1(gl, extensions) {
 		if (p === 1030) return gl.RG;
 		if (p === 1031) return gl.RG_INTEGER;
 		if (p === 1033) return gl.RGBA_INTEGER;
-		if (p === 33776 || p === 33777 || p === 33778 || p === 33779) {
-			if (transfer === "srgb") {
-				extension = extensions.get("WEBGL_compressed_texture_s3tc_srgb");
-				if (extension !== null) {
-					if (p === 33776) return extension.COMPRESSED_SRGB_S3TC_DXT1_EXT;
-					if (p === 33777) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
-					if (p === 33778) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
-					if (p === 33779) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
-				} else return null;
-			} else {
-				extension = extensions.get("WEBGL_compressed_texture_s3tc");
-				if (extension !== null) {
-					if (p === 33776) return extension.COMPRESSED_RGB_S3TC_DXT1_EXT;
-					if (p === 33777) return extension.COMPRESSED_RGBA_S3TC_DXT1_EXT;
-					if (p === 33778) return extension.COMPRESSED_RGBA_S3TC_DXT3_EXT;
-					if (p === 33779) return extension.COMPRESSED_RGBA_S3TC_DXT5_EXT;
-				} else return null;
-			}
+		if (p === 33776 || p === 33777 || p === 33778 || p === 33779) if (transfer === "srgb") {
+			extension = extensions.get("WEBGL_compressed_texture_s3tc_srgb");
+			if (extension !== null) {
+				if (p === 33776) return extension.COMPRESSED_SRGB_S3TC_DXT1_EXT;
+				if (p === 33777) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+				if (p === 33778) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+				if (p === 33779) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+			} else return null;
+		} else {
+			extension = extensions.get("WEBGL_compressed_texture_s3tc");
+			if (extension !== null) {
+				if (p === 33776) return extension.COMPRESSED_RGB_S3TC_DXT1_EXT;
+				if (p === 33777) return extension.COMPRESSED_RGBA_S3TC_DXT1_EXT;
+				if (p === 33778) return extension.COMPRESSED_RGBA_S3TC_DXT3_EXT;
+				if (p === 33779) return extension.COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			} else return null;
 		}
 		if (p === 35840 || p === 35841 || p === 35842 || p === 35843) {
 			extension = extensions.get("WEBGL_compressed_texture_pvrtc");
@@ -40959,10 +40886,8 @@ var WebGLRenderer = class {
 			if (_gl === null) {
 				const contextName = "webgl2";
 				_gl = getContext(contextName, contextAttributes);
-				if (_gl === null) {
-					if (getContext(contextName)) throw new Error("THREE.WebGLRenderer: Error creating WebGL context with your selected attributes.");
-					else throw new Error("THREE.WebGLRenderer: Error creating WebGL context.");
-				}
+				if (_gl === null) if (getContext(contextName)) throw new Error("THREE.WebGLRenderer: Error creating WebGL context with your selected attributes.");
+				else throw new Error("THREE.WebGLRenderer: Error creating WebGL context.");
 			}
 		} catch (e) {
 			error("WebGLRenderer: " + e.message);
@@ -41512,12 +41437,11 @@ var WebGLRenderer = class {
 				renderer = indexedBufferRenderer;
 				renderer.setIndex(attribute);
 			}
-			if (object.isMesh) {
-				if (material.wireframe === true) {
-					state.setLineWidth(material.wireframeLinewidth * getTargetPixelRatio());
-					renderer.setMode(_gl.LINES);
-				} else renderer.setMode(_gl.TRIANGLES);
-			} else if (object.isLine) {
+			if (object.isMesh) if (material.wireframe === true) {
+				state.setLineWidth(material.wireframeLinewidth * getTargetPixelRatio());
+				renderer.setMode(_gl.LINES);
+			} else renderer.setMode(_gl.TRIANGLES);
+			else if (object.isLine) {
 				let lineWidth = material.linewidth;
 				if (lineWidth === void 0) lineWidth = 1;
 				state.setLineWidth(lineWidth * getTargetPixelRatio());
@@ -41526,19 +41450,18 @@ var WebGLRenderer = class {
 				else renderer.setMode(_gl.LINE_STRIP);
 			} else if (object.isPoints) renderer.setMode(_gl.POINTS);
 			else if (object.isSprite) renderer.setMode(_gl.TRIANGLES);
-			if (object.isBatchedMesh) {
-				if (!extensions.get("WEBGL_multi_draw")) {
-					const starts = object._multiDrawStarts;
-					const counts = object._multiDrawCounts;
-					const drawCount = object._multiDrawCount;
-					const bytesPerElement = index ? attributes.get(index).bytesPerElement : 1;
-					const uniforms = properties.get(material).currentProgram.getUniforms();
-					for (let i = 0; i < drawCount; i++) {
-						uniforms.setValue(_gl, "_gl_DrawID", i);
-						renderer.render(starts[i] / bytesPerElement, counts[i]);
-					}
-				} else renderer.renderMultiDraw(object._multiDrawStarts, object._multiDrawCounts, object._multiDrawCount);
-			} else if (object.isInstancedMesh) renderer.renderInstances(drawStart, drawCount, object.count);
+			if (object.isBatchedMesh) if (!extensions.get("WEBGL_multi_draw")) {
+				const starts = object._multiDrawStarts;
+				const counts = object._multiDrawCounts;
+				const drawCount = object._multiDrawCount;
+				const bytesPerElement = index ? attributes.get(index).bytesPerElement : 1;
+				const uniforms = properties.get(material).currentProgram.getUniforms();
+				for (let i = 0; i < drawCount; i++) {
+					uniforms.setValue(_gl, "_gl_DrawID", i);
+					renderer.render(starts[i] / bytesPerElement, counts[i]);
+				}
+			} else renderer.renderMultiDraw(object._multiDrawStarts, object._multiDrawCounts, object._multiDrawCount);
+			else if (object.isInstancedMesh) renderer.renderInstances(drawStart, drawCount, object.count);
 			else if (geometry.isInstancedBufferGeometry) {
 				const maxInstanceCount = geometry._maxInstanceCount !== void 0 ? geometry._maxInstanceCount : Infinity;
 				const instanceCount = Math.min(geometry.instanceCount, maxInstanceCount);
@@ -41590,16 +41513,14 @@ var WebGLRenderer = class {
 			scene.traverse(function(object) {
 				if (!(object.isMesh || object.isPoints || object.isLine || object.isSprite)) return;
 				const material = object.material;
-				if (material) {
-					if (Array.isArray(material)) for (let i = 0; i < material.length; i++) {
-						const material2 = material[i];
-						prepareMaterial(material2, targetScene, object);
-						materials.add(material2);
-					}
-					else {
-						prepareMaterial(material, targetScene, object);
-						materials.add(material);
-					}
+				if (material) if (Array.isArray(material)) for (let i = 0; i < material.length; i++) {
+					const material2 = material[i];
+					prepareMaterial(material2, targetScene, object);
+					materials.add(material2);
+				}
+				else {
+					prepareMaterial(material, targetScene, object);
+					materials.add(material);
 				}
 			});
 			currentRenderState = renderStateStack.pop();
@@ -42350,31 +42271,29 @@ var WebGLRenderer = class {
 			if (!(renderTarget && renderTarget.isWebGLRenderTarget)) throw new Error("THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not THREE.WebGLRenderTarget.");
 			let framebuffer = properties.get(renderTarget).__webglFramebuffer;
 			if (renderTarget.isWebGLCubeRenderTarget && activeCubeFaceIndex !== void 0) framebuffer = framebuffer[activeCubeFaceIndex];
-			if (framebuffer) {
-				if (x >= 0 && x <= renderTarget.width - width && y >= 0 && y <= renderTarget.height - height) {
-					state.bindFramebuffer(_gl.FRAMEBUFFER, framebuffer);
-					const texture = renderTarget.textures[textureIndex];
-					const textureFormat = texture.format;
-					const textureType = texture.type;
-					if (renderTarget.textures.length > 1) _gl.readBuffer(_gl.COLOR_ATTACHMENT0 + textureIndex);
-					if (!capabilities.textureFormatReadable(textureFormat)) throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: renderTarget is not in RGBA or implementation defined format.");
-					if (!capabilities.textureTypeReadable(textureType)) throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: renderTarget is not in UnsignedByteType or implementation defined type.");
-					const glBuffer = _gl.createBuffer();
-					_gl.bindBuffer(_gl.PIXEL_PACK_BUFFER, glBuffer);
-					_gl.bufferData(_gl.PIXEL_PACK_BUFFER, buffer.byteLength, _gl.STREAM_READ);
-					_gl.readPixels(x, y, width, height, utils.convert(textureFormat), utils.convert(textureType), 0);
-					const currFramebuffer = _currentRenderTarget !== null ? properties.get(_currentRenderTarget).__webglFramebuffer : null;
-					state.bindFramebuffer(_gl.FRAMEBUFFER, currFramebuffer);
-					const sync = _gl.fenceSync(_gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-					_gl.flush();
-					await probeAsync(_gl, sync, 4);
-					_gl.bindBuffer(_gl.PIXEL_PACK_BUFFER, glBuffer);
-					_gl.getBufferSubData(_gl.PIXEL_PACK_BUFFER, 0, buffer);
-					_gl.deleteBuffer(glBuffer);
-					_gl.deleteSync(sync);
-					return buffer;
-				} else throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: requested read bounds are out of range.");
-			}
+			if (framebuffer) if (x >= 0 && x <= renderTarget.width - width && y >= 0 && y <= renderTarget.height - height) {
+				state.bindFramebuffer(_gl.FRAMEBUFFER, framebuffer);
+				const texture = renderTarget.textures[textureIndex];
+				const textureFormat = texture.format;
+				const textureType = texture.type;
+				if (renderTarget.textures.length > 1) _gl.readBuffer(_gl.COLOR_ATTACHMENT0 + textureIndex);
+				if (!capabilities.textureFormatReadable(textureFormat)) throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: renderTarget is not in RGBA or implementation defined format.");
+				if (!capabilities.textureTypeReadable(textureType)) throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: renderTarget is not in UnsignedByteType or implementation defined type.");
+				const glBuffer = _gl.createBuffer();
+				_gl.bindBuffer(_gl.PIXEL_PACK_BUFFER, glBuffer);
+				_gl.bufferData(_gl.PIXEL_PACK_BUFFER, buffer.byteLength, _gl.STREAM_READ);
+				_gl.readPixels(x, y, width, height, utils.convert(textureFormat), utils.convert(textureType), 0);
+				const currFramebuffer = _currentRenderTarget !== null ? properties.get(_currentRenderTarget).__webglFramebuffer : null;
+				state.bindFramebuffer(_gl.FRAMEBUFFER, currFramebuffer);
+				const sync = _gl.fenceSync(_gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+				_gl.flush();
+				await probeAsync(_gl, sync, 4);
+				_gl.bindBuffer(_gl.PIXEL_PACK_BUFFER, glBuffer);
+				_gl.getBufferSubData(_gl.PIXEL_PACK_BUFFER, 0, buffer);
+				_gl.deleteBuffer(glBuffer);
+				_gl.deleteSync(sync);
+				return buffer;
+			} else throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: requested read bounds are out of range.");
 		};
 		/**
 		* Copies pixels from the current bound framebuffer into the given texture.
@@ -42498,11 +42417,10 @@ var WebGLRenderer = class {
 				}
 				state.bindFramebuffer(_gl.READ_FRAMEBUFFER, null);
 				state.bindFramebuffer(_gl.DRAW_FRAMEBUFFER, null);
-			} else if (isDst3D) {
-				if (srcTexture.isDataTexture || srcTexture.isData3DTexture) _gl.texSubImage3D(glTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image.data);
-				else if (dstTexture.isCompressedArrayTexture) _gl.compressedTexSubImage3D(glTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, image.data);
-				else _gl.texSubImage3D(glTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image);
-			} else if (srcTexture.isDataTexture) _gl.texSubImage2D(_gl.TEXTURE_2D, dstLevel, dstX, dstY, width, height, glFormat, glType, image.data);
+			} else if (isDst3D) if (srcTexture.isDataTexture || srcTexture.isData3DTexture) _gl.texSubImage3D(glTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image.data);
+			else if (dstTexture.isCompressedArrayTexture) _gl.compressedTexSubImage3D(glTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, image.data);
+			else _gl.texSubImage3D(glTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image);
+			else if (srcTexture.isDataTexture) _gl.texSubImage2D(_gl.TEXTURE_2D, dstLevel, dstX, dstY, width, height, glFormat, glType, image.data);
 			else if (srcTexture.isCompressedTexture) _gl.compressedTexSubImage2D(_gl.TEXTURE_2D, dstLevel, dstX, dstY, image.width, image.height, glFormat, image.data);
 			else _gl.texSubImage2D(_gl.TEXTURE_2D, dstLevel, dstX, dstY, width, height, glFormat, glType, image);
 			state.pixelStorei(_gl.UNPACK_ROW_LENGTH, currentUnpackRowLen);
@@ -42904,17 +42822,16 @@ var GLTFLoader = class extends Loader {
 		const plugins = {};
 		const textDecoder = new TextDecoder();
 		if (typeof data === "string") json = JSON.parse(data);
-		else if (data instanceof ArrayBuffer) {
-			if (textDecoder.decode(new Uint8Array(data, 0, 4)) === BINARY_EXTENSION_HEADER_MAGIC) {
-				try {
-					extensions[EXTENSIONS.KHR_BINARY_GLTF] = new GLTFBinaryExtension(data);
-				} catch (error) {
-					if (onError) onError(error);
-					return;
-				}
-				json = JSON.parse(extensions[EXTENSIONS.KHR_BINARY_GLTF].content);
-			} else json = JSON.parse(textDecoder.decode(data));
-		} else json = data;
+		else if (data instanceof ArrayBuffer) if (textDecoder.decode(new Uint8Array(data, 0, 4)) === BINARY_EXTENSION_HEADER_MAGIC) {
+			try {
+				extensions[EXTENSIONS.KHR_BINARY_GLTF] = new GLTFBinaryExtension(data);
+			} catch (error) {
+				if (onError) onError(error);
+				return;
+			}
+			json = JSON.parse(extensions[EXTENSIONS.KHR_BINARY_GLTF].content);
+		} else json = JSON.parse(textDecoder.decode(data));
+		else json = data;
 		if (json.asset === void 0 || json.asset.version[0] < 2) {
 			if (onError) onError(/* @__PURE__ */ new Error("THREE.GLTFLoader: Unsupported asset. glTF versions >=2.0 are supported."));
 			return;
@@ -43444,10 +43361,8 @@ var GLTFTextureBasisUExtension = class {
 		if (!textureDef.extensions || !textureDef.extensions[this.name]) return null;
 		const extension = textureDef.extensions[this.name];
 		const loader = parser.options.ktx2Loader;
-		if (!loader) {
-			if (json.extensionsRequired && json.extensionsRequired.indexOf(this.name) >= 0) throw new Error("THREE.GLTFLoader: setKTX2Loader must be called before loading KTX2 textures");
-			else return null;
-		}
+		if (!loader) if (json.extensionsRequired && json.extensionsRequired.indexOf(this.name) >= 0) throw new Error("THREE.GLTFLoader: setKTX2Loader must be called before loading KTX2 textures");
+		else return null;
 		return parser.loadTextureImage(textureIndex, extension.source, loader);
 	}
 };
@@ -43526,10 +43441,8 @@ var GLTFMeshoptCompression = class {
 			const extensionDef = bufferView.extensions[this.name];
 			const buffer = this.parser.getDependency("buffer", extensionDef.buffer);
 			const decoder = this.parser.options.meshoptDecoder;
-			if (!decoder || !decoder.supported) {
-				if (json.extensionsRequired && json.extensionsRequired.indexOf(this.name) >= 0) throw new Error("THREE.GLTFLoader: setMeshoptDecoder must be called before loading compressed files");
-				else return null;
-			}
+			if (!decoder || !decoder.supported) if (json.extensionsRequired && json.extensionsRequired.indexOf(this.name) >= 0) throw new Error("THREE.GLTFLoader: setMeshoptDecoder must be called before loading compressed files");
+			else return null;
 			return buffer.then(function(res) {
 				const byteOffset = extensionDef.byteOffset || 0;
 				const byteLength = extensionDef.byteLength || 0;
@@ -43887,10 +43800,8 @@ function addUnknownExtensionsToUserData(knownExtensions, object, objectDef) {
 * @param {GLTF.definition} gltfDef
 */
 function assignExtrasToUserData(object, gltfDef) {
-	if (gltfDef.extras !== void 0) {
-		if (typeof gltfDef.extras === "object") Object.assign(object.userData, gltfDef.extras);
-		else console.warn("THREE.GLTFLoader: Ignoring primitive type .extras, " + gltfDef.extras);
-	}
+	if (gltfDef.extras !== void 0) if (typeof gltfDef.extras === "object") Object.assign(object.userData, gltfDef.extras);
+	else console.warn("THREE.GLTFLoader: Ignoring primitive type .extras, " + gltfDef.extras);
 }
 /**
 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#morph-targets
@@ -46171,16 +46082,14 @@ var OrbitControls = class extends Controls {
 				console.warn("WARNING: OrbitControls.js encountered an unknown camera type - zoom to cursor disabled.");
 				this.zoomToCursor = false;
 			}
-			if (newRadius !== null) {
-				if (this.screenSpacePanning) this.target.set(0, 0, -1).transformDirection(this.object.matrix).multiplyScalar(newRadius).add(this.object.position);
+			if (newRadius !== null) if (this.screenSpacePanning) this.target.set(0, 0, -1).transformDirection(this.object.matrix).multiplyScalar(newRadius).add(this.object.position);
+			else {
+				_ray.origin.copy(this.object.position);
+				_ray.direction.set(0, 0, -1).transformDirection(this.object.matrix);
+				if (Math.abs(this.object.up.dot(_ray.direction)) < _TILT_LIMIT) this.object.lookAt(this.target);
 				else {
-					_ray.origin.copy(this.object.position);
-					_ray.direction.set(0, 0, -1).transformDirection(this.object.matrix);
-					if (Math.abs(this.object.up.dot(_ray.direction)) < _TILT_LIMIT) this.object.lookAt(this.target);
-					else {
-						_plane$1.setFromNormalAndCoplanarPoint(this.object.up, this.target);
-						_ray.intersectPlane(_plane$1, this.target);
-					}
+					_plane$1.setFromNormalAndCoplanarPoint(this.object.up, this.target);
+					_ray.intersectPlane(_plane$1, this.target);
 				}
 			}
 		} else if (this.object.isOrthographicCamera) {
@@ -47150,13 +47059,12 @@ var NodeMaterialObserver = class {
 			for (const property of this.refreshUniforms) {
 				const value = material[property];
 				if (value === null || value === void 0) continue;
-				if (typeof value === "object" && value.clone !== void 0) {
-					if (value.isTexture === true) data[property] = {
-						id: value.id,
-						version: 0
-					};
-					else data[property] = value.clone();
-				} else data[property] = value;
+				if (typeof value === "object" && value.clone !== void 0) if (value.isTexture === true) data[property] = {
+					id: value.id,
+					version: 0
+				};
+				else data[property] = value.clone();
+				else data[property] = value;
 			}
 			_materialCache.set(material, data);
 		}
@@ -48253,16 +48161,15 @@ var Node = class Node extends EventDispatcher {
 				const type = this.getNodeType(builder);
 				const nodeData = builder.getDataFromNode(this);
 				result = nodeData.snippet;
-				if (result === void 0) {
-					if (nodeData.generated === void 0) {
-						nodeData.generated = true;
-						result = this.generate(builder) || "";
-						nodeData.snippet = result;
-					} else {
-						warn("Node: Recursion detected.", this);
-						result = "/* Recursion detected. */";
-					}
-				} else if (nodeData.flowCodes !== void 0 && builder.context.nodeBlock !== void 0) builder.addFlowCodeHierarchy(this, builder.context.nodeBlock);
+				if (result === void 0) if (nodeData.generated === void 0) {
+					nodeData.generated = true;
+					result = this.generate(builder) || "";
+					nodeData.snippet = result;
+				} else {
+					warn("Node: Recursion detected.", this);
+					result = "/* Recursion detected. */";
+				}
+				else if (nodeData.flowCodes !== void 0 && builder.context.nodeBlock !== void 0) builder.addFlowCodeHierarchy(this, builder.context.nodeBlock);
 				result = builder.format(result, type, output);
 			} else result = this.generate(builder, output) || "";
 			if (result === "" && output !== null && output !== "void" && output !== "OutputType") {
@@ -49375,10 +49282,8 @@ function getProxyParameters(params) {
 					const objectTarget = params[0];
 					if (objectTarget[property] === void 0) value = objectTarget[index++];
 					else value = Reflect.get(objectTarget, property, receiver);
-				} else if (params[0] instanceof Node) {
-					if (params[property] === void 0) value = params[index++];
-					else value = Reflect.get(params, property, receiver);
-				}
+				} else if (params[0] instanceof Node) if (params[property] === void 0) value = params[index++];
+				else value = Reflect.get(params, property, receiver);
 			} else value = Reflect.get(target, property, receiver);
 			value = nodeObject(value);
 		}
@@ -49498,13 +49403,11 @@ var FnNode = class extends Node {
 	constructor(jsFunc, layout = null) {
 		super();
 		let nodeType = null;
-		if (layout !== null) {
-			if (typeof layout === "object") nodeType = layout.return;
-			else {
-				if (typeof layout === "string") nodeType = layout;
-				else error("TSL: Invalid layout type.", new StackTrace());
-				layout = null;
-			}
+		if (layout !== null) if (typeof layout === "object") nodeType = layout.return;
+		else {
+			if (typeof layout === "string") nodeType = layout;
+			else error("TSL: Invalid layout type.", new StackTrace());
+			layout = null;
 		}
 		this.shaderNode = new ShaderNode(jsFunc, nodeType);
 		if (layout !== null) this.setLayout(layout);
@@ -50711,34 +50614,28 @@ var OperatorNode = class OperatorNode extends TempNode {
 			} else if (op === "%") {
 				typeA = type;
 				typeB = builder.isInteger(typeA) && builder.isInteger(typeB) ? typeB : typeA;
-			} else if (builder.isMatrix(typeA)) {
-				if (typeB === "float") typeB = "float";
-				else if (builder.isVector(typeB)) typeB = builder.getVectorFromMatrix(typeA);
-				else if (builder.isMatrix(typeB));
-				else typeA = typeB = type;
-			} else if (builder.isMatrix(typeB)) {
-				if (typeA === "float") typeA = "float";
-				else if (builder.isVector(typeA)) typeA = builder.getVectorFromMatrix(typeB);
-				else typeA = typeB = type;
-			} else typeA = typeB = type;
+			} else if (builder.isMatrix(typeA)) if (typeB === "float") typeB = "float";
+			else if (builder.isVector(typeB)) typeB = builder.getVectorFromMatrix(typeA);
+			else if (builder.isMatrix(typeB));
+			else typeA = typeB = type;
+			else if (builder.isMatrix(typeB)) if (typeA === "float") typeA = "float";
+			else if (builder.isVector(typeA)) typeA = builder.getVectorFromMatrix(typeB);
+			else typeA = typeB = type;
+			else typeA = typeB = type;
 		} else typeA = typeB = type;
 		const a = aNode.build(builder, typeA);
 		const b = bNode ? bNode.build(builder, typeB) : null;
 		const fnOpSnippet = builder.getFunctionOperator(op);
 		if (output !== "void") {
 			const isGLSL = builder.renderer.coordinateSystem === WebGLCoordinateSystem;
-			if (op === "==" || op === "!=" || op === "<" || op === ">" || op === "<=" || op === ">=") {
-				if (isGLSL) {
-					if (builder.isVector(typeA)) return builder.format(`${this.getOperatorMethod(builder, output)}( ${a}, ${b} )`, type, output);
-					else return builder.format(`( ${a} ${op} ${b} )`, type, output);
-				} else return builder.format(`( ${a} ${op} ${b} )`, type, output);
-			} else if (op === "%") {
-				if (builder.isInteger(typeB)) return builder.format(`( ${a} % ${b} )`, type, output);
-				else return builder.format(`${this.getOperatorMethod(builder, type)}( ${a}, ${b} )`, type, output);
-			} else if (op === "!") {
-				if (isGLSL && builder.isVector(typeA)) return builder.format(`not( ${a} )`, output);
-				else return builder.format(`( ${op} ${a} )`, typeA, output);
-			} else if (op === "~") return builder.format(`( ${op} ${a} )`, typeA, output);
+			if (op === "==" || op === "!=" || op === "<" || op === ">" || op === "<=" || op === ">=") if (isGLSL) if (builder.isVector(typeA)) return builder.format(`${this.getOperatorMethod(builder, output)}( ${a}, ${b} )`, type, output);
+			else return builder.format(`( ${a} ${op} ${b} )`, type, output);
+			else return builder.format(`( ${a} ${op} ${b} )`, type, output);
+			else if (op === "%") if (builder.isInteger(typeB)) return builder.format(`( ${a} % ${b} )`, type, output);
+			else return builder.format(`${this.getOperatorMethod(builder, type)}( ${a}, ${b} )`, type, output);
+			else if (op === "!") if (isGLSL && builder.isVector(typeA)) return builder.format(`not( ${a} )`, output);
+			else return builder.format(`( ${op} ${a} )`, typeA, output);
+			else if (op === "~") return builder.format(`( ${op} ${a} )`, typeA, output);
 			else if (fnOpSnippet) return builder.format(`${fnOpSnippet}( ${a}, ${b} )`, type, output);
 			else if (builder.isMatrix(typeA) && typeB === "float") return builder.format(`( ${b} ${op} ${a} )`, type, output);
 			else if (typeA === "float" && builder.isMatrix(typeB)) return builder.format(`${a} ${op} ${b}`, type, output);
@@ -50747,11 +50644,9 @@ var OperatorNode = class OperatorNode extends TempNode {
 				if (!isGLSL && type === "bool" && builder.isVector(typeA) && builder.isVector(typeB)) snippet = `all${snippet}`;
 				return builder.format(snippet, type, output);
 			}
-		} else if (typeA !== "void") {
-			if (fnOpSnippet) return builder.format(`${fnOpSnippet}( ${a}, ${b} )`, type, output);
-			else if (builder.isMatrix(typeA) && typeB === "float") return builder.format(`${b} ${op} ${a}`, type, output);
-			else return builder.format(`${a} ${op} ${b}`, type, output);
-		}
+		} else if (typeA !== "void") if (fnOpSnippet) return builder.format(`${fnOpSnippet}( ${a}, ${b} )`, type, output);
+		else if (builder.isMatrix(typeA) && typeB === "float") return builder.format(`${b} ${op} ${a}`, type, output);
+		else return builder.format(`${a} ${op} ${b}`, type, output);
 	}
 	serialize(data) {
 		super.serialize(data);
@@ -52077,28 +51972,24 @@ var ConditionalNode = class extends Node {
 		}
 		builder.addFlowCode(`\n${builder.tab}if ( ${nodeSnippet} ) {\n\n`).addFlowTab();
 		let ifSnippet = ifNode.build(builder, type);
-		if (ifSnippet) {
-			if (needsOutput) ifSnippet = nodeProperty + " = " + ifSnippet + ";";
-			else {
-				ifSnippet = "return " + ifSnippet + ";";
-				if (functionNode === null) {
-					warn("TSL: Return statement used in an inline 'Fn()'. Define a layout struct to allow return values.", this.stackTrace);
-					ifSnippet = "// " + ifSnippet;
-				}
+		if (ifSnippet) if (needsOutput) ifSnippet = nodeProperty + " = " + ifSnippet + ";";
+		else {
+			ifSnippet = "return " + ifSnippet + ";";
+			if (functionNode === null) {
+				warn("TSL: Return statement used in an inline 'Fn()'. Define a layout struct to allow return values.", this.stackTrace);
+				ifSnippet = "// " + ifSnippet;
 			}
 		}
 		builder.removeFlowTab().addFlowCode(builder.tab + "	" + ifSnippet + "\n\n" + builder.tab + "}");
 		if (elseNode !== null) {
 			builder.addFlowCode(" else {\n\n").addFlowTab();
 			let elseSnippet = elseNode.build(builder, type);
-			if (elseSnippet) {
-				if (needsOutput) elseSnippet = nodeProperty + " = " + elseSnippet + ";";
-				else {
-					elseSnippet = "return " + elseSnippet + ";";
-					if (functionNode === null) {
-						warn("TSL: Return statement used in an inline 'Fn()'. Define a layout struct to allow return values.", this.stackTrace);
-						elseSnippet = "// " + elseSnippet;
-					}
+			if (elseSnippet) if (needsOutput) elseSnippet = nodeProperty + " = " + elseSnippet + ";";
+			else {
+				elseSnippet = "return " + elseSnippet + ";";
+				if (functionNode === null) {
+					warn("TSL: Return statement used in an inline 'Fn()'. Define a layout struct to allow return values.", this.stackTrace);
+					elseSnippet = "// " + elseSnippet;
 				}
 			}
 			builder.removeFlowTab().addFlowCode(builder.tab + "	" + elseSnippet + "\n\n" + builder.tab + "}\n\n");
@@ -52482,12 +52373,10 @@ var VarNode = class extends Node {
 		const nodeVar = builder.getVarFromNode(this, name, vectorType, void 0, shouldTreatAsReadOnly);
 		const propertyName = builder.getPropertyName(nodeVar);
 		let declarationPrefix = propertyName;
-		if (shouldTreatAsReadOnly) {
-			if (isWebGPUBackend) declarationPrefix = isDeterministic ? `const ${propertyName}` : `let ${propertyName}`;
-			else {
-				const count = node.getArrayCount(builder);
-				declarationPrefix = `const ${builder.getVar(nodeVar.type, propertyName, count)}`;
-			}
+		if (shouldTreatAsReadOnly) if (isWebGPUBackend) declarationPrefix = isDeterministic ? `const ${propertyName}` : `let ${propertyName}`;
+		else {
+			const count = node.getArrayCount(builder);
+			declarationPrefix = `const ${builder.getVar(nodeVar.type, propertyName, count)}`;
 		}
 		builder.addLineFlowCode(`${declarationPrefix} = ${snippet}`, this);
 		return propertyName;
@@ -54991,15 +54880,13 @@ var TextureNode = class extends UniformNode {
 		if (levelNode === null && builder.context.getTextureLevel) levelNode = builder.context.getTextureLevel(this);
 		let compareNode = null;
 		let compareStepNode = null;
-		if (this.compareNode !== null) {
-			if (builder.renderer.hasCompatibility(Compatibility.TEXTURE_COMPARE)) compareNode = this.compareNode;
+		if (this.compareNode !== null) if (builder.renderer.hasCompatibility(Compatibility.TEXTURE_COMPARE)) compareNode = this.compareNode;
+		else {
+			const compareFunction = texture.compareFunction;
+			if (compareFunction === null || compareFunction === 513 || compareFunction === 515 || compareFunction === 516 || compareFunction === 518) compareStepNode = this.compareNode;
 			else {
-				const compareFunction = texture.compareFunction;
-				if (compareFunction === null || compareFunction === 513 || compareFunction === 515 || compareFunction === 516 || compareFunction === 518) compareStepNode = this.compareNode;
-				else {
-					compareNode = this.compareNode;
-					warnOnce("TSL: Only \"LessCompare\", \"LessEqualCompare\", \"GreaterCompare\" and \"GreaterEqualCompare\" are supported for depth texture comparison fallback.");
-				}
+				compareNode = this.compareNode;
+				warnOnce("TSL: Only \"LessCompare\", \"LessEqualCompare\", \"GreaterCompare\" and \"GreaterEqualCompare\" are supported for depth texture comparison fallback.");
 			}
 		}
 		properties.uvNode = uvNode;
@@ -55053,10 +54940,9 @@ var TextureNode = class extends UniformNode {
 		let snippet;
 		if (biasSnippet) snippet = builder.generateTextureBias(texture, textureProperty, uvSnippet, biasSnippet, depthSnippet, offsetSnippet);
 		else if (gradSnippet) snippet = builder.generateTextureGrad(texture, textureProperty, uvSnippet, gradSnippet, depthSnippet, offsetSnippet);
-		else if (gatherSnippet) {
-			if (compareSnippet) snippet = builder.generateTextureGatherCompare(texture, textureProperty, uvSnippet, compareSnippet, depthSnippet, offsetSnippet, flipYSnippet);
-			else snippet = builder.generateTextureGather(texture, textureProperty, uvSnippet, gatherSnippet, depthSnippet, offsetSnippet, flipYSnippet);
-		} else if (compareSnippet) snippet = builder.generateTextureCompare(texture, textureProperty, uvSnippet, compareSnippet, depthSnippet, offsetSnippet);
+		else if (gatherSnippet) if (compareSnippet) snippet = builder.generateTextureGatherCompare(texture, textureProperty, uvSnippet, compareSnippet, depthSnippet, offsetSnippet, flipYSnippet);
+		else snippet = builder.generateTextureGather(texture, textureProperty, uvSnippet, gatherSnippet, depthSnippet, offsetSnippet, flipYSnippet);
+		else if (compareSnippet) snippet = builder.generateTextureCompare(texture, textureProperty, uvSnippet, compareSnippet, depthSnippet, offsetSnippet);
 		else if (this.sampler === false) snippet = builder.generateTextureLoad(texture, textureProperty, uvSnippet, levelSnippet, depthSnippet, offsetSnippet);
 		else if (levelSnippet) snippet = builder.generateTextureLevel(texture, textureProperty, uvSnippet, levelSnippet, depthSnippet, offsetSnippet);
 		else snippet = builder.generateTexture(texture, textureProperty, uvSnippet, depthSnippet, offsetSnippet);
@@ -55813,13 +55699,12 @@ var ScreenNode = class ScreenNode extends Node {
 	*/
 	update({ renderer }) {
 		const renderTarget = renderer.getRenderTarget();
-		if (this.scope === ScreenNode.VIEWPORT) {
-			if (renderTarget !== null) _viewportVec.copy(renderTarget.viewport);
-			else {
-				renderer.getViewport(_viewportVec);
-				_viewportVec.multiplyScalar(renderer.getPixelRatio());
-			}
-		} else if (this.scope === ScreenNode.DPR) this._output.value = renderer.getPixelRatio();
+		if (this.scope === ScreenNode.VIEWPORT) if (renderTarget !== null) _viewportVec.copy(renderTarget.viewport);
+		else {
+			renderer.getViewport(_viewportVec);
+			_viewportVec.multiplyScalar(renderer.getPixelRatio());
+		}
+		else if (this.scope === ScreenNode.DPR) this._output.value = renderer.getPixelRatio();
 		else if (renderTarget !== null) {
 			_screenSizeVec.width = renderTarget.width;
 			_screenSizeVec.height = renderTarget.height;
@@ -57425,10 +57310,9 @@ var MaterialNode = class MaterialNode extends Node {
 			const opacityNode = this.getFloat(scope);
 			if (material.alphaMap && material.alphaMap.isTexture === true) node = opacityNode.mul(this.getTexture("alpha"));
 			else node = opacityNode;
-		} else if (scope === MaterialNode.SPECULAR_STRENGTH) {
-			if (material.specularMap && material.specularMap.isTexture === true) node = this.getTexture("specular").r;
-			else node = float(1);
-		} else if (scope === MaterialNode.SPECULAR_INTENSITY) {
+		} else if (scope === MaterialNode.SPECULAR_STRENGTH) if (material.specularMap && material.specularMap.isTexture === true) node = this.getTexture("specular").r;
+		else node = float(1);
+		else if (scope === MaterialNode.SPECULAR_INTENSITY) {
 			const specularIntensityNode = this.getFloat(scope);
 			if (material.specularIntensityMap && material.specularIntensityMap.isTexture === true) node = specularIntensityNode.mul(this.getTexture(scope).a);
 			else node = specularIntensityNode;
@@ -57449,14 +57333,13 @@ var MaterialNode = class MaterialNode extends Node {
 			const emissiveNode = this.getColor(scope).mul(emissiveIntensityNode);
 			if (material.emissiveMap && material.emissiveMap.isTexture === true) node = emissiveNode.mul(this.getTexture(scope));
 			else node = emissiveNode;
-		} else if (scope === MaterialNode.NORMAL) {
-			if (material.normalMap) {
-				node = normalMap(this.getTexture("normal"), this.getCache("normalScale", "vec2"));
-				node.normalMapType = material.normalMapType;
-				if (material.normalMap.format == 1030 || material.normalMap.format == 36285 || material.normalMap.format == 37490) node.unpackNormalMode = "rg";
-			} else if (material.bumpMap) node = bumpMap(this.getTexture("bump").r, this.getFloat("bumpScale"));
-			else node = normalView;
-		} else if (scope === MaterialNode.CLEARCOAT) {
+		} else if (scope === MaterialNode.NORMAL) if (material.normalMap) {
+			node = normalMap(this.getTexture("normal"), this.getCache("normalScale", "vec2"));
+			node.normalMapType = material.normalMapType;
+			if (material.normalMap.format == 1030 || material.normalMap.format == 36285 || material.normalMap.format == 37490) node.unpackNormalMode = "rg";
+		} else if (material.bumpMap) node = bumpMap(this.getTexture("bump").r, this.getFloat("bumpScale"));
+		else node = normalView;
+		else if (scope === MaterialNode.CLEARCOAT) {
 			const clearcoatNode = this.getFloat(scope);
 			if (material.clearcoatMap && material.clearcoatMap.isTexture === true) node = clearcoatNode.mul(this.getTexture(scope).r);
 			else node = clearcoatNode;
@@ -57464,10 +57347,9 @@ var MaterialNode = class MaterialNode extends Node {
 			const clearcoatRoughnessNode = this.getFloat(scope);
 			if (material.clearcoatRoughnessMap && material.clearcoatRoughnessMap.isTexture === true) node = clearcoatRoughnessNode.mul(this.getTexture(scope).r);
 			else node = clearcoatRoughnessNode;
-		} else if (scope === MaterialNode.CLEARCOAT_NORMAL) {
-			if (material.clearcoatNormalMap) node = normalMap(this.getTexture(scope), this.getCache(scope + "Scale", "vec2"));
-			else node = normalView;
-		} else if (scope === MaterialNode.SHEEN) {
+		} else if (scope === MaterialNode.CLEARCOAT_NORMAL) if (material.clearcoatNormalMap) node = normalMap(this.getTexture(scope), this.getCache(scope + "Scale", "vec2"));
+		else node = normalView;
+		else if (scope === MaterialNode.SHEEN) {
 			const sheenNode = this.getColor("sheenColor").mul(this.getFloat("sheen"));
 			if (material.sheenColorMap && material.sheenColorMap.isTexture === true) node = sheenNode.mul(this.getTexture("sheenColor").rgb);
 			else node = sheenNode;
@@ -57476,12 +57358,11 @@ var MaterialNode = class MaterialNode extends Node {
 			if (material.sheenRoughnessMap && material.sheenRoughnessMap.isTexture === true) node = sheenRoughnessNode.mul(this.getTexture(scope).a);
 			else node = sheenRoughnessNode;
 			node = node.clamp(1e-4, 1);
-		} else if (scope === MaterialNode.ANISOTROPY) {
-			if (material.anisotropyMap && material.anisotropyMap.isTexture === true) {
-				const anisotropyPolar = this.getTexture(scope);
-				node = mat2(materialAnisotropyVector.x, materialAnisotropyVector.y, materialAnisotropyVector.y.negate(), materialAnisotropyVector.x).mul(anisotropyPolar.rg.mul(2).sub(vec2(1)).normalize().mul(anisotropyPolar.b));
-			} else node = materialAnisotropyVector;
-		} else if (scope === MaterialNode.IRIDESCENCE_THICKNESS) {
+		} else if (scope === MaterialNode.ANISOTROPY) if (material.anisotropyMap && material.anisotropyMap.isTexture === true) {
+			const anisotropyPolar = this.getTexture(scope);
+			node = mat2(materialAnisotropyVector.x, materialAnisotropyVector.y, materialAnisotropyVector.y.negate(), materialAnisotropyVector.x).mul(anisotropyPolar.rg.mul(2).sub(vec2(1)).normalize().mul(anisotropyPolar.b));
+		} else node = materialAnisotropyVector;
+		else if (scope === MaterialNode.IRIDESCENCE_THICKNESS) {
 			const iridescenceThicknessMaximum = reference("1", "float", material.iridescenceThicknessRange);
 			if (material.iridescenceThicknessMap) {
 				const iridescenceThicknessMinimum = reference("0", "float", material.iridescenceThicknessRange);
@@ -57496,13 +57377,11 @@ var MaterialNode = class MaterialNode extends Node {
 			if (material.thicknessMap) node = thicknessNode.mul(this.getTexture(scope).g);
 			else node = thicknessNode;
 		} else if (scope === MaterialNode.IOR) node = this.getFloat(scope);
-		else if (scope === MaterialNode.LIGHT_MAP) {
-			if (material.lightMap) node = this.getTexture(scope).rgb.mul(this.getFloat("lightMapIntensity"));
-			else node = vec3(0);
-		} else if (scope === MaterialNode.AO) {
-			if (material.aoMap) node = this.getTexture(scope).r.sub(1).mul(this.getFloat("aoMapIntensity")).add(1);
-			else node = float(1);
-		} else if (scope === MaterialNode.LINE_DASH_OFFSET) node = material.dashOffset ? this.getFloat(scope) : float(0);
+		else if (scope === MaterialNode.LIGHT_MAP) if (material.lightMap) node = this.getTexture(scope).rgb.mul(this.getFloat("lightMapIntensity"));
+		else node = vec3(0);
+		else if (scope === MaterialNode.AO) if (material.aoMap) node = this.getTexture(scope).r.sub(1).mul(this.getFloat("aoMapIntensity")).add(1);
+		else node = float(1);
+		else if (scope === MaterialNode.LINE_DASH_OFFSET) node = material.dashOffset ? this.getFloat(scope) : float(0);
 		else {
 			const outputType = this.getNodeType(builder);
 			node = this.getCache(scope, outputType);
@@ -57967,10 +57846,9 @@ var StorageArrayElementNode = class extends ArrayElementNode {
 	generate(builder, output) {
 		let snippet;
 		const isAssignContext = builder.isContextAssign();
-		if (builder.isAvailable("storageBuffer") === false) {
-			if (this.node.isPBO === true && isAssignContext !== true && (this.node.value.isInstancedBufferAttribute || builder.shaderStage !== "compute")) snippet = builder.generatePBO(this);
-			else snippet = this.node.build(builder);
-		} else snippet = super.generate(builder);
+		if (builder.isAvailable("storageBuffer") === false) if (this.node.isPBO === true && isAssignContext !== true && (this.node.value.isInstancedBufferAttribute || builder.shaderStage !== "compute")) snippet = builder.generatePBO(this);
+		else snippet = this.node.build(builder);
+		else snippet = super.generate(builder);
 		if (isAssignContext !== true) {
 			const type = this.getNodeType(builder);
 			snippet = builder.format(snippet, type, output);
@@ -58101,10 +57979,8 @@ var StorageBufferNode = class extends BufferNode {
 		* @default true
 		*/
 		this.global = true;
-		if (value.isStorageBufferAttribute !== true && value.isStorageInstancedBufferAttribute !== true) {
-			if (value.isInstancedBufferAttribute) value.isStorageInstancedBufferAttribute = true;
-			else value.isStorageBufferAttribute = true;
-		}
+		if (value.isStorageBufferAttribute !== true && value.isStorageInstancedBufferAttribute !== true) if (value.isInstancedBufferAttribute) value.isStorageInstancedBufferAttribute = true;
+		else value.isStorageBufferAttribute = true;
 	}
 	/**
 	* This method is overwritten since the buffer data might be shared
@@ -58340,17 +58216,15 @@ var instance = /*@__PURE__*/ Fn(([matrices, colors = null], builder) => {
 	}
 	let instanceColorNode = null;
 	let interleavedColor = null;
-	if (colors) {
-		if (isStorageColor) instanceColorNode = storage(colors, "vec3", Math.max(colors.count, 1)).element(instanceIndex);
-		else {
-			let bufferAttribute = _colorBuffers.get(colors);
-			if (!bufferAttribute) {
-				bufferAttribute = new InstancedBufferAttribute(colors.array, 3);
-				_colorBuffers.set(colors, bufferAttribute);
-			}
-			interleavedColor = bufferAttribute;
-			instanceColorNode = vec3((colors.usage === 35048 ? instancedDynamicBufferAttribute : instancedBufferAttribute)(bufferAttribute, "vec3", 3, 0));
+	if (colors) if (isStorageColor) instanceColorNode = storage(colors, "vec3", Math.max(colors.count, 1)).element(instanceIndex);
+	else {
+		let bufferAttribute = _colorBuffers.get(colors);
+		if (!bufferAttribute) {
+			bufferAttribute = new InstancedBufferAttribute(colors.array, 3);
+			_colorBuffers.set(colors, bufferAttribute);
 		}
+		interleavedColor = bufferAttribute;
+		instanceColorNode = vec3((colors.usage === 35048 ? instancedDynamicBufferAttribute : instancedBufferAttribute)(bufferAttribute, "vec3", 3, 0));
 	}
 	if (interleavedMatrix !== null || interleavedColor !== null) OnFrameUpdate(() => {
 		if (interleavedMatrix !== null) {
@@ -58656,19 +58530,18 @@ var LoopNode = class extends Node {
 		for (let i = 0, l = params.length - 1; i < l; i++) {
 			const param = params[i];
 			let isWhile = false, start = null, end = null, name = null, type = null, condition = null, update = null;
-			if (param.isNode) {
-				if (param.getNodeType(builder) === "bool") {
-					isWhile = true;
-					type = "bool";
-					end = param.build(builder, type);
-				} else {
-					type = "int";
-					name = this.getVarName(i);
-					start = "0";
-					end = param.build(builder, type);
-					condition = "<";
-				}
+			if (param.isNode) if (param.getNodeType(builder) === "bool") {
+				isWhile = true;
+				type = "bool";
+				end = param.build(builder, type);
 			} else {
+				type = "int";
+				name = this.getVarName(i);
+				start = "0";
+				end = param.build(builder, type);
+				condition = "<";
+			}
+			else {
 				type = param.type || "int";
 				name = param.name || this.getVarName(i);
 				start = param.start;
@@ -58687,10 +58560,8 @@ var LoopNode = class extends Node {
 					start = "0";
 					condition = "<";
 				}
-				if (condition === void 0) {
-					if (Number(start) > Number(end)) condition = ">=";
-					else condition = "<";
-				}
+				if (condition === void 0) if (Number(start) > Number(end)) condition = ">=";
+				else condition = "<";
 			}
 			let loopSnippet;
 			if (isWhile) loopSnippet = `while ( ${end} )`;
@@ -59335,15 +59206,11 @@ var ViewportDepthNode = class ViewportDepthNode extends Node {
 		let node = null;
 		if (scope === ViewportDepthNode.DEPTH_BASE) {
 			if (value !== null) node = depthBase().assign(value);
-		} else if (scope === ViewportDepthNode.DEPTH) {
-			if (camera.isPerspectiveCamera) node = viewZToPerspectiveDepth(positionView.z, cameraNear, cameraFar);
-			else node = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
-		} else if (scope === ViewportDepthNode.LINEAR_DEPTH) {
-			if (value !== null) {
-				if (camera.isPerspectiveCamera) node = viewZToOrthographicDepth(perspectiveDepthToViewZ(value, cameraNear, cameraFar), cameraNear, cameraFar);
-				else node = value;
-			} else node = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
-		}
+		} else if (scope === ViewportDepthNode.DEPTH) if (camera.isPerspectiveCamera) node = viewZToPerspectiveDepth(positionView.z, cameraNear, cameraFar);
+		else node = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
+		else if (scope === ViewportDepthNode.LINEAR_DEPTH) if (value !== null) if (camera.isPerspectiveCamera) node = viewZToOrthographicDepth(perspectiveDepthToViewZ(value, cameraNear, cameraFar), cameraNear, cameraFar);
+		else node = value;
+		else node = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
 		return node;
 	}
 };
@@ -60166,10 +60033,8 @@ var NodeMaterial = class extends Material {
 		if (depthNode === null) {
 			const mrt = renderer.getMRT();
 			if (mrt && mrt.has("depth")) depthNode = mrt.get("depth");
-			else if (renderer.logarithmicDepthBuffer === true) {
-				if (camera.isPerspectiveCamera) depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar);
-				else depthNode = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
-			}
+			else if (renderer.logarithmicDepthBuffer === true) if (camera.isPerspectiveCamera) depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar);
+			else depthNode = viewZToOrthographicDepth(positionView.z, cameraNear, cameraFar);
 		}
 		if (depthNode !== null) depth.assign(depthNode).toStack();
 	}
@@ -60807,12 +60672,10 @@ Fn(({ material, renderer }) => {
 		const p1 = worldStart.add(lineDir.mul(params.x));
 		const p2 = rayEnd.mul(params.y);
 		const norm = p1.sub(p2).length().div(materialLineWidth);
-		if (!useDash) {
-			if (useAlphaToCoverage && renderer.currentSamples > 0) {
-				const dnorm = norm.fwidth();
-				alpha.assign(smoothstep(dnorm.negate().add(.5), dnorm.add(.5), norm).oneMinus());
-			} else norm.greaterThan(.5).discard();
-		}
+		if (!useDash) if (useAlphaToCoverage && renderer.currentSamples > 0) {
+			const dnorm = norm.fwidth();
+			alpha.assign(smoothstep(dnorm.negate().add(.5), dnorm.add(.5), norm).oneMinus());
+		} else norm.greaterThan(.5).discard();
 	} else if (useAlphaToCoverage && renderer.currentSamples > 0) {
 		const a = vUv.x;
 		const b = vUv.y.greaterThan(0).select(vUv.y.sub(1), vUv.y.add(1));
@@ -64172,10 +64035,9 @@ function _getPMREMFromTexture(texture, renderer, generator) {
 	let cacheTexture = cache.get(texture);
 	if ((cacheTexture !== void 0 ? cacheTexture.pmremVersion : -1) !== texture.pmremVersion) {
 		const image = texture.image;
-		if (texture.isCubeTexture) {
-			if (isCubeMapReady(image)) cacheTexture = generator.fromCubemap(texture, cacheTexture);
-			else return null;
-		} else if (isEquirectangularMapReady(image)) cacheTexture = generator.fromEquirectangular(texture, cacheTexture);
+		if (texture.isCubeTexture) if (isCubeMapReady(image)) cacheTexture = generator.fromCubemap(texture, cacheTexture);
+		else return null;
+		else if (isEquirectangularMapReady(image)) cacheTexture = generator.fromEquirectangular(texture, cacheTexture);
 		else return null;
 		cacheTexture.pmremVersion = texture.pmremVersion;
 		if (cache.has(texture) === false) {
@@ -66105,10 +65967,8 @@ var RenderObject = class {
 			if (nodeAttribute.node && nodeAttribute.node.attribute) attribute = nodeAttribute.node.attribute;
 			else {
 				attribute = geometry.getAttribute(nodeAttribute.name);
-				if (attribute !== void 0) {
-					if (attribute.isInterleavedBufferAttribute) attributesId[nodeAttribute.name] = attribute.data.uuid;
-					else attributesId[nodeAttribute.name] = attribute.id;
-				}
+				if (attribute !== void 0) if (attribute.isInterleavedBufferAttribute) attributesId[nodeAttribute.name] = attribute.data.uuid;
+				else attributesId[nodeAttribute.name] = attribute.id;
 			}
 			if (attribute === void 0) continue;
 			attributes.push(attribute);
@@ -66215,10 +66075,9 @@ var RenderObject = class {
 			let valueKey;
 			if (value !== null) {
 				const type = typeof value;
-				if (type === "number") {
-					if (property === "side") valueKey = String(value);
-					else valueKey = value !== 0 ? "1" : "0";
-				} else if (type === "object") {
+				if (type === "number") if (property === "side") valueKey = String(value);
+				else valueKey = value !== 0 ? "1" : "0";
+				else if (type === "object") {
 					valueKey = "{";
 					if (value.isTexture) {
 						valueKey += value.mapping;
@@ -66406,12 +66265,10 @@ var RenderObjects = class {
 			renderObject.camera = camera;
 			renderObject.updateClipping(clippingContext);
 			if (renderObject.needsGeometryUpdate) renderObject.setGeometry(object.geometry);
-			if (renderObject.version !== material.version || renderObject.needsUpdate) {
-				if (renderObject.initialCacheKey !== renderObject.getCacheKey()) {
-					renderObject.dispose();
-					renderObject = this.get(object, material, scene, camera, lightsNode, renderContext, clippingContext, passId);
-				} else renderObject.version = material.version;
-			}
+			if (renderObject.version !== material.version || renderObject.needsUpdate) if (renderObject.initialCacheKey !== renderObject.getCacheKey()) {
+				renderObject.dispose();
+				renderObject = this.get(object, material, scene, camera, lightsNode, renderContext, clippingContext, passId);
+			} else renderObject.version = material.version;
 		}
 		_chainKeys$3[0] = null;
 		_chainKeys$3[1] = null;
@@ -69246,17 +69103,15 @@ var StackNode = class extends Node {
 			error("TSL: Invalid node added to stack.", new StackTrace());
 			return this;
 		}
-		if (index === -1) {
-			if (this._currentNode) {
-				let nodeData = this._nodeDataLibrary.get(this._currentNode);
-				if (nodeData === void 0) {
-					nodeData = { delta: 0 };
-					this._nodeDataLibrary.set(this._currentNode, nodeData);
-				}
-				nodeData.delta++;
-				index = this.nodes.indexOf(this._currentNode) + nodeData.delta;
-			} else index = this.nodes.length;
-		}
+		if (index === -1) if (this._currentNode) {
+			let nodeData = this._nodeDataLibrary.get(this._currentNode);
+			if (nodeData === void 0) {
+				nodeData = { delta: 0 };
+				this._nodeDataLibrary.set(this._currentNode, nodeData);
+			}
+			nodeData.delta++;
+			index = this.nodes.indexOf(this._currentNode) + nodeData.delta;
+		} else index = this.nodes.length;
 		this.nodes.splice(index, 0, node);
 		return this;
 	}
@@ -71779,10 +71634,8 @@ var LightsNode = class extends Node {
 			const { backdrop, backdropAlpha } = context;
 			const { directDiffuse, directSpecular, indirectDiffuse, indirectSpecular } = context.reflectedLight;
 			let totalDiffuse = directDiffuse.add(indirectDiffuse);
-			if (backdrop !== null) {
-				if (backdropAlpha !== null) totalDiffuse = vec3(backdropAlpha.mix(totalDiffuse, backdrop));
-				else totalDiffuse = vec3(backdrop);
-			}
+			if (backdrop !== null) if (backdropAlpha !== null) totalDiffuse = vec3(backdropAlpha.mix(totalDiffuse, backdrop));
+			else totalDiffuse = vec3(backdrop);
 			totalDiffuseNode.assign(totalDiffuse);
 			totalSpecularNode.assign(directSpecular.add(indirectSpecular));
 			outgoingLightNode.assign(totalDiffuseNode.add(totalSpecularNode));
@@ -72546,12 +72399,10 @@ var ShadowNode = class extends ShadowBaseNode {
 			depthLayer: this.depthLayer
 		});
 		let shadowColor;
-		if (renderer.shadowMap.transmitted === true) {
-			if (shadowMap.texture.isCubeTexture) shadowColor = cubeTexture(shadowMap.texture, shadowCoord.xyz);
-			else {
-				shadowColor = texture(shadowMap.texture, shadowCoord);
-				if (depthTexture.isArrayTexture) shadowColor = shadowColor.depth(this.depthLayer);
-			}
+		if (renderer.shadowMap.transmitted === true) if (shadowMap.texture.isCubeTexture) shadowColor = cubeTexture(shadowMap.texture, shadowCoord.xyz);
+		else {
+			shadowColor = texture(shadowMap.texture, shadowCoord);
+			if (depthTexture.isArrayTexture) shadowColor = shadowColor.depth(this.depthLayer);
 		}
 		let shadowOutput;
 		if (shadowColor) shadowOutput = mix(1, shadowNode.rgb.mix(shadowColor, 1), shadowIntensity.mul(shadowColor.a)).toVar();
@@ -74929,11 +74780,10 @@ var NodeBuilder = class {
 			let typeStr = "vec";
 			if (renderTargetType === 1013) typeStr = "ivec";
 			else if (renderTargetType === 1014) typeStr = "uvec";
-			if (renderTargetFormat === 1028 || renderTargetFormat === 1029) {
-				if (renderTargetType === 1013) type = "int";
-				else if (renderTargetType === 1014) type = "uint";
-				else type = "float";
-			} else if (renderTargetFormat === 1030 || renderTargetFormat === 1031) type = `${typeStr}2`;
+			if (renderTargetFormat === 1028 || renderTargetFormat === 1029) if (renderTargetType === 1013) type = "int";
+			else if (renderTargetType === 1014) type = "uint";
+			else type = "float";
+			else if (renderTargetFormat === 1030 || renderTargetFormat === 1031) type = `${typeStr}2`;
 			else if (renderTargetFormat === 1022 || renderTargetFormat === 1032) type = `${typeStr}3`;
 			else type = `${typeStr}4`;
 		}
@@ -76424,11 +76274,10 @@ var NodeBuilder = class {
 	*/
 	getClosestSubBuild(data) {
 		let subBuilds;
-		if (data && data.isNode) {
-			if (data.isShaderCallNodeInternal) subBuilds = data.shaderNode.subBuilds;
-			else if (data.isStackNode) subBuilds = [data.subBuild];
-			else subBuilds = this.getDataFromNode(data, "any").subBuilds;
-		} else if (data instanceof Set) subBuilds = [...data];
+		if (data && data.isNode) if (data.isShaderCallNodeInternal) subBuilds = data.shaderNode.subBuilds;
+		else if (data.isStackNode) subBuilds = [data.subBuild];
+		else subBuilds = this.getDataFromNode(data, "any").subBuilds;
+		else if (data instanceof Set) subBuilds = [...data];
 		else subBuilds = data;
 		if (!subBuilds) return null;
 		const subBuildLayers = this.subBuildLayers;
@@ -76473,13 +76322,11 @@ var NodeBuilder = class {
 			...renderer.contextNode.getFlowContextData()
 		};
 		else error("NodeBuilder: \"renderer.contextNode\" must be an instance of `context()`.");
-		if (material && material.contextNode) {
-			if (material.contextNode.isContextNode === true) this.context = {
-				...this.context,
-				...material.contextNode.getFlowContextData()
-			};
-			else error("NodeBuilder: \"material.contextNode\" must be an instance of `context()`.");
-		}
+		if (material && material.contextNode) if (material.contextNode.isContextNode === true) this.context = {
+			...this.context,
+			...material.contextNode.getFlowContextData()
+		};
+		else error("NodeBuilder: \"material.contextNode\" must be an instance of `context()`.");
 		if (material !== null) {
 			let nodeMaterial = renderer.library.fromMaterial(material);
 			if (nodeMaterial === null) {
@@ -77841,15 +77688,14 @@ var NodeManager = class extends DataMap {
 			const forceUpdate = scene.backgroundBlurriness === 0 && sceneData.backgroundBlurriness > 0 || scene.backgroundBlurriness > 0 && sceneData.backgroundBlurriness === 0;
 			if (sceneData.background !== background || forceUpdate) {
 				sceneData.backgroundNode = this.getCacheNode("background", background, () => {
-					if (background.isCubeTexture === true || background.mapping === 303 || background.mapping === 304 || background.mapping === 306) {
-						if (scene.backgroundBlurriness > 0 || background.mapping === 306) return pmremTexture(background);
-						else {
-							let envMap;
-							if (background.isCubeTexture === true) envMap = cubeTexture(background);
-							else envMap = texture(background);
-							return cubeMapNode(envMap);
-						}
-					} else if (background.isTexture === true) return texture(background, screenUV.flipY()).setUpdateMatrix(true);
+					if (background.isCubeTexture === true || background.mapping === 303 || background.mapping === 304 || background.mapping === 306) if (scene.backgroundBlurriness > 0 || background.mapping === 306) return pmremTexture(background);
+					else {
+						let envMap;
+						if (background.isCubeTexture === true) envMap = cubeTexture(background);
+						else envMap = texture(background);
+						return cubeMapNode(envMap);
+					}
+					else if (background.isTexture === true) return texture(background, screenUV.flipY()).setUpdateMatrix(true);
 					else if (background.isColor !== true) error("WebGPUNodes: Unsupported background configuration.", background);
 				}, forceUpdate);
 				sceneData.background = background;
@@ -77956,10 +77802,9 @@ var NodeManager = class extends DataMap {
 	getOutputNode(outputTarget) {
 		const renderer = this.renderer;
 		let output;
-		if (outputTarget.isArrayTexture) {
-			if (this.backend.isWebGLBackend) output = texture(outputTarget, screenUV).depth(builtin("gl_ViewID_OVR")).renderOutput(renderer.toneMapping, renderer.currentColorSpace);
-			else output = texture(outputTarget, screenUV).depth(_outputLayerIndex).renderOutput(renderer.toneMapping, renderer.currentColorSpace);
-		} else output = texture(outputTarget, screenUV).renderOutput(renderer.toneMapping, renderer.currentColorSpace);
+		if (outputTarget.isArrayTexture) if (this.backend.isWebGLBackend) output = texture(outputTarget, screenUV).depth(builtin("gl_ViewID_OVR")).renderOutput(renderer.toneMapping, renderer.currentColorSpace);
+		else output = texture(outputTarget, screenUV).depth(_outputLayerIndex).renderOutput(renderer.toneMapping, renderer.currentColorSpace);
+		else output = texture(outputTarget, screenUV).renderOutput(renderer.toneMapping, renderer.currentColorSpace);
 		return output;
 	}
 	/**
@@ -82081,14 +81926,13 @@ var Renderer = class {
 	* @param {?(Vector2|Vector4)} [rectangle=null] - A two or four dimensional vector that defines the rectangular portion of the framebuffer that should be copied.
 	*/
 	copyFramebufferToTexture(framebufferTexture, rectangle = null) {
-		if (rectangle !== null) {
-			if (rectangle.isVector2) rectangle = _vector4.set(rectangle.x, rectangle.y, framebufferTexture.image.width, framebufferTexture.image.height).floor();
-			else if (rectangle.isVector4) rectangle = _vector4.copy(rectangle).floor();
-			else {
-				error("Renderer.copyFramebufferToTexture: Invalid rectangle.");
-				return;
-			}
-		} else rectangle = _vector4.set(0, 0, framebufferTexture.image.width, framebufferTexture.image.height);
+		if (rectangle !== null) if (rectangle.isVector2) rectangle = _vector4.set(rectangle.x, rectangle.y, framebufferTexture.image.width, framebufferTexture.image.height).floor();
+		else if (rectangle.isVector4) rectangle = _vector4.copy(rectangle).floor();
+		else {
+			error("Renderer.copyFramebufferToTexture: Invalid rectangle.");
+			return;
+		}
+		else rectangle = _vector4.set(0, 0, framebufferTexture.image.width, framebufferTexture.image.height);
 		let renderContext = this._currentRenderContext;
 		let renderTarget;
 		if (renderContext !== null) renderTarget = renderContext.renderTarget;
@@ -83847,10 +83691,9 @@ ${flowData.code}
 	generateTextureLoad(texture, textureProperty, uvIndexSnippet, levelSnippet, depthSnippet, offsetSnippet) {
 		if (levelSnippet === null) levelSnippet = "0";
 		let snippet;
-		if (depthSnippet) {
-			if (offsetSnippet) snippet = `texelFetchOffset( ${textureProperty}, ivec3( ${uvIndexSnippet}, ${depthSnippet} ), int( ${levelSnippet} ), ${offsetSnippet} )`;
-			else snippet = `texelFetch( ${textureProperty}, ivec3( ${uvIndexSnippet}, ${depthSnippet} ), int( ${levelSnippet} ) )`;
-		} else if (offsetSnippet) snippet = `texelFetchOffset( ${textureProperty}, ${uvIndexSnippet}, int( ${levelSnippet} ), ${offsetSnippet} )`;
+		if (depthSnippet) if (offsetSnippet) snippet = `texelFetchOffset( ${textureProperty}, ivec3( ${uvIndexSnippet}, ${depthSnippet} ), int( ${levelSnippet} ), ${offsetSnippet} )`;
+		else snippet = `texelFetch( ${textureProperty}, ivec3( ${uvIndexSnippet}, ${depthSnippet} ), int( ${levelSnippet} ) )`;
+		else if (offsetSnippet) snippet = `texelFetchOffset( ${textureProperty}, ${uvIndexSnippet}, int( ${levelSnippet} ), ${offsetSnippet} )`;
 		else snippet = `texelFetch( ${textureProperty}, ${uvIndexSnippet}, int( ${levelSnippet} ) )`;
 		if (texture !== null && texture.isDepthTexture) snippet += ".x";
 		return snippet;
@@ -84013,16 +83856,14 @@ ${flowData.code}
 					else if (texture.type === 1013) typePrefix = "i";
 				}
 				if (uniform.type === "texture3D" && texture.isArrayTexture === false) snippet = `${typePrefix}sampler3D ${uniform.name};`;
-				else if (texture.compareFunction && textureNode.compareNode !== null) {
-					if (texture.isArrayTexture === true) snippet = `sampler2DArrayShadow ${uniform.name};`;
-					else snippet = `sampler2DShadow ${uniform.name};`;
-				} else if (texture.isArrayTexture === true || texture.isDataArrayTexture === true || texture.isCompressedArrayTexture === true) snippet = `${typePrefix}sampler2DArray ${uniform.name};`;
+				else if (texture.compareFunction && textureNode.compareNode !== null) if (texture.isArrayTexture === true) snippet = `sampler2DArrayShadow ${uniform.name};`;
+				else snippet = `sampler2DShadow ${uniform.name};`;
+				else if (texture.isArrayTexture === true || texture.isDataArrayTexture === true || texture.isCompressedArrayTexture === true) snippet = `${typePrefix}sampler2DArray ${uniform.name};`;
 				else snippet = `${typePrefix}sampler2D ${uniform.name};`;
 			} else if (uniform.type === "cubeTexture") snippet = `samplerCube ${uniform.name};`;
-			else if (uniform.type === "cubeDepthTexture") {
-				if (uniform.node.value.compareFunction) snippet = `samplerCubeShadow ${uniform.name};`;
-				else snippet = `samplerCube ${uniform.name};`;
-			} else if (uniform.type === "buffer") {
+			else if (uniform.type === "cubeDepthTexture") if (uniform.node.value.compareFunction) snippet = `samplerCubeShadow ${uniform.name};`;
+			else snippet = `samplerCube ${uniform.name};`;
+			else if (uniform.type === "buffer") {
 				const bufferNode = uniform.node;
 				const bufferType = this.getType(bufferNode.bufferType);
 				const bufferCount = bufferNode.bufferCount;
@@ -84136,16 +83977,15 @@ ${flowData.code}
 		if (shaderStage === "vertex" || shaderStage === "compute") for (const varying of varyings) {
 			if (shaderStage === "compute") varying.needsInterpolation = true;
 			const type = this.getType(varying.type);
-			if (varying.needsInterpolation) {
-				if (varying.interpolationType) {
-					const interpolationType = interpolationTypeMap[varying.interpolationType] || varying.interpolationType;
-					const sampling = interpolationModeMap[varying.interpolationSampling] || "";
-					snippet += `${interpolationType} ${sampling} out ${type} ${varying.name};\n`;
-				} else {
-					const flat = type.includes("int") || type.includes("uv") || type.includes("iv") ? "flat " : "";
-					snippet += `${flat}out ${type} ${varying.name};\n`;
-				}
-			} else snippet += `${type} ${varying.name};\n`;
+			if (varying.needsInterpolation) if (varying.interpolationType) {
+				const interpolationType = interpolationTypeMap[varying.interpolationType] || varying.interpolationType;
+				const sampling = interpolationModeMap[varying.interpolationSampling] || "";
+				snippet += `${interpolationType} ${sampling} out ${type} ${varying.name};\n`;
+			} else {
+				const flat = type.includes("int") || type.includes("uv") || type.includes("iv") ? "flat " : "";
+				snippet += `${flat}out ${type} ${varying.name};\n`;
+			}
+			else snippet += `${type} ${varying.name};\n`;
 		}
 		else if (shaderStage === "fragment") {
 			for (const varying of varyings) if (varying.needsInterpolation) {
@@ -85283,10 +85123,9 @@ var WebGLAttributeUtils = class {
 		let type;
 		if (array instanceof Float32Array) type = gl.FLOAT;
 		else if (typeof Float16Array !== "undefined" && array instanceof Float16Array) type = gl.HALF_FLOAT;
-		else if (array instanceof Uint16Array) {
-			if (attribute.isFloat16BufferAttribute) type = gl.HALF_FLOAT;
-			else type = gl.UNSIGNED_SHORT;
-		} else if (array instanceof Int16Array) type = gl.SHORT;
+		else if (array instanceof Uint16Array) if (attribute.isFloat16BufferAttribute) type = gl.HALF_FLOAT;
+		else type = gl.UNSIGNED_SHORT;
+		else if (array instanceof Int16Array) type = gl.SHORT;
 		else if (array instanceof Uint32Array) type = gl.UNSIGNED_INT;
 		else if (array instanceof Int32Array) type = gl.INT;
 		else if (array instanceof Int8Array) type = gl.BYTE;
@@ -85567,11 +85406,9 @@ var WebGLState = class {
 		const { gl } = this;
 		if (cullFace !== 0) {
 			this.enable(gl.CULL_FACE);
-			if (cullFace !== this.currentCullFace) {
-				if (cullFace === 1) gl.cullFace(gl.BACK);
-				else if (cullFace === 2) gl.cullFace(gl.FRONT);
-				else gl.cullFace(gl.FRONT_AND_BACK);
-			}
+			if (cullFace !== this.currentCullFace) if (cullFace === 1) gl.cullFace(gl.BACK);
+			else if (cullFace === 2) gl.cullFace(gl.FRONT);
+			else gl.cullFace(gl.FRONT_AND_BACK);
 		} else this.disable(gl.CULL_FACE);
 		this.currentCullFace = cullFace;
 	}
@@ -86139,10 +85976,8 @@ var WebGLState = class {
 	*/
 	bindTexture(webglType, webglTexture, webglSlot) {
 		const { gl, currentTextureSlot, currentBoundTextures, maxTextures } = this;
-		if (webglSlot === void 0) {
-			if (currentTextureSlot === null) webglSlot = gl.TEXTURE0 + maxTextures - 1;
-			else webglSlot = currentTextureSlot;
-		}
+		if (webglSlot === void 0) if (currentTextureSlot === null) webglSlot = gl.TEXTURE0 + maxTextures - 1;
+		else webglSlot = currentTextureSlot;
 		let boundTexture = currentBoundTextures[webglSlot];
 		if (boundTexture === void 0) {
 			boundTexture = {
@@ -86289,24 +86124,22 @@ var WebGLUtils = class {
 		if (p === 1030) return gl.RG;
 		if (p === 1031) return gl.RG_INTEGER;
 		if (p === 1033) return gl.RGBA_INTEGER;
-		if (p === 33776 || p === 33777 || p === 33778 || p === 33779) {
-			if (transfer === "srgb") {
-				extension = extensions.get("WEBGL_compressed_texture_s3tc_srgb");
-				if (extension !== null) {
-					if (p === 33776) return extension.COMPRESSED_SRGB_S3TC_DXT1_EXT;
-					if (p === 33777) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
-					if (p === 33778) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
-					if (p === 33779) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
-				} else return null;
-			} else {
-				extension = extensions.get("WEBGL_compressed_texture_s3tc");
-				if (extension !== null) {
-					if (p === 33776) return extension.COMPRESSED_RGB_S3TC_DXT1_EXT;
-					if (p === 33777) return extension.COMPRESSED_RGBA_S3TC_DXT1_EXT;
-					if (p === 33778) return extension.COMPRESSED_RGBA_S3TC_DXT3_EXT;
-					if (p === 33779) return extension.COMPRESSED_RGBA_S3TC_DXT5_EXT;
-				} else return null;
-			}
+		if (p === 33776 || p === 33777 || p === 33778 || p === 33779) if (transfer === "srgb") {
+			extension = extensions.get("WEBGL_compressed_texture_s3tc_srgb");
+			if (extension !== null) {
+				if (p === 33776) return extension.COMPRESSED_SRGB_S3TC_DXT1_EXT;
+				if (p === 33777) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+				if (p === 33778) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+				if (p === 33779) return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+			} else return null;
+		} else {
+			extension = extensions.get("WEBGL_compressed_texture_s3tc");
+			if (extension !== null) {
+				if (p === 33776) return extension.COMPRESSED_RGB_S3TC_DXT1_EXT;
+				if (p === 33777) return extension.COMPRESSED_RGBA_S3TC_DXT1_EXT;
+				if (p === 33778) return extension.COMPRESSED_RGBA_S3TC_DXT3_EXT;
+				if (p === 33779) return extension.COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			} else return null;
 		}
 		if (p === 35840 || p === 35841 || p === 35842 || p === 35843) {
 			extension = extensions.get("WEBGL_compressed_texture_pvrtc");
@@ -86744,12 +86577,10 @@ var WebGLTextureUtils = class {
 			const image = options.image;
 			for (let i = 0; i < mipmaps.length; i++) {
 				const mipmap = mipmaps[i];
-				if (texture.isCompressedArrayTexture) {
-					if (texture.format !== gl.RGBA) {
-						if (glFormat !== null) gl.compressedTexSubImage3D(gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, mipmap.data);
-						else warn("WebGLBackend: Attempt to load unsupported compressed texture format in .uploadTexture()");
-					} else gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, glType, mipmap.data);
-				} else if (glFormat !== null) gl.compressedTexSubImage2D(gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+				if (texture.isCompressedArrayTexture) if (texture.format !== gl.RGBA) if (glFormat !== null) gl.compressedTexSubImage3D(gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, mipmap.data);
+				else warn("WebGLBackend: Attempt to load unsupported compressed texture format in .uploadTexture()");
+				else gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, i, 0, 0, 0, mipmap.width, mipmap.height, image.depth, glFormat, glType, mipmap.data);
+				else if (glFormat !== null) gl.compressedTexSubImage2D(gl.TEXTURE_2D, i, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
 				else warn("WebGLBackend: Unsupported compressed texture format");
 			}
 		} else if (texture.isCubeTexture) {
@@ -86781,10 +86612,8 @@ var WebGLTextureUtils = class {
 			texture.update();
 			gl.texImage2D(glTextureType, 0, glInternalFormat, glFormat, glType, options.image);
 		} else if (texture.isHTMLTexture) {
-			if (typeof gl.texElementImage2D === "function") {
-				if (gl.texElementImage2D.length === 3) gl.texElementImage2D(gl.TEXTURE_2D, gl.RGBA8, options.image);
-				else gl.texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, options.image);
-			}
+			if (typeof gl.texElementImage2D === "function") if (gl.texElementImage2D.length === 3) gl.texElementImage2D(gl.TEXTURE_2D, gl.RGBA8, options.image);
+			else gl.texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, options.image);
 		} else {
 			const mipmaps = texture.mipmaps;
 			if (mipmaps.length > 0) for (let i = 0, il = mipmaps.length; i < il; i++) {
@@ -86953,11 +86782,10 @@ var WebGLTextureUtils = class {
 			}
 			state.bindFramebuffer(gl.READ_FRAMEBUFFER, prevReadFramebuffer);
 			state.bindFramebuffer(gl.DRAW_FRAMEBUFFER, prevDrawFramebuffer);
-		} else if (isDst3D) {
-			if (srcTexture.isDataTexture || srcTexture.isData3DTexture) gl.texSubImage3D(glTextureType, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image.data);
-			else if (dstTexture.isCompressedArrayTexture) gl.compressedTexSubImage3D(glTextureType, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, image.data);
-			else gl.texSubImage3D(glTextureType, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image);
-		} else if (srcTexture.isDataTexture) gl.texSubImage2D(gl.TEXTURE_2D, dstLevel, dstX, dstY, width, height, glFormat, glType, image.data);
+		} else if (isDst3D) if (srcTexture.isDataTexture || srcTexture.isData3DTexture) gl.texSubImage3D(glTextureType, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image.data);
+		else if (dstTexture.isCompressedArrayTexture) gl.compressedTexSubImage3D(glTextureType, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, image.data);
+		else gl.texSubImage3D(glTextureType, dstLevel, dstX, dstY, dstZ, width, height, depth, glFormat, glType, image);
+		else if (srcTexture.isDataTexture) gl.texSubImage2D(gl.TEXTURE_2D, dstLevel, dstX, dstY, width, height, glFormat, glType, image.data);
 		else if (srcTexture.isCompressedTexture) gl.compressedTexSubImage2D(gl.TEXTURE_2D, dstLevel, dstX, dstY, image.width, image.height, glFormat, image.data);
 		else gl.texSubImage2D(gl.TEXTURE_2D, dstLevel, dstX, dstY, width, height, glFormat, glType, image);
 		state.pixelStorei(gl.UNPACK_ROW_LENGTH, currentUnpackRowLen);
@@ -87856,12 +87684,10 @@ var WebGLBackend = class extends Backend {
 		this.disjoint = this.extensions.get("EXT_disjoint_timer_query_webgl2");
 		this.parallel = this.extensions.get("KHR_parallel_shader_compile");
 		this.drawBuffersIndexedExt = this.extensions.get("OES_draw_buffers_indexed");
-		if (parameters.reversedDepthBuffer) {
-			if (this.extensions.has("EXT_clip_control")) renderer.reversedDepthBuffer = true;
-			else {
-				warn("WebGPURenderer: Unable to use reversed depth buffer due to missing EXT_clip_control extension. Fallback to default depth buffer.");
-				renderer.reversedDepthBuffer = false;
-			}
+		if (parameters.reversedDepthBuffer) if (this.extensions.has("EXT_clip_control")) renderer.reversedDepthBuffer = true;
+		else {
+			warn("WebGPURenderer: Unable to use reversed depth buffer due to missing EXT_clip_control extension. Fallback to default depth buffer.");
+			renderer.reversedDepthBuffer = false;
 		}
 		if (renderer.reversedDepthBuffer) this.state.setReversedDepth(true);
 	}
@@ -88272,19 +88098,18 @@ var WebGLBackend = class extends Backend {
 	* @param {WebGLProgram} programGPU - The raw WebGL shader program.
 	*/
 	_draw(object, renderer, firstVertex, vertexCount, instanceCount, programGPU) {
-		if (object.isBatchedMesh) {
-			if (this.hasFeature("WEBGL_multi_draw") === false) {
-				const { gl } = this;
-				const drawIdLocation = gl.getUniformLocation(programGPU, "nodeUniformDrawId");
-				const starts = object._multiDrawStarts;
-				const counts = object._multiDrawCounts;
-				const drawCount = object._multiDrawCount;
-				for (let i = 0; i < drawCount; i++) {
-					gl.uniform1ui(drawIdLocation, i);
-					renderer.render(starts[i], counts[i]);
-				}
-			} else renderer.renderMultiDraw(object._multiDrawStarts, object._multiDrawCounts, object._multiDrawCount);
-		} else if (instanceCount > 1) renderer.renderInstances(firstVertex, vertexCount, instanceCount);
+		if (object.isBatchedMesh) if (this.hasFeature("WEBGL_multi_draw") === false) {
+			const { gl } = this;
+			const drawIdLocation = gl.getUniformLocation(programGPU, "nodeUniformDrawId");
+			const starts = object._multiDrawStarts;
+			const counts = object._multiDrawCounts;
+			const drawCount = object._multiDrawCount;
+			for (let i = 0; i < drawCount; i++) {
+				gl.uniform1ui(drawIdLocation, i);
+				renderer.render(starts[i], counts[i]);
+			}
+		} else renderer.renderMultiDraw(object._multiDrawStarts, object._multiDrawCounts, object._multiDrawCount);
+		else if (instanceCount > 1) renderer.renderInstances(firstVertex, vertexCount, instanceCount);
 		else renderer.render(firstVertex, vertexCount);
 	}
 	/**
@@ -88625,14 +88450,13 @@ var WebGLBackend = class extends Backend {
 		if (this.renderer.debug.checkShaderErrors) {
 			const gl = this.gl;
 			const programLog = (gl.getProgramInfoLog(programGPU) || "").trim();
-			if (gl.getProgramParameter(programGPU, gl.LINK_STATUS) === false) {
-				if (typeof this.renderer.debug.onShaderError === "function") this.renderer.debug.onShaderError(gl, programGPU, glVertexShader, glFragmentShader);
-				else {
-					const vertexErrors = this._getShaderErrors(gl, glVertexShader, "vertex");
-					const fragmentErrors = this._getShaderErrors(gl, glFragmentShader, "fragment");
-					error("WebGLProgram: Shader Error " + gl.getError() + " - VALIDATE_STATUS " + gl.getProgramParameter(programGPU, gl.VALIDATE_STATUS) + "\n\nProgram Info Log: " + programLog + "\n" + vertexErrors + "\n" + fragmentErrors);
-				}
-			} else if (programLog !== "") warn("WebGLProgram: Program Info Log:", programLog);
+			if (gl.getProgramParameter(programGPU, gl.LINK_STATUS) === false) if (typeof this.renderer.debug.onShaderError === "function") this.renderer.debug.onShaderError(gl, programGPU, glVertexShader, glFragmentShader);
+			else {
+				const vertexErrors = this._getShaderErrors(gl, glVertexShader, "vertex");
+				const fragmentErrors = this._getShaderErrors(gl, glFragmentShader, "fragment");
+				error("WebGLProgram: Shader Error " + gl.getError() + " - VALIDATE_STATUS " + gl.getProgramParameter(programGPU, gl.VALIDATE_STATUS) + "\n\nProgram Info Log: " + programLog + "\n" + vertexErrors + "\n" + fragmentErrors);
+			}
+			else if (programLog !== "") warn("WebGLProgram: Program Info Log:", programLog);
 		}
 	}
 	/**
@@ -89681,14 +89505,11 @@ var WebGPUUtils = class {
 	*/
 	getCurrentDepthStencilFormat(renderContext) {
 		let format;
-		if (renderContext.depth) {
-			if (renderContext.depthTexture !== null) format = this.getTextureFormatGPU(renderContext.depthTexture);
-			else if (renderContext.stencil) {
-				if (this.backend.renderer.reversedDepthBuffer === true) format = GPUTextureFormat.Depth32FloatStencil8;
-				else format = GPUTextureFormat.Depth24PlusStencil8;
-			} else if (this.backend.renderer.reversedDepthBuffer === true) format = GPUTextureFormat.Depth32Float;
-			else format = GPUTextureFormat.Depth24Plus;
-		}
+		if (renderContext.depth) if (renderContext.depthTexture !== null) format = this.getTextureFormatGPU(renderContext.depthTexture);
+		else if (renderContext.stencil) if (this.backend.renderer.reversedDepthBuffer === true) format = GPUTextureFormat.Depth32FloatStencil8;
+		else format = GPUTextureFormat.Depth24PlusStencil8;
+		else if (this.backend.renderer.reversedDepthBuffer === true) format = GPUTextureFormat.Depth32Float;
+		else format = GPUTextureFormat.Depth24Plus;
 		return format;
 	}
 	/**
@@ -91292,10 +91113,8 @@ var WebGPUTextureUtils = class {
 		if (options.levels === void 0) options.levels = 1;
 		if (options.depth === void 0) options.depth = 1;
 		const { width, height, depth, levels } = options;
-		if (texture.isFramebufferTexture) {
-			if (options.renderTarget) options.format = this.backend.utils.getCurrentColorFormat(options.renderTarget);
-			else options.format = this.backend.utils.getPreferredCanvasFormat();
-		}
+		if (texture.isFramebufferTexture) if (options.renderTarget) options.format = this.backend.utils.getCurrentColorFormat(options.renderTarget);
+		else options.format = this.backend.utils.getPreferredCanvasFormat();
 		const dimension = this._getDimension(texture);
 		const format = texture.internalFormat || options.format || getFormat(texture, backend.device);
 		textureData.format = format;
@@ -91440,23 +91259,20 @@ var WebGPUTextureUtils = class {
 		const mipmaps = texture.mipmaps;
 		const { textureDescriptorGPU } = textureData;
 		if (texture.isRenderTargetTexture || textureDescriptorGPU === void 0) return;
-		if (texture.isDataTexture) {
-			if (mipmaps.length > 0) for (let i = 0, il = mipmaps.length; i < il; i++) {
-				const mipmap = mipmaps[i];
-				this._copyBufferToTexture(mipmap, textureData.texture, textureDescriptorGPU, 0, texture.flipY, 0, i);
-			}
-			else this._copyBufferToTexture(options.image, textureData.texture, textureDescriptorGPU, 0, texture.flipY);
-		} else if (texture.isArrayTexture || texture.isDataArrayTexture || texture.isData3DTexture) {
-			if (texture.layerUpdates && texture.layerUpdates.size > 0) {
-				for (const layerIndex of texture.layerUpdates) this._copyBufferToTexture(options.image, textureData.texture, textureDescriptorGPU, layerIndex, texture.flipY, layerIndex);
-				texture.clearLayerUpdates();
-			} else for (let i = 0; i < options.image.depth; i++) this._copyBufferToTexture(options.image, textureData.texture, textureDescriptorGPU, i, texture.flipY, i);
-		} else if (texture.isCompressedTexture || texture.isCompressedArrayTexture) {
-			if (texture.isCompressedArrayTexture && texture.layerUpdates.size > 0) {
-				this._copyCompressedBufferToTexture(texture.mipmaps, textureData.texture, textureDescriptorGPU, texture.layerUpdates);
-				texture.clearLayerUpdates();
-			} else this._copyCompressedBufferToTexture(texture.mipmaps, textureData.texture, textureDescriptorGPU);
-		} else if (texture.isCubeTexture) this._copyCubeMapToTexture(texture, textureData.texture, textureDescriptorGPU);
+		if (texture.isDataTexture) if (mipmaps.length > 0) for (let i = 0, il = mipmaps.length; i < il; i++) {
+			const mipmap = mipmaps[i];
+			this._copyBufferToTexture(mipmap, textureData.texture, textureDescriptorGPU, 0, texture.flipY, 0, i);
+		}
+		else this._copyBufferToTexture(options.image, textureData.texture, textureDescriptorGPU, 0, texture.flipY);
+		else if (texture.isArrayTexture || texture.isDataArrayTexture || texture.isData3DTexture) if (texture.layerUpdates && texture.layerUpdates.size > 0) {
+			for (const layerIndex of texture.layerUpdates) this._copyBufferToTexture(options.image, textureData.texture, textureDescriptorGPU, layerIndex, texture.flipY, layerIndex);
+			texture.clearLayerUpdates();
+		} else for (let i = 0; i < options.image.depth; i++) this._copyBufferToTexture(options.image, textureData.texture, textureDescriptorGPU, i, texture.flipY, i);
+		else if (texture.isCompressedTexture || texture.isCompressedArrayTexture) if (texture.isCompressedArrayTexture && texture.layerUpdates.size > 0) {
+			this._copyCompressedBufferToTexture(texture.mipmaps, textureData.texture, textureDescriptorGPU, texture.layerUpdates);
+			texture.clearLayerUpdates();
+		} else this._copyCompressedBufferToTexture(texture.mipmaps, textureData.texture, textureDescriptorGPU);
+		else if (texture.isCubeTexture) this._copyCubeMapToTexture(texture, textureData.texture, textureDescriptorGPU);
 		else if (texture.isHTMLTexture) {
 			const device = this.backend.device;
 			const canvas = this.backend.renderer.domElement;
@@ -92691,15 +92507,14 @@ var WGSLNodeBuilder = class extends NodeBuilder {
 	* @return {string} The WGSL snippet.
 	*/
 	_generateTextureSample(texture, textureProperty, uvSnippet, depthSnippet, offsetSnippet, shaderStage = this.shaderStage) {
-		if (shaderStage === "fragment") {
-			if (depthSnippet) {
-				if (offsetSnippet) return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${offsetSnippet} )`;
-				return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet} )`;
-			} else {
-				if (offsetSnippet) return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${offsetSnippet} )`;
-				return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet} )`;
-			}
-		} else return this.generateTextureSampleLevel(texture, textureProperty, uvSnippet, "0", depthSnippet);
+		if (shaderStage === "fragment") if (depthSnippet) {
+			if (offsetSnippet) return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${offsetSnippet} )`;
+			return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet} )`;
+		} else {
+			if (offsetSnippet) return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${offsetSnippet} )`;
+			return `textureSample( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet} )`;
+		}
+		else return this.generateTextureSampleLevel(texture, textureProperty, uvSnippet, "0", depthSnippet);
 	}
 	/**
 	* Generates the WGSL snippet when sampling textures with explicit mip level.
@@ -92714,15 +92529,14 @@ var WGSLNodeBuilder = class extends NodeBuilder {
 	* @return {string} The WGSL snippet.
 	*/
 	generateTextureSampleLevel(texture, textureProperty, uvSnippet, levelSnippet, depthSnippet, offsetSnippet) {
-		if (this.isUnfilterable(texture) === false) {
-			if (depthSnippet) {
-				if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
-				return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet} )`;
-			} else {
-				if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
-				return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet} )`;
-			}
-		} else if (this.isFilteredTexture(texture)) return this.generateFilteredTexture(texture, textureProperty, uvSnippet, offsetSnippet, levelSnippet, depthSnippet);
+		if (this.isUnfilterable(texture) === false) if (depthSnippet) {
+			if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
+			return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet} )`;
+		} else {
+			if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
+			return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet} )`;
+		}
+		else if (this.isFilteredTexture(texture)) return this.generateFilteredTexture(texture, textureProperty, uvSnippet, offsetSnippet, levelSnippet, depthSnippet);
 		else return this.generateTextureLod(texture, textureProperty, uvSnippet, depthSnippet, offsetSnippet, levelSnippet);
 	}
 	/**
@@ -92960,15 +92774,14 @@ var WGSLNodeBuilder = class extends NodeBuilder {
 	* @return {string} The WGSL snippet.
 	*/
 	generateTextureGrad(texture, textureProperty, uvSnippet, gradSnippet, depthSnippet, offsetSnippet, shaderStage = this.shaderStage) {
-		if (shaderStage === "fragment") {
-			if (depthSnippet) {
-				if (offsetSnippet) return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]}, ${offsetSnippet} )`;
-				return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]} )`;
-			} else {
-				if (offsetSnippet) return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]}, ${offsetSnippet} )`;
-				return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]} )`;
-			}
-		} else error(`WebGPURenderer: THREE.TextureNode.gradient() does not support ${shaderStage} shader.`);
+		if (shaderStage === "fragment") if (depthSnippet) {
+			if (offsetSnippet) return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]}, ${offsetSnippet} )`;
+			return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]} )`;
+		} else {
+			if (offsetSnippet) return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]}, ${offsetSnippet} )`;
+			return `textureSampleGrad( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${gradSnippet[0]}, ${gradSnippet[1]} )`;
+		}
+		else error(`WebGPURenderer: THREE.TextureNode.gradient() does not support ${shaderStage} shader.`);
 	}
 	/**
 	* Generates the WGSL snippet for sampling a depth texture and comparing the sampled depth values
@@ -93047,15 +92860,14 @@ var WGSLNodeBuilder = class extends NodeBuilder {
 	* @return {string} The WGSL snippet.
 	*/
 	generateTextureLevel(texture, textureProperty, uvSnippet, levelSnippet, depthSnippet, offsetSnippet) {
-		if (this.isUnfilterable(texture) === false) {
-			if (depthSnippet) {
-				if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
-				return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet} )`;
-			} else {
-				if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
-				return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet} )`;
-			}
-		} else if (this.isFilteredTexture(texture)) return this.generateFilteredTexture(texture, textureProperty, uvSnippet, offsetSnippet, levelSnippet, depthSnippet);
+		if (this.isUnfilterable(texture) === false) if (depthSnippet) {
+			if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
+			return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${levelSnippet} )`;
+		} else {
+			if (offsetSnippet) return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet}, ${offsetSnippet} )`;
+			return `textureSampleLevel( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${levelSnippet} )`;
+		}
+		else if (this.isFilteredTexture(texture)) return this.generateFilteredTexture(texture, textureProperty, uvSnippet, offsetSnippet, levelSnippet, depthSnippet);
 		else return this.generateTextureLod(texture, textureProperty, uvSnippet, depthSnippet, offsetSnippet, levelSnippet);
 	}
 	/**
@@ -93071,15 +92883,14 @@ var WGSLNodeBuilder = class extends NodeBuilder {
 	* @return {string} The WGSL snippet.
 	*/
 	generateTextureBias(texture, textureProperty, uvSnippet, biasSnippet, depthSnippet, offsetSnippet, shaderStage = this.shaderStage) {
-		if (shaderStage === "fragment") {
-			if (depthSnippet) {
-				if (offsetSnippet) return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${biasSnippet}, ${offsetSnippet} )`;
-				return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${biasSnippet} )`;
-			} else {
-				if (offsetSnippet) return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${biasSnippet}, ${offsetSnippet} )`;
-				return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${biasSnippet} )`;
-			}
-		} else error(`WebGPURenderer: THREE.TextureNode.biasNode does not support ${shaderStage} shader.`);
+		if (shaderStage === "fragment") if (depthSnippet) {
+			if (offsetSnippet) return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${biasSnippet}, ${offsetSnippet} )`;
+			return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${depthSnippet}, ${biasSnippet} )`;
+		} else {
+			if (offsetSnippet) return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${biasSnippet}, ${offsetSnippet} )`;
+			return `textureSampleBias( ${textureProperty}, ${textureProperty}_sampler, ${uvSnippet}, ${biasSnippet} )`;
+		}
+		else error(`WebGPURenderer: THREE.TextureNode.biasNode does not support ${shaderStage} shader.`);
 	}
 	/**
 	* Returns a WGSL snippet that represents the property name of the given node.
@@ -93175,10 +92986,9 @@ var WGSLNodeBuilder = class extends NodeBuilder {
 			if (type === "texture" || type === "cubeTexture" || type === "cubeDepthTexture" || type === "storageTexture" || type === "texture3D") {
 				let texture = null;
 				const access = this.getNodeAccess(node, shaderStage);
-				if (type === "texture" || type === "storageTexture") {
-					if (node.value.is3DTexture === true) texture = new NodeSampledTexture3D(uniformNode.name, uniformNode.node, group, access);
-					else texture = new NodeSampledTexture(uniformNode.name, uniformNode.node, group, access);
-				} else if (type === "cubeTexture" || type === "cubeDepthTexture") texture = new NodeSampledCubeTexture(uniformNode.name, uniformNode.node, group, access);
+				if (type === "texture" || type === "storageTexture") if (node.value.is3DTexture === true) texture = new NodeSampledTexture3D(uniformNode.name, uniformNode.node, group, access);
+				else texture = new NodeSampledTexture(uniformNode.name, uniformNode.node, group, access);
+				else if (type === "cubeTexture" || type === "cubeDepthTexture") texture = new NodeSampledCubeTexture(uniformNode.name, uniformNode.node, group, access);
 				else if (type === "texture3D") texture = new NodeSampledTexture3D(uniformNode.name, uniformNode.node, group, access);
 				texture.store = node.isStorageTextureNode === true;
 				texture.mipLevel = texture.store ? node.mipLevel : 0;
@@ -93632,20 +93442,17 @@ ${flowData.code}
 			if (uniform.type === "texture" || uniform.type === "cubeTexture" || uniform.type === "cubeDepthTexture" || uniform.type === "storageTexture" || uniform.type === "texture3D") {
 				const textureNode = uniform.node;
 				const texture = textureNode.value;
-				if (texture.isCubeTexture === true || this.isUnfilterable(texture) === false && textureNode.isStorageTextureNode !== true || textureNode.gatherNode !== null) {
-					if (this.isSampleCompare(texture) && textureNode.compareNode !== null) bindingSnippets.push(`@binding( ${uniformIndexes.binding++} ) @group( ${uniformIndexes.group} ) var ${uniform.name}_sampler : sampler_comparison;`);
-					else bindingSnippets.push(`@binding( ${uniformIndexes.binding++} ) @group( ${uniformIndexes.group} ) var ${uniform.name}_sampler : sampler;`);
-				}
+				if (texture.isCubeTexture === true || this.isUnfilterable(texture) === false && textureNode.isStorageTextureNode !== true || textureNode.gatherNode !== null) if (this.isSampleCompare(texture) && textureNode.compareNode !== null) bindingSnippets.push(`@binding( ${uniformIndexes.binding++} ) @group( ${uniformIndexes.group} ) var ${uniform.name}_sampler : sampler_comparison;`);
+				else bindingSnippets.push(`@binding( ${uniformIndexes.binding++} ) @group( ${uniformIndexes.group} ) var ${uniform.name}_sampler : sampler;`);
 				let textureType;
 				let multisampled = "";
 				const { primarySamples } = backend.utils.getTextureSampleData(texture);
 				if (primarySamples > 1) multisampled = "_multisampled";
 				if (texture.isCubeTexture === true && texture.isDepthTexture === true) textureType = "texture_depth_cube";
 				else if (texture.isCubeTexture === true) textureType = "texture_cube<f32>";
-				else if (texture.isDepthTexture === true) {
-					if (backend.compatibilityMode && texture.compareFunction === null) textureType = `texture${multisampled}_2d<f32>`;
-					else textureType = `texture_depth${multisampled}_2d${texture.isArrayTexture === true ? "_array" : ""}`;
-				} else if (uniform.node.isStorageTextureNode === true) {
+				else if (texture.isDepthTexture === true) if (backend.compatibilityMode && texture.compareFunction === null) textureType = `texture${multisampled}_2d<f32>`;
+				else textureType = `texture_depth${multisampled}_2d${texture.isArrayTexture === true ? "_array" : ""}`;
+				else if (uniform.node.isStorageTextureNode === true) {
 					const format = getFormat(texture, backend.device);
 					const access = this.getStorageAccess(uniform.node, shaderStage);
 					const is3D = uniform.node.value.is3DTexture;
@@ -93745,20 +93552,18 @@ ${flowData.code}
 				if (node === mainNode && shaderStage !== "compute") {
 					flow += "// result\n\n	";
 					if (shaderStage === "vertex") flow += `varyings.builtinClipSpace = ${flowSlotData.result};`;
-					else if (shaderStage === "fragment") {
-						if (isOutputStruct) {
-							stageData.returnType = outputNode.getNodeType(this);
-							stageData.structs += "var<private> output : " + stageData.returnType + ";";
-							flow += `return ${flowSlotData.result};`;
-						} else {
-							let structSnippet = `\t@location( 0 ) color: ${this.getType(this.getOutputType())}`;
-							const builtins = this.getBuiltins("output");
-							if (builtins) structSnippet += ",\n	" + builtins;
-							stageData.returnType = "OutputStruct";
-							stageData.structs += this._getWGSLStruct("OutputStruct", structSnippet);
-							stageData.structs += "\nvar<private> output : OutputStruct;";
-							flow += `output.color = ${this.format(flowSlotData.result, mainNode.getNodeType(this), this.getOutputType())};\n\n\treturn output;`;
-						}
+					else if (shaderStage === "fragment") if (isOutputStruct) {
+						stageData.returnType = outputNode.getNodeType(this);
+						stageData.structs += "var<private> output : " + stageData.returnType + ";";
+						flow += `return ${flowSlotData.result};`;
+					} else {
+						let structSnippet = `\t@location( 0 ) color: ${this.getType(this.getOutputType())}`;
+						const builtins = this.getBuiltins("output");
+						if (builtins) structSnippet += ",\n	" + builtins;
+						stageData.returnType = "OutputStruct";
+						stageData.structs += this._getWGSLStruct("OutputStruct", structSnippet);
+						stageData.structs += "\nvar<private> output : OutputStruct;";
+						flow += `output.color = ${this.format(flowSlotData.result, mainNode.getNodeType(this), this.getOutputType())};\n\n\treturn output;`;
 					}
 				}
 			}
@@ -94581,12 +94386,9 @@ var WebGPUBindingUtils = class {
 			};
 			if (binding.isUniformBuffer || binding.isStorageBuffer) {
 				const buffer = {};
-				if (binding.isStorageBuffer) {
-					if (binding.visibility & GPUShaderStage.COMPUTE) {
-						if (binding.access === NodeAccess.READ_WRITE || binding.access === NodeAccess.WRITE_ONLY) buffer.type = GPUBufferBindingType.Storage;
-						else buffer.type = GPUBufferBindingType.ReadOnlyStorage;
-					} else buffer.type = GPUBufferBindingType.ReadOnlyStorage;
-				}
+				if (binding.isStorageBuffer) if (binding.visibility & GPUShaderStage.COMPUTE) if (binding.access === NodeAccess.READ_WRITE || binding.access === NodeAccess.WRITE_ONLY) buffer.type = GPUBufferBindingType.Storage;
+				else buffer.type = GPUBufferBindingType.ReadOnlyStorage;
+				else buffer.type = GPUBufferBindingType.ReadOnlyStorage;
 				bindingGPU.buffer = buffer;
 			} else if (binding.isSampledTexture && binding.store) {
 				const storageTexture = {};
@@ -94605,17 +94407,14 @@ var WebGPUBindingUtils = class {
 					texture.multisampled = true;
 					if (!binding.texture.isDepthTexture) texture.sampleType = GPUTextureSampleType.UnfilterableFloat;
 				}
-				if (binding.texture.isDepthTexture) {
-					if (backend.compatibilityMode && binding.texture.compareFunction === null) texture.sampleType = GPUTextureSampleType.UnfilterableFloat;
-					else texture.sampleType = GPUTextureSampleType.Depth;
-				} else {
+				if (binding.texture.isDepthTexture) if (backend.compatibilityMode && binding.texture.compareFunction === null) texture.sampleType = GPUTextureSampleType.UnfilterableFloat;
+				else texture.sampleType = GPUTextureSampleType.Depth;
+				else {
 					const type = binding.texture.type;
 					if (type === 1013) texture.sampleType = GPUTextureSampleType.SInt;
 					else if (type === 1014) texture.sampleType = GPUTextureSampleType.UInt;
-					else if (type === 1015) {
-						if (this.backend.hasFeature("float32-filterable")) texture.sampleType = GPUTextureSampleType.Float;
-						else texture.sampleType = GPUTextureSampleType.UnfilterableFloat;
-					}
+					else if (type === 1015) if (this.backend.hasFeature("float32-filterable")) texture.sampleType = GPUTextureSampleType.Float;
+					else texture.sampleType = GPUTextureSampleType.UnfilterableFloat;
 				}
 				if (binding.isSampledCubeTexture) texture.viewDimension = GPUTextureViewDimension.Cube;
 				else if (binding.texture.isArrayTexture || binding.texture.isDataArrayTexture || binding.texture.isCompressedArrayTexture) texture.viewDimension = GPUTextureViewDimension.TwoDArray;
@@ -94623,10 +94422,8 @@ var WebGPUBindingUtils = class {
 				bindingGPU.texture = texture;
 			} else if (binding.isSampler) {
 				const sampler = {};
-				if (binding.texture.isDepthTexture) {
-					if (binding.texture.compareFunction !== null && binding.textureNode.compareNode !== null && backend.hasCompatibility(Compatibility.TEXTURE_COMPARE)) sampler.type = GPUSamplerBindingType.Comparison;
-					else sampler.type = GPUSamplerBindingType.NonFiltering;
-				}
+				if (binding.texture.isDepthTexture) if (binding.texture.compareFunction !== null && binding.textureNode.compareNode !== null && backend.hasCompatibility(Compatibility.TEXTURE_COMPARE)) sampler.type = GPUSamplerBindingType.Comparison;
+				else sampler.type = GPUSamplerBindingType.NonFiltering;
 				bindingGPU.sampler = sampler;
 			} else error(`WebGPUBindingUtils: Unsupported binding "${binding}".`);
 			entries.push(bindingGPU);
@@ -94828,16 +94625,15 @@ var WebGPUPipelineUtils = class {
 				const texture = textures[i];
 				const colorFormat = utils.getTextureFormatGPU(texture);
 				let blending;
-				if (mrt !== null) {
-					if (this.backend.compatibilityMode !== true) {
-						const blendMode = mrt.getBlendMode(texture.name);
-						if (blendMode.blending === 6) blending = materialBlending;
-						else if (blendMode.blending !== 0) blending = this._getBlending(blendMode);
-					} else {
-						warnOnce("WebGPURenderer: Multiple Render Targets (MRT) blending configuration is not fully supported in compatibility mode. The material blending will be used for all render targets.");
-						blending = materialBlending;
-					}
-				} else blending = materialBlending;
+				if (mrt !== null) if (this.backend.compatibilityMode !== true) {
+					const blendMode = mrt.getBlendMode(texture.name);
+					if (blendMode.blending === 6) blending = materialBlending;
+					else if (blendMode.blending !== 0) blending = this._getBlending(blendMode);
+				} else {
+					warnOnce("WebGPURenderer: Multiple Render Targets (MRT) blending configuration is not fully supported in compatibility mode. The material blending will be used for all render targets.");
+					blending = materialBlending;
+				}
+				else blending = materialBlending;
 				targets.push({
 					format: colorFormat,
 					blend: blending,
@@ -96078,22 +95874,20 @@ var WebGPUBackend = class extends Backend {
 					sliceIndex = renderContext.activeCubeFace;
 					_viewDescriptor.baseArrayLayer = 0;
 					_viewDescriptor.dimension = GPUTextureViewDimension.ThreeD;
-				} else if (renderTarget.isRenderTarget && textures[i].image.depth > 1) {
-					if (isRenderCameraDepthArray === true) {
-						const cameras = renderContext.camera.cameras;
-						for (let layer = 0; layer < cameras.length; layer++) {
-							_viewDescriptor.baseArrayLayer = layer;
-							_viewDescriptor.arrayLayerCount = 1;
-							_viewDescriptor.dimension = GPUTextureViewDimension.TwoD;
-							const textureView = textureData.texture.createView(_viewDescriptor);
-							textureViews.push({
-								view: textureView,
-								resolveTarget: void 0,
-								depthSlice: void 0
-							});
-						}
-					} else _viewDescriptor.dimension = GPUTextureViewDimension.TwoDArray;
-				}
+				} else if (renderTarget.isRenderTarget && textures[i].image.depth > 1) if (isRenderCameraDepthArray === true) {
+					const cameras = renderContext.camera.cameras;
+					for (let layer = 0; layer < cameras.length; layer++) {
+						_viewDescriptor.baseArrayLayer = layer;
+						_viewDescriptor.arrayLayerCount = 1;
+						_viewDescriptor.dimension = GPUTextureViewDimension.TwoD;
+						const textureView = textureData.texture.createView(_viewDescriptor);
+						textureViews.push({
+							view: textureView,
+							resolveTarget: void 0,
+							depthSlice: void 0
+						});
+					}
+				} else _viewDescriptor.dimension = GPUTextureViewDimension.TwoDArray;
 				if (isRenderCameraDepthArray !== true) {
 					const textureView = textureData.texture.createView(_viewDescriptor);
 					let view, resolveTarget;
@@ -96350,18 +96144,14 @@ var WebGPUBackend = class extends Backend {
 			const layerDescriptor = renderContextData.layerDescriptors[i];
 			if (layerDescriptor.depthStencilAttachment) {
 				const depthAttachment = layerDescriptor.depthStencilAttachment;
-				if (renderContext.depth) {
-					if (renderContext.clearDepth) {
-						depthAttachment.depthClearValue = renderContext.clearDepthValue;
-						depthAttachment.depthLoadOp = GPULoadOp.Clear;
-					} else depthAttachment.depthLoadOp = GPULoadOp.Load;
-				}
-				if (renderContext.stencil) {
-					if (renderContext.clearStencil) {
-						depthAttachment.stencilClearValue = renderContext.clearStencilValue;
-						depthAttachment.stencilLoadOp = GPULoadOp.Clear;
-					} else depthAttachment.stencilLoadOp = GPULoadOp.Load;
-				}
+				if (renderContext.depth) if (renderContext.clearDepth) {
+					depthAttachment.depthClearValue = renderContext.clearDepthValue;
+					depthAttachment.depthLoadOp = GPULoadOp.Clear;
+				} else depthAttachment.depthLoadOp = GPULoadOp.Load;
+				if (renderContext.stencil) if (renderContext.clearStencil) {
+					depthAttachment.stencilClearValue = renderContext.clearStencilValue;
+					depthAttachment.stencilLoadOp = GPULoadOp.Clear;
+				} else depthAttachment.stencilLoadOp = GPULoadOp.Load;
 			}
 		}
 	}
@@ -96551,25 +96341,21 @@ var WebGPUBackend = class extends Backend {
 			colorAttachments = descriptor.colorAttachments;
 			depthStencilAttachment = descriptor.depthStencilAttachment;
 		}
-		if (supportsDepth && depthStencilAttachment) {
-			if (depth) {
-				depthStencilAttachment.depthLoadOp = GPULoadOp.Clear;
-				depthStencilAttachment.depthClearValue = renderer.getClearDepth();
-				depthStencilAttachment.depthStoreOp = GPUStoreOp.Store;
-			} else {
-				depthStencilAttachment.depthLoadOp = GPULoadOp.Load;
-				depthStencilAttachment.depthStoreOp = GPUStoreOp.Store;
-			}
+		if (supportsDepth && depthStencilAttachment) if (depth) {
+			depthStencilAttachment.depthLoadOp = GPULoadOp.Clear;
+			depthStencilAttachment.depthClearValue = renderer.getClearDepth();
+			depthStencilAttachment.depthStoreOp = GPUStoreOp.Store;
+		} else {
+			depthStencilAttachment.depthLoadOp = GPULoadOp.Load;
+			depthStencilAttachment.depthStoreOp = GPUStoreOp.Store;
 		}
-		if (supportsStencil && depthStencilAttachment) {
-			if (stencil) {
-				depthStencilAttachment.stencilLoadOp = GPULoadOp.Clear;
-				depthStencilAttachment.stencilClearValue = renderer.getClearStencil();
-				depthStencilAttachment.stencilStoreOp = GPUStoreOp.Store;
-			} else {
-				depthStencilAttachment.stencilLoadOp = GPULoadOp.Load;
-				depthStencilAttachment.stencilStoreOp = GPUStoreOp.Store;
-			}
+		if (supportsStencil && depthStencilAttachment) if (stencil) {
+			depthStencilAttachment.stencilLoadOp = GPULoadOp.Clear;
+			depthStencilAttachment.stencilClearValue = renderer.getClearStencil();
+			depthStencilAttachment.stencilStoreOp = GPUStoreOp.Store;
+		} else {
+			depthStencilAttachment.stencilLoadOp = GPULoadOp.Load;
+			depthStencilAttachment.stencilStoreOp = GPUStoreOp.Store;
 		}
 		_commandEncoderDescriptor.label = "clear";
 		const encoder = device.createCommandEncoder(_commandEncoderDescriptor);
@@ -97268,21 +97054,19 @@ var WebGPUBackend = class extends Backend {
 		let srcWidth = srcTexture.image.width;
 		let srcHeight = srcTexture.image.height;
 		let srcDepth = 1;
-		if (srcRegion !== null) {
-			if (srcRegion.isBox3 === true) {
-				srcX = srcRegion.min.x;
-				srcY = srcRegion.min.y;
-				srcZ = srcRegion.min.z;
-				srcWidth = srcRegion.max.x - srcRegion.min.x;
-				srcHeight = srcRegion.max.y - srcRegion.min.y;
-				srcDepth = srcRegion.max.z - srcRegion.min.z;
-			} else {
-				srcX = srcRegion.min.x;
-				srcY = srcRegion.min.y;
-				srcWidth = srcRegion.max.x - srcRegion.min.x;
-				srcHeight = srcRegion.max.y - srcRegion.min.y;
-				srcDepth = 1;
-			}
+		if (srcRegion !== null) if (srcRegion.isBox3 === true) {
+			srcX = srcRegion.min.x;
+			srcY = srcRegion.min.y;
+			srcZ = srcRegion.min.z;
+			srcWidth = srcRegion.max.x - srcRegion.min.x;
+			srcHeight = srcRegion.max.y - srcRegion.min.y;
+			srcDepth = srcRegion.max.z - srcRegion.min.z;
+		} else {
+			srcX = srcRegion.min.x;
+			srcY = srcRegion.min.y;
+			srcWidth = srcRegion.max.x - srcRegion.min.x;
+			srcHeight = srcRegion.max.y - srcRegion.min.y;
+			srcDepth = 1;
 		}
 		if (dstPosition !== null) {
 			dstX = dstPosition.x;
@@ -97324,10 +97108,9 @@ var WebGPUBackend = class extends Backend {
 	copyFramebufferToTexture(texture, renderContext, rectangle) {
 		const renderContextData = this.get(renderContext);
 		let sourceGPU = null;
-		if (renderContext.renderTarget) {
-			if (texture.isDepthTexture) sourceGPU = this.get(renderContext.depthTexture).texture;
-			else sourceGPU = this.get(renderContext.textures[0]).texture;
-		} else if (texture.isDepthTexture) sourceGPU = this.textureUtils.getDepthBuffer(renderContext.depth, renderContext.stencil);
+		if (renderContext.renderTarget) if (texture.isDepthTexture) sourceGPU = this.get(renderContext.depthTexture).texture;
+		else sourceGPU = this.get(renderContext.textures[0]).texture;
+		else if (texture.isDepthTexture) sourceGPU = this.textureUtils.getDepthBuffer(renderContext.depth, renderContext.stencil);
 		else sourceGPU = this.context.getCurrentTexture();
 		const destinationGPU = this.get(texture).texture;
 		if (sourceGPU.format !== destinationGPU.format) {

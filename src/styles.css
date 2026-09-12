@@ -27,6 +27,25 @@
   --tracking-brand: 0.18em;
 }
 
+:root {
+  --tabbar-height: 4rem;
+  --tabbar-pad: env(safe-area-inset-bottom, 0px);
+  --tabbar-total: calc(var(--tabbar-height) + var(--tabbar-pad));
+  --z-base: 0;
+  --z-header: 30;
+  --z-tray: 35;
+  --z-sheet: 40;
+  --z-tabbar: 50;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --tabbar-height: 0px;
+    --tabbar-pad: 0px;
+    --tabbar-total: 0px;
+  }
+}
+
 @layer base {
   html {
     color-scheme: dark;
@@ -42,7 +61,7 @@
     font-family: var(--font-sans);
   }
   body {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   h1, h2, h3 {
     text-wrap: balance;
@@ -74,11 +93,54 @@
   }
 }
 
+html.a11y-mode {
+  font-size: 112.5%;
+}
+
 .site-shell {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
+}
+
+.site-main {
+  position: relative;
+  z-index: var(--z-base);
+  isolation: isolate;
+  flex: 1 1 auto;
+}
+
+.mobile-tabbar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: var(--z-tabbar);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding-bottom: var(--tabbar-pad);
+  padding-right: max(4.75rem, env(safe-area-inset-right, 0px));
+  touch-action: manipulation;
+}
+
+.mobile-sheet-layer {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  bottom: var(--tabbar-total);
+  z-index: var(--z-sheet);
+}
+
+.mobile-dialog-layer {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  bottom: var(--tabbar-total);
+  z-index: var(--z-sheet);
+}
+
+.pad-tabbar {
+  padding-bottom: var(--tabbar-total);
 }
 
 .toyota-mark {
