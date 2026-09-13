@@ -12,3 +12,9 @@ node_modules/
 .vercel
 .vercel/
 .vercel/output/
+
+# PGlite live data + backups (never commit)
+.pglite-data/
+*.pglite.tar
+*.pglite.tgz
+backups/

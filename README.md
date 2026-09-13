@@ -42,6 +42,30 @@ Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
 - Vite `base` / router basepath: `/jayota/` when `GITHUB_PAGES=1`
 - Local Pages build: `npm run build:pages` → `.vercel/output/static`
 
+## PGlite persistence & backup
+
+Without `DATABASE_URL`, the app uses embedded **PGlite** for showroom tables
+(configurations, leads, etc. — see `migrations/0002_showroom.sql`).
+
+| Mode | Location | Survives process restart? |
+| ---- | -------- | ------------------------- |
+| Default (preview/dev) | In-memory WASM PGDATA | No — refresh/restart wipes data |
+| Optional FS | Directory from `PGLITE_DATA_DIR` (recommended: `.pglite-data`) | Yes |
+| Production | Neon via `DATABASE_URL` | Yes (managed Postgres) |
+
+**Export / import** (round-trip via `dumpDataDir` / `loadDataDir`):
+
+```bash
+# Helpers: src/lib/pglite-backup.ts (unit-tested)
+
+# Optional CLI against a filesystem data dir (never commit these files):
+PGLITE_DATA_DIR=.pglite-data npm run db:backup            # → backups/pglite-*.tgz
+PGLITE_DATA_DIR=.pglite-data npm run db:restore -- backups/pglite-….tgz
+```
+
+`.pglite-data/`, `backups/`, and `*.pglite.tgz` are gitignored. Do not commit live
+DBs or dump tarballs.
+
 ## More docs
 
 - Integrations & env vars: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md)
