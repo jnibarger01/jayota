@@ -82,7 +82,6 @@ export class CanvasErrorBoundary extends Component<Props, State> {
     return (
       <div className="vehicle-canvas canvas-fallback" role="alert">
         {fallbackImage ? (
-          // eslint-disable-next-line @next/next/no-img-element -- static export; no image optimizer.
           <img className="canvas-fallback-image" src={fallbackImage.url} alt={fallbackImage.alt} />
         ) : null}
         <div className="canvas-fallback-notice">
