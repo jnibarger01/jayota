@@ -54,3 +54,25 @@ jobs:
           done
           curl -sf http://127.0.0.1:8080/__app-env >/dev/null
           npm run check:auth
+
+      - name: Mobile-nav smoke
+        run: |
+          set -euo pipefail
+          npx playwright install --with-deps chromium
+          npm run build
+          npm run preview &
+          PREVIEW_PID=$!
+          cleanup() { kill "$PREVIEW_PID" 2>/dev/null || true; wait "$PREVIEW_PID" 2>/dev/null || true; }
+          trap cleanup EXIT
+          for i in $(seq 1 90); do
+            if curl -sf http://127.0.0.1:8081/ >/dev/null; then
+              break
+            fi
+            if ! kill -0 "$PREVIEW_PID" 2>/dev/null; then
+              echo "vite preview exited before becoming ready"
+              exit 1
+            fi
+            sleep 2
+          done
+          curl -sf http://127.0.0.1:8081/ >/dev/null
+          node scripts/mobile-nav-smoke.mjs http://127.0.0.1:8081/
