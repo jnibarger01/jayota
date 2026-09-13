@@ -2,12 +2,20 @@
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
+  /** Present on 429 responses; used for the `Retry-After` response header. */
+  readonly retryAfterSeconds?: number;
 
-  constructor(status: number, code: string, message: string, options?: { cause?: unknown }) {
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    options?: { cause?: unknown; retryAfterSeconds?: number },
+  ) {
     super(message, options);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.retryAfterSeconds = options?.retryAfterSeconds;
   }
 }
 
@@ -46,7 +54,7 @@ export function forbidden(message: string): ApiError {
   return new ApiError(403, "forbidden", message);
 }
 
-/** The caller exceeded the configuration-write rate limit (lib/server/rateLimit.ts). */
-export function tooManyRequests(message: string): ApiError {
-  return new ApiError(429, "rate_limited", message);
+/** The caller exceeded a showroom/API rate limit (`src/lib/http/rate-limit.ts`). */
+export function tooManyRequests(message: string, retryAfterSeconds = 60): ApiError {
+  return new ApiError(429, "rate_limited", message, { retryAfterSeconds });
 }

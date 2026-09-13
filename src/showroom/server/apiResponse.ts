@@ -1,4 +1,5 @@
-import { ApiError, toErrorBody } from "../api/errors";
+import { ApiError, toErrorBody } from "../api/errors.ts";
+import { RATE_LIMIT_RETRY_AFTER_SECONDS } from "./rateLimit.ts";
 
 export function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
   const headers = new Headers(init.headers);
@@ -12,7 +13,9 @@ export function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
 export function errorResponse(err: unknown): Response {
   if (err instanceof ApiError) {
     const headers: Record<string, string> = {};
-    if (err.status === 429) headers["Retry-After"] = "60";
+    if (err.status === 429) {
+      headers["Retry-After"] = String(err.retryAfterSeconds ?? RATE_LIMIT_RETRY_AFTER_SECONDS);
+    }
     return jsonResponse(toErrorBody(err), { status: err.status, headers });
   }
   const requestId = crypto.randomUUID();
