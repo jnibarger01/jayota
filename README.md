@@ -29,6 +29,8 @@ Dev server: `http://127.0.0.1:8080/` (bound to `0.0.0.0:8080`).
 | `npm run check:auth` | Auth invariant vs a live `npm run dev` server |
 | `npm run preview` | Preview the production build |
 | `npm run test:mobile-nav` | Mobile tab bar Playwright smoke (needs a live server) |
+| `npm run preview:pages` | Vite preview of `build:pages` static output at `/jayota/` |
+| `npm run test:pages-base` | Fetch smoke: index + JS/CSS under Pages base return 200 |
 
 Always start Vite through the npm scripts above. Invoking `vite` directly skips
 `scripts/with-app-env.mjs`, so `VITE_AUTH_ENABLED` can diverge between the live
@@ -42,6 +44,19 @@ Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
 - Site: **https://jnibarger01.github.io/jayota/**
 - Vite `base` / router basepath: `/jayota/` when `GITHUB_PAGES=1`
 - Local Pages build: `npm run build:pages` → `.vercel/output/static`
+
+### Pages base-path asset smoke
+
+Fetch check that the static Pages artifact resolves under `/jayota/` (wrong Vite
+`base` → JS/CSS 404 → CI fails). Uses a Nitro-free Vite preview config so the
+server mirrors GitHub Pages subpath hosting.
+
+| Context | How |
+| ------- | --- |
+| Local | `npm run build:pages`, then `npm run preview:pages`, then `npm run test:pages-base` |
+| PR CI | [`.github/workflows/pr-ci.yml`](.github/workflows/pr-ci.yml) runs `build:pages`, starts preview on `:4175` with [`vite.pages-preview.config.mjs`](vite.pages-preview.config.mjs), then [`scripts/pages-base-asset-smoke.mjs`](scripts/pages-base-asset-smoke.mjs) |
+
+PR CI does **not** deploy Pages; deploy stays on push to `main` via `pages.yml`.
 
 ## PGlite persistence & backup
 
