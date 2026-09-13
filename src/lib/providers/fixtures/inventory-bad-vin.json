@@ -1,0 +1,20 @@
+{
+  "lots": [
+    {
+      "vin": "SHORTVIN",
+      "stockNumber": "T25002",
+      "year": 2024,
+      "make": "Toyota",
+      "model": "RAV4",
+      "trim": "XLE",
+      "drivetrain": "AWD",
+      "exteriorColor": "Blueprint",
+      "mileage": 5,
+      "status": "in_transit",
+      "price": 33990,
+      "priceProvenance": "dealer_asking",
+      "imageUrl": null,
+      "location": "Hendrick Toyota Merriam"
+    }
+  ]
+}

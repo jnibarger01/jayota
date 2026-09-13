@@ -1,0 +1,20 @@
+{
+  "lots": [
+    {
+      "vin": "4T1BF1FK5EU12345I",
+      "stockNumber": "T25003",
+      "year": 2025,
+      "make": "Toyota",
+      "model": "Corolla",
+      "trim": "LE",
+      "drivetrain": null,
+      "exteriorColor": null,
+      "mileage": null,
+      "status": "in_stock",
+      "price": null,
+      "priceProvenance": null,
+      "imageUrl": null,
+      "location": "Hendrick Toyota Merriam"
+    }
+  ]
+}

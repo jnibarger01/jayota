@@ -1,0 +1,20 @@
+{
+  "lots": [
+    {
+      "vin": "4T1BF1FK5EU123456",
+      "stockNumber": "T25001",
+      "year": 2025,
+      "make": "Toyota",
+      "model": "Camry",
+      "trim": "SE",
+      "drivetrain": "FWD",
+      "exteriorColor": "Celestial Silver Metallic",
+      "mileage": 12,
+      "status": "in_stock",
+      "price": 28990,
+      "priceProvenance": "dealer_asking",
+      "imageUrl": "https://example.com/camry.jpg",
+      "location": "Hendrick Toyota Merriam"
+    }
+  ]
+}
