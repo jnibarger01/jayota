@@ -1,4 +1,5 @@
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useFocusTrap } from "@/lib/a11y/focus-trap";
 import { highlightMatch, searchShowroom } from "@/lib/search-engine";
 import { rememberQuery, useShopper } from "@/lib/shopper";
 import { track } from "@/lib/analytics";
@@ -11,11 +12,13 @@ export function SearchDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const shopper = useShopper();
   const results = useMemo(() => searchShowroom(query), [query]);
   const flat = [...results.vehicles, ...results.destinations];
+  useFocusTrap(dialogRef, open);
 
   useEffect(() => {
     if (!open) return;
@@ -51,6 +54,7 @@ export function SearchDialog({
   return (
     <div className="mobile-dialog-layer flex items-start justify-center bg-ink/60 p-4 pt-[12vh] md:inset-0" role="presentation">
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
