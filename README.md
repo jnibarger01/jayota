@@ -31,6 +31,8 @@ Dev server: `http://127.0.0.1:8080/` (bound to `0.0.0.0:8080`).
 | `npm run test:mobile-nav` | Mobile tab bar Playwright smoke (needs a live server) |
 | `npm run preview:pages` | Vite preview of `build:pages` static output at `/jayota/` |
 | `npm run test:pages-base` | Fetch smoke: index + JS/CSS under Pages base return 200 |
+| `npm run preview:restart` | Free `:8081`, serve built output for QA (`scripts/preview.mjs`) |
+| `npm run preview:stop` | Stop the `:8081` built-output preview |
 
 Always start Vite through the npm scripts above. Invoking `vite` directly skips
 `scripts/with-app-env.mjs`, so `VITE_AUTH_ENABLED` can diverge between the live
@@ -142,5 +144,6 @@ New imagine dumps belong under `artifacts/imagine_images/` only. Copy any asset 
 
 ## More docs
 
+- Preview ops (hibernate/revive, `preview:stop`/`restart`, PGlite crash recovery): [`docs/preview-ops.md`](docs/preview-ops.md)
 - Integrations & env vars: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md)
 - Sandbox / auth / data contract: [`AGENTS.md`](AGENTS.md)
