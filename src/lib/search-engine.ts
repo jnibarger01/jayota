@@ -63,9 +63,6 @@ function scoreBlob(blob: string, words: string[]): { score: number; matched: str
     } else if (word === "suv" && (blob.includes("suv") || blob.includes("crossover"))) {
       score += 5;
       matched.push(word);
-    } else if ((word === "hybrid" || word === "electric" || word === "truck" || word === "van") && blob.includes(word)) {
-      score += 6;
-      matched.push(word);
     }
   }
   if (matched.length === words.length && words.length > 1) score += 8;
