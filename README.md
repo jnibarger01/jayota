@@ -66,6 +66,32 @@ PGLITE_DATA_DIR=.pglite-data npm run db:restore -- backups/pglite-….tgz
 `.pglite-data/`, `backups/`, and `*.pglite.tgz` are gitignored. Do not commit live
 DBs or dump tarballs.
 
+## Showroom API rate limits
+
+Configuration writes (`POST`/`PATCH`/`DELETE` `/api/v1/configurations`) and related
+showroom/intake surfaces share an in-process sliding-window limiter
+(`src/lib/http/rate-limit.ts`). Defaults stop a burst client from unbounded-writing
+showroom rows; cold starts reset the buckets (single-isolate only — not a shared edge
+limiter).
+
+| Knob | Default | Applies to |
+| ---- | ------- | ---------- |
+| `SHOWROOM_RATE_LIMIT_CONFIG_WRITE` | `30` | Configuration create/update/delete |
+| `SHOWROOM_RATE_LIMIT_CATALOG_READ` | `300` | Catalog/query reads (when wired) |
+| `SHOWROOM_RATE_LIMIT_LEAD_WRITE` | `8` | Lead / appointment intakes |
+| `SHOWROOM_RATE_LIMIT_SEARCH` | `60` | Search-style endpoints |
+| `SHOWROOM_RATE_LIMIT_WINDOW_MS` | `60000` | Sliding window length (ms) |
+
+Exceeded requests return HTTP **429** with structured JSON and a `Retry-After` header:
+
+```json
+{ "error": { "code": "rate_limited", "status": 429, "message": "…" } }
+```
+
+Helpers: `enforceConfigWriteRateLimit` / `enforceCatalogReadRateLimit` in
+`src/showroom/server/rateLimit.ts`. Unit coverage: `src/lib/http/rate-limit.test.ts`
+(burst → 429).
+
 ## More docs
 
 - Integrations & env vars: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md)
