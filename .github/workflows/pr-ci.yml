@@ -36,4 +36,21 @@ jobs:
         run: npm test
 
       - name: Auth invariant
-        run: npm run check:auth
+        run: |
+          set -euo pipefail
+          npm run dev &
+          DEV_PID=$!
+          cleanup() { kill "$DEV_PID" 2>/dev/null || true; wait "$DEV_PID" 2>/dev/null || true; }
+          trap cleanup EXIT
+          for i in $(seq 1 90); do
+            if curl -sf http://127.0.0.1:8080/__app-env >/dev/null; then
+              break
+            fi
+            if ! kill -0 "$DEV_PID" 2>/dev/null; then
+              echo "dev server exited before becoming ready"
+              exit 1
+            fi
+            sleep 2
+          done
+          curl -sf http://127.0.0.1:8080/__app-env >/dev/null
+          npm run check:auth
