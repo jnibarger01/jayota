@@ -130,6 +130,16 @@ Keep these three places in sync when the tab bar markup changes:
 
 After editing, re-run the unit test (`npm test` covers `mobile-nav.test.ts`) and the smoke against a live server.
 
+## Images & generated art
+
+| Location | Tracked? | Purpose |
+| -------- | -------- | ------- |
+| `public/images/`, `public/renders/`, `public/models/` | Yes | Small committed set the app ships (campaign, lineup, 3D assets) |
+| `artifacts/imagine_images/` | No (gitignored) | Local Imagine / agent image dumps — do not commit |
+| `artifacts/.tmp/` | No (gitignored) | Scratch MCP / tool output |
+
+New imagine dumps belong under `artifacts/imagine_images/` only. Copy any asset the product must ship into `public/` and reference it from there. History is not rewritten; previously committed dumps are removed from the index only (`git rm --cached`).
+
 ## More docs
 
 - Integrations & env vars: [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md)
