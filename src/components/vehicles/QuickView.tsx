@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { useFocusTrap } from "@/lib/a11y/focus-trap";
 import { Link } from "@tanstack/react-router";
 import { Box, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +19,8 @@ export function QuickView({
   compareCount: number;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, true);
   const configure = lineupConfigure(model);
   const eLabel = electrifiedLabel(model.electrified);
   const compareFull = !comparing && compareCount >= MAX_COMPARE;
@@ -25,6 +29,7 @@ export function QuickView({
     <div className="mobile-dialog-layer md:inset-0 md:z-[var(--z-sheet)]">
       <button type="button" className="absolute inset-0 bg-ink/70" aria-label="Close" onClick={onClose} />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="quickview-title"

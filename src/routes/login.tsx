@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { GROK_PROVIDERS, authEnabled, authClient, signIn } from "@/lib/auth/client";
+import {
+  SIGN_IN_A11Y,
+  SIGN_IN_ERROR_ID,
+  SIGN_IN_FIELD_IDS,
+  SIGN_IN_FORM_ID,
+  SIGN_IN_TITLE_ID,
+} from "@/lib/auth/sign-in-gate-a11y";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,55 +43,118 @@ function Login() {
     }
   };
 
+  const errorDescribedBy = error ? SIGN_IN_ERROR_ID : undefined;
+
   return (
     <SiteShell>
-      <section className="mx-auto grid min-h-[60vh] max-w-md place-items-center px-4 py-16">
+      <section
+        className="mx-auto grid min-h-[60vh] max-w-md place-items-center px-4 py-16"
+        data-sign-in-gate="region"
+        aria-label={SIGN_IN_A11Y.regionLabel}
+      >
         <div className="w-full border border-border bg-surface p-8">
-          <h1 className="font-display text-3xl tracking-wide">Sign in</h1>
-          <p className="mt-2 text-sm text-muted">Save vehicles and builds to your Hendrick Toyota Merriam account.</p>
+          <h1 id={SIGN_IN_TITLE_ID} className="font-display text-3xl tracking-wide">
+            Sign in
+          </h1>
+          <p className="mt-2 text-sm text-muted">
+            Save vehicles and builds to your Hendrick Toyota Merriam account.
+          </p>
           {authEnabled ? (
             <div className="mt-6 space-y-3">
-              {GROK_PROVIDERS.map((p) => (
-                <Button
-                  key={p.providerId}
-                  type="button"
-                  variant="secondary"
-                  className="w-full"
-                  onClick={() => signIn(p.providerId, { callbackURL: "/account" })}
-                >
-                  Continue with {p.label}
-                </Button>
-              ))}
+              <div
+                className="space-y-3"
+                role="group"
+                aria-label={SIGN_IN_A11Y.providerGroupLabel}
+                data-sign-in-gate="providers"
+              >
+                {GROK_PROVIDERS.map((p) => (
+                  <Button
+                    key={p.providerId}
+                    type="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => signIn(p.providerId, { callbackURL: "/account" })}
+                  >
+                    Continue with {p.label}
+                  </Button>
+                ))}
+              </div>
               <div className="relative py-3 text-center text-xs uppercase tracking-[0.18em] text-muted">
                 or email
               </div>
-              <form className="space-y-4" onSubmit={onEmail}>
+              <form
+                id={SIGN_IN_FORM_ID}
+                className="space-y-4"
+                onSubmit={onEmail}
+                aria-labelledby={SIGN_IN_TITLE_ID}
+                aria-describedby={errorDescribedBy}
+                data-sign-in-gate="form"
+              >
                 {mode === "signup" ? (
-                  <Field id="name" label="Name">
-                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                  <Field id={SIGN_IN_FIELD_IDS.name} label="Name">
+                    <Input
+                      id={SIGN_IN_FIELD_IDS.name}
+                      name="name"
+                      autoComplete="name"
+                      required
+                      aria-required="true"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
                   </Field>
                 ) : null}
-                <Field id="email" label="Email">
-                  <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                </Field>
-                <Field id="password" label="Password">
+                <Field id={SIGN_IN_FIELD_IDS.email} label="Email">
                   <Input
-                    id="password"
+                    id={SIGN_IN_FIELD_IDS.email}
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    aria-required="true"
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={errorDescribedBy}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Field>
+                <Field id={SIGN_IN_FIELD_IDS.password} label="Password">
+                  <Input
+                    id={SIGN_IN_FIELD_IDS.password}
+                    name="password"
                     type="password"
                     autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                    required
+                    aria-required="true"
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={errorDescribedBy}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </Field>
-                {error ? <p className="text-sm text-accent">{error}</p> : null}
+                {error ? (
+                  <p
+                    id={SIGN_IN_ERROR_ID}
+                    className="text-sm text-accent"
+                    role={SIGN_IN_A11Y.errorRole}
+                    aria-live={SIGN_IN_A11Y.errorLive}
+                    data-sign-in-gate="error"
+                  >
+                    {error}
+                  </p>
+                ) : null}
                 <Button type="submit" className="w-full" disabled={busy}>
                   {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
                 </Button>
               </form>
               <button
                 type="button"
-                className="w-full text-sm text-muted"
-                onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
+                className="w-full min-h-11 text-sm text-muted"
+                data-sign-in-gate="mode-toggle"
+                aria-pressed={mode === "signup"}
+                onClick={() => {
+                  setError(null);
+                  setMode((m) => (m === "signin" ? "signup" : "signin"));
+                }}
               >
                 {mode === "signin" ? "Need an account? Create one" : "Already have an account? Sign in"}
               </button>
