@@ -18,3 +18,7 @@ node_modules/
 *.pglite.tar
 *.pglite.tgz
 backups/
+
+# Generated art dumps (local only — never commit)
+artifacts/imagine_images/
+artifacts/.tmp/
