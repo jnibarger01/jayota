@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * Interactive coverage for the mobile tab bar.
- * Requires the app to already be serving (dev on :8080 or preview).
+ * Requires the app to already be serving (dev on :8080 or vite preview on :8081).
+ * PR CI runs this against http://127.0.0.1:8081/ after `npm run build && npm run preview`.
+ * Keep locators in sync with MobileTabBar + src/lib/mobile-nav.ts (see README).
  */
 import { chromium } from "playwright";
 import { checkedUrl } from "./browser-guard.mjs";

@@ -28,6 +28,7 @@ Dev server: `http://127.0.0.1:8080/` (bound to `0.0.0.0:8080`).
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run check:auth` | Auth invariant vs a live `npm run dev` server |
 | `npm run preview` | Preview the production build |
+| `npm run test:mobile-nav` | Mobile tab bar Playwright smoke (needs a live server) |
 
 Always start Vite through the npm scripts above. Invoking `vite` directly skips
 `scripts/with-app-env.mjs`, so `VITE_AUTH_ENABLED` can diverge between the live
@@ -91,6 +92,28 @@ Exceeded requests return HTTP **429** with structured JSON and a `Retry-After` h
 Helpers: `enforceConfigWriteRateLimit` / `enforceCatalogReadRateLimit` in
 `src/showroom/server/rateLimit.ts`. Unit coverage: `src/lib/http/rate-limit.test.ts`
 (burst → 429).
+
+## Mobile-nav smoke
+
+Interactive Playwright check for the mobile tab bar (`scripts/mobile-nav-smoke.mjs`).
+
+| Context | How |
+| ------- | --- |
+| Local (dev) | `npm run dev`, then `npm run test:mobile-nav` (hits `http://127.0.0.1:8080/`) |
+| Local (preview) | `npm run build && npm run preview`, then `node scripts/mobile-nav-smoke.mjs http://127.0.0.1:8081/` |
+| PR CI | [`.github/workflows/pr-ci.yml`](.github/workflows/pr-ci.yml) builds, starts `vite preview` on `:8081`, runs the smoke |
+
+A broken mobile-nav selector fails that CI job (non-zero exit from the smoke).
+
+### Refreshing selectors
+
+Keep these three places in sync when the tab bar markup changes:
+
+1. **DOM hooks** in [`src/components/layout/MobileTabBar.tsx`](src/components/layout/MobileTabBar.tsx) — `data-mobile-tabbar="true"`, `data-mobile-more-search="true"`, tab `href`s / `aria-label`s, and the More sheet heading/link names the smoke clicks.
+2. **Contract constants** in [`src/lib/mobile-nav.ts`](src/lib/mobile-nav.ts) — `MOBILE_TABBAR_SELECTOR`, `MOBILE_TABS` / `MOBILE_TAB_HREFS`, `MOBILE_MORE_LINKS` (unit-tested by `src/lib/mobile-nav.test.ts`).
+3. **Smoke locators** in [`scripts/mobile-nav-smoke.mjs`](scripts/mobile-nav-smoke.mjs) — `TABS`, `[data-mobile-tabbar="true"]`, `[data-mobile-more-search]`, and role/name queries (`More`, `Garage`, search placeholder).
+
+After editing, re-run the unit test (`npm test` covers `mobile-nav.test.ts`) and the smoke against a live server.
 
 ## More docs
 
