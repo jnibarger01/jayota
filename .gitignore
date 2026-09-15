@@ -22,3 +22,15 @@ backups/
 # Generated art dumps (local only — never commit)
 artifacts/imagine_images/
 artifacts/.tmp/
+
+# QA / agent artifacts — regenerated on demand, never read by the build, tests, or deploy.
+# Enforced by scripts/repo-weight.test.mjs; see that file for why this is a test and not a convention.
+screenshots/*
+!screenshots/.gitkeep
+attachments/
+.grok/card-raw.png
+
+# Grok skill packs unrelated to this project (game dev, sprite/map generation, multiplayer).
+# `.grok/skills/og/` stays: scripts/brand-check.mjs reads its SKILL.md.
+.grok/skills/*
+!.grok/skills/og/
