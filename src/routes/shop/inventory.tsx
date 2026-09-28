@@ -8,6 +8,7 @@ import { filtersToSearch, rankInventoryMatches, applyInventoryFilters, watchDiff
 import { saveSearch, useShopper } from "@/lib/shopper";
 import { LINEUP } from "@/lib/lineup";
 import { z } from "zod";
+import { pageHead } from "@/lib/seo";
 
 const searchSchema = z.object({
   model: z.string().optional(),
@@ -25,6 +26,11 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/shop/inventory")({
+  head: () =>
+    pageHead(
+      "Inventory",
+      "Browse and filter Toyota inventory at Hendrick Toyota Merriam.",
+    ),
   validateSearch: (s) => searchSchema.parse(s),
   loader: () => loadInventoryState(),
   component: InventoryPage,

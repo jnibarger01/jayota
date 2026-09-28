@@ -1,8 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { Button } from "@/components/ui/button";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/owners/maintenance")({ component: MaintenancePage });
+export const Route = createFileRoute("/owners/maintenance")({
+  head: () =>
+    pageHead(
+      "Maintenance",
+      "Maintenance schedules, manuals, warranty, and recall lookups for your Toyota.",
+    ),
+  component: MaintenancePage,
+});
 
 function MaintenancePage() {
   return (

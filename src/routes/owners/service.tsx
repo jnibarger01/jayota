@@ -10,8 +10,16 @@ import { serviceSchema } from "@/lib/validators/forms";
 import { DEALER } from "@/lib/dealer";
 import { track } from "@/lib/analytics";
 import { newRequestId } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/owners/service")({ component: ServicePage });
+export const Route = createFileRoute("/owners/service")({
+  head: () =>
+    pageHead(
+      "Schedule service",
+      "Request a service appointment at Hendrick Toyota Merriam. Requests are confirmed by the service team.",
+    ),
+  component: ServicePage,
+});
 
 function ServicePage() {
   const [values, setValues] = useState({

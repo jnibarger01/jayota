@@ -11,8 +11,16 @@ import { decodeVinLocal } from "@/lib/vin";
 import { patchWorkspace } from "@/lib/shopper";
 import { track } from "@/lib/analytics";
 import { newRequestId } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/shop/trade-in")({ component: TradeInPage });
+export const Route = createFileRoute("/shop/trade-in")({
+  head: () =>
+    pageHead(
+      "Trade-in",
+      "Tell us about your trade-in and request an appraisal from Hendrick Toyota Merriam.",
+    ),
+  component: TradeInPage,
+});
 
 function TradeInPage() {
   const [values, setValues] = useState({

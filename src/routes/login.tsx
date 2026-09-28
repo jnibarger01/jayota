@@ -13,8 +13,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/forms/IntakeForm";
 import { publicUrl } from "@/lib/public-url";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/login")({ component: Login });
+export const Route = createFileRoute("/login")({
+  head: () =>
+    pageHead(
+      "Sign in",
+      "Sign in or create an account to save builds and shopping progress.",
+    ),
+  component: Login,
+});
 
 function Login() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");

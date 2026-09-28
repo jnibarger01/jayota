@@ -1,8 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { DEALER } from "@/lib/dealer";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/accessibility")({ component: AccessibilityPage });
+export const Route = createFileRoute("/accessibility")({
+  head: () =>
+    pageHead(
+      "Accessibility",
+      "Accessibility commitment, supported features, and how to request help using the Hendrick Toyota Merriam digital showroom.",
+    ),
+  component: AccessibilityPage,
+});
 
 function AccessibilityPage() {
   return (

@@ -13,10 +13,16 @@ import { patchWorkspace, rememberTestDrive } from "@/lib/shopper";
 import { track } from "@/lib/analytics";
 import { newRequestId } from "@/lib/utils";
 import { z } from "zod";
+import { pageHead } from "@/lib/seo";
 
 const searchSchema = z.object({ vehicle: z.string().optional() });
 
 export const Route = createFileRoute("/shop/test-drive")({
+  head: () =>
+    pageHead(
+      "Test drive",
+      "Request a Toyota test drive at Hendrick Toyota Merriam.",
+    ),
   validateSearch: (s) => searchSchema.parse(s),
   component: TestDrivePage,
 });

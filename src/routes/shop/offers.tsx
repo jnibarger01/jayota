@@ -3,8 +3,14 @@ import { SiteShell } from "@/components/layout/SiteShell";
 import { DEALER, OFFERS_UNAVAILABLE } from "@/lib/dealer";
 import { loadOffersState } from "@/lib/loaders";
 import { Button } from "@/components/ui/button";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/shop/offers")({
+  head: () =>
+    pageHead(
+      "Offers",
+      "Toyota offers and incentives. Confirm current programs and eligibility with Hendrick Toyota Merriam.",
+    ),
   loader: () => loadOffersState(),
   component: OffersPage,
 });
