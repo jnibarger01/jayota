@@ -1,16 +1,14 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { TriangleAlert } from "lucide-react";
+import { displayErrorMessage } from "@/lib/error-message";
 
-const FALLBACK_MESSAGE = "An unexpected error occurred. Try reloading the page.";
-
-function errorMessage(error: unknown): string {
-  if (error instanceof Error && error.message) return error.message;
-  if (typeof error === "string" && error) return error;
-  return FALLBACK_MESSAGE;
-}
-
-export function AppErrorComponent({ error }: ErrorComponentProps) {
+export function AppErrorComponent({ error, reset }: ErrorComponentProps) {
+  const router = useRouter();
+  const retry = () => {
+    reset();
+    void router.invalidate();
+  };
   return (
     <main
       className={
@@ -21,13 +19,18 @@ export function AppErrorComponent({ error }: ErrorComponentProps) {
       <span className="text-accent" aria-hidden="true">
         <TriangleAlert className="size-10" strokeWidth={2} />
       </span>
-      <h1 className="text-lg font-semibold">Something went wrong</h1>
-      <p className="max-w-md text-sm break-words text-muted">
-        {errorMessage(error)}
-      </p>
-      <Link to="/" className="mt-4 text-sm underline">
-        Return home
-      </Link>
+      <div role="alert" className="flex flex-col items-center gap-3">
+        <h1 className="text-lg font-semibold">Something went wrong</h1>
+        <p className="max-w-md text-sm break-words text-muted">{displayErrorMessage(error)}</p>
+      </div>
+      <div className="mt-4 flex items-center gap-4">
+        <button type="button" onClick={retry} className="min-h-11 bg-accent px-5 py-3 text-sm text-accent-fg">
+          Try again
+        </button>
+        <Link to="/" className="text-sm underline">
+          Return home
+        </Link>
+      </div>
     </main>
   );
 }
