@@ -17,6 +17,10 @@ const ICONS = {
 
 export function MobileTabBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // Exposed for the mobile-nav smoke: the URL (and so `pathname`) changes before the destination
+  // route commits, and every route renders its own SiteShell, so this tab bar is replaced when the
+  // new route mounts. "idle" means navigation has settled and this is the bar that will stay.
+  const routerStatus = useRouterState({ select: (s) => s.status });
   const shopper = useShopper();
   const t = COPY[shopper.locale];
   const [moreOpen, setMoreOpen] = useState(false);
@@ -114,6 +118,7 @@ export function MobileTabBar() {
 
       <nav
         data-mobile-tabbar="true"
+        data-router-status={routerStatus}
         className="mobile-tabbar md:hidden"
         aria-label="Mobile"
       >

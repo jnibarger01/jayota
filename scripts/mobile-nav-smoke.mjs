@@ -4,18 +4,32 @@
  * Requires the app to already be serving (dev on :8080 or vite preview on :8081).
  * PR CI runs this against http://127.0.0.1:8081/ after `npm run build && npm run preview`.
  * Keep locators in sync with MobileTabBar + src/lib/mobile-nav.ts (see README).
+ *
+ * Every route renders its own SiteShell, so the tab bar (and any open More sheet) is replaced when
+ * a navigation commits, and the URL changes before that happens. After each navigation, wait for
+ * `data-router-status="idle"` on the tab bar before interacting, or the next click can land on the
+ * outgoing bar and its element is detached mid-click.
  */
 import { chromium } from "playwright";
 import { checkedUrl } from "./browser-guard.mjs";
 
 const url = checkedUrl(process.argv[2] || "http://127.0.0.1:8080/");
 const timeoutMs = Number(process.env.MOBILE_NAV_SMOKE_TIMEOUT_MS || 20000);
+// Opt-in stress mode (unset in CI): delay JS chunks after the first page load so route commits land
+// while the smoke is mid-interaction. Used to prove the navigation waits below are sufficient.
+const chunkDelayMs = Number(process.env.MOBILE_NAV_SMOKE_CHUNK_DELAY_MS || 0);
 
 const TABS = [
   { name: "Home", href: "/", path: "/" },
   { name: "Vehicles", href: "/vehicles", path: "/vehicles" },
   { name: "Find a Dealer", href: "/dealership", path: "/dealership" },
 ];
+
+/** Resolves once navigation to `pathname` has committed and the router is idle. */
+async function settledAt(page, pathname) {
+  await page.waitForURL((next) => new URL(next).pathname === pathname, { timeout: timeoutMs });
+  await page.locator('[data-mobile-tabbar="true"][data-router-status="idle"]').waitFor();
+}
 
 function fail(message, extra) {
   console.error(JSON.stringify({ ok: false, error: message, ...extra }, null, 2));
@@ -25,9 +39,18 @@ function fail(message, extra) {
 const browser = await chromium.launch({ args: ["--disable-dev-shm-usage"] });
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 page.setDefaultTimeout(timeoutMs);
+let delayChunks = false;
+if (chunkDelayMs > 0) {
+  await page.route("**/assets/*.js", async (route) => {
+    if (delayChunks) await new Promise((resolve) => setTimeout(resolve, chunkDelayMs));
+    await route.continue();
+  });
+}
 
 try {
   await page.goto(url, { waitUntil: "networkidle" });
+  await page.locator('[data-mobile-tabbar="true"][data-router-status="idle"]').waitFor();
+  delayChunks = true;
   const bar = page.locator('[data-mobile-tabbar="true"]');
   if (!(await bar.isVisible())) fail("mobile tab bar is not visible at 390x844");
 
@@ -53,7 +76,7 @@ try {
   for (const tab of TABS) {
     const link = bar.locator(`a[href="${tab.href}"]`);
     await link.click();
-    await page.waitForURL((next) => new URL(next).pathname === tab.path, { timeout: timeoutMs });
+    await settledAt(page, tab.path);
     const current = await link.getAttribute("aria-current");
     if (current !== "page") fail(`${tab.name} did not receive aria-current after navigation`);
 
@@ -78,15 +101,19 @@ try {
   const moreStillVisible = await bar.isVisible();
   if (!moreStillVisible) fail("tab bar disappeared while More sheet was open");
 
-  await page.locator("[data-mobile-more-search]").click({ force: true });
-  await page.getByPlaceholder(/search models/i).waitFor();
+  const moreSearch = page.locator("[data-mobile-more-search]");
+  await moreSearch.waitFor({ state: "visible" });
+  if (!(await moreSearch.isEnabled())) fail("More sheet search button is disabled");
+  await moreSearch.click();
+  const searchInput = page.getByPlaceholder(/search models/i);
+  await searchInput.waitFor();
 
   await page.keyboard.press("Escape");
-  await page.waitForTimeout(200);
+  await searchInput.waitFor({ state: "hidden" });
 
   await bar.getByRole("button", { name: "More" }).click();
   await page.getByRole("link", { name: "Garage" }).click();
-  await page.waitForURL((next) => new URL(next).pathname === "/owners/saved");
+  await settledAt(page, "/owners/saved");
 
   console.log(
     JSON.stringify(

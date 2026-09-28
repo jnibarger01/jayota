@@ -122,11 +122,13 @@ Interactive Playwright check for the mobile tab bar (`scripts/mobile-nav-smoke.m
 
 A broken mobile-nav selector fails that CI job (non-zero exit from the smoke).
 
+Every route renders its own `SiteShell`, so the tab bar (and an open More sheet) is replaced when a navigation commits, which happens *after* the URL changes. The smoke therefore waits for `[data-mobile-tabbar][data-router-status="idle"]` after each navigation before interacting. To stress that locally, set `MOBILE_NAV_SMOKE_CHUNK_DELAY_MS=300` (delays JS chunks after first load). CI leaves it unset.
+
 ### Refreshing selectors
 
 Keep these three places in sync when the tab bar markup changes:
 
-1. **DOM hooks** in [`src/components/layout/MobileTabBar.tsx`](src/components/layout/MobileTabBar.tsx) — `data-mobile-tabbar="true"`, `data-mobile-more-search="true"`, tab `href`s / `aria-label`s, and the More sheet heading/link names the smoke clicks.
+1. **DOM hooks** in [`src/components/layout/MobileTabBar.tsx`](src/components/layout/MobileTabBar.tsx) — `data-mobile-tabbar="true"`, `data-router-status`, `data-mobile-more-search="true"`, tab `href`s / `aria-label`s, and the More sheet heading/link names the smoke clicks.
 2. **Contract constants** in [`src/lib/mobile-nav.ts`](src/lib/mobile-nav.ts) — `MOBILE_TABBAR_SELECTOR`, `MOBILE_TABS` / `MOBILE_TAB_HREFS`, `MOBILE_MORE_LINKS` (unit-tested by `src/lib/mobile-nav.test.ts`).
 3. **Smoke locators** in [`scripts/mobile-nav-smoke.mjs`](scripts/mobile-nav-smoke.mjs) — `TABS`, `[data-mobile-tabbar="true"]`, `[data-mobile-more-search]`, and role/name queries (`More`, `Garage`, search placeholder).
 
