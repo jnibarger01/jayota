@@ -1,8 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { CATALOG_DISCLAIMER, FINANCE_DISCLAIMER, INVENTORY_UNAVAILABLE, OFFERS_UNAVAILABLE } from "@/lib/dealer";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/legal/disclosures")({ component: DisclosuresPage });
+export const Route = createFileRoute("/legal/disclosures")({
+  head: () =>
+    pageHead(
+      "Disclosures",
+      "Pricing, catalog, and offer disclosures for the Hendrick Toyota Merriam digital showroom.",
+    ),
+  component: DisclosuresPage,
+});
 
 function DisclosuresPage() {
   return (

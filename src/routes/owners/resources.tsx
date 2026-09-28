@@ -1,7 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/layout/SiteShell";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/owners/resources")({ component: ResourcesPage });
+export const Route = createFileRoute("/owners/resources")({
+  head: () =>
+    pageHead(
+      "Owner resources",
+      "Links to official Toyota owner resources: manuals, warranty, and recall lookups.",
+    ),
+  component: ResourcesPage,
+});
 
 function ResourcesPage() {
   const links = [

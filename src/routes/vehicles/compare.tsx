@@ -8,12 +8,18 @@ import { MAX_COMPARE, MIN_COMPARE } from "@/showroom/api/client";
 import { buildCompareRows, winnerLabel } from "@/lib/compare-intel";
 import { rememberComparison } from "@/lib/shopper";
 import { z } from "zod";
+import { pageHead } from "@/lib/seo";
 
 const searchSchema = z.object({
   vehicles: z.string().optional(),
 });
 
 export const Route = createFileRoute("/vehicles/compare")({
+  head: () =>
+    pageHead(
+      "Compare vehicles",
+      "Compare Toyota models side by side on price, specs, and features.",
+    ),
   validateSearch: (search) => searchSchema.parse(search),
   component: ComparePage,
 });

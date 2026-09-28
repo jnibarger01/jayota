@@ -12,10 +12,16 @@ import { LINEUP } from "@/lib/lineup";
 import { patchWorkspace } from "@/lib/shopper";
 import { z } from "zod";
 import { track } from "@/lib/analytics";
+import { pageHead } from "@/lib/seo";
 
 const searchSchema = z.object({ slug: z.string().optional() });
 
 export const Route = createFileRoute("/shop/finance")({
+  head: () =>
+    pageHead(
+      "Payment scenario lab",
+      "Estimate monthly payments for a Toyota. Estimates only, not a finance offer or approval.",
+    ),
   validateSearch: (s) => searchSchema.parse(s),
   component: FinancePage,
 });
