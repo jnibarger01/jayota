@@ -17,7 +17,7 @@ export function SearchDialog({
   const [active, setActive] = useState(0);
   const shopper = useShopper();
   const results = useMemo(() => searchShowroom(query), [query]);
-  const flat = [...results.vehicles, ...results.destinations];
+  const flat = useMemo(() => [...results.vehicles, ...results.destinations], [results]);
   useFocusTrap(dialogRef, open);
 
   useEffect(() => {

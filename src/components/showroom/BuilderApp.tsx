@@ -1038,7 +1038,7 @@ function SaveIndicator({ status, local }: { status: string; local: boolean }) {
  * the matching toolbar button reads as selected; a configuration saved from a free orbit falls back
  * to its raw position and target.
  */
-export function presetForConfiguration(
+function presetForConfiguration(
   vehicle: Vehicle,
   configuration: VehicleConfiguration,
 ): CameraPreset | null {

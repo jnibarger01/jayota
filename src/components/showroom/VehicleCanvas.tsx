@@ -878,9 +878,9 @@ function renameMaterials(root: THREE.Object3D, name: string): void {
 
 /**
  * Hides retained donor geometry, then centres and grounds the vehicle using only the nodes the
- * catalog nominates. Exported for the grounding test.
+ * catalog nominates.
  */
-export function prepareVehicleRoot(root: THREE.Object3D, threeDConfig: Vehicle3DConfig): void {
+function prepareVehicleRoot(root: THREE.Object3D, threeDConfig: Vehicle3DConfig): void {
   root.name = "VEHICLE_ROOT";
 
   for (const name of threeDConfig.hiddenNodeNames ?? []) {

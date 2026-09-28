@@ -35,19 +35,22 @@ function InventoryPage() {
   const search = Route.useSearch();
   const shopper = useShopper();
   const [sheet, setSheet] = useState(false);
-  const filters: InventoryFilters = {
-    model: search.model,
-    body: search.body,
-    trim: search.trim,
-    drivetrain: search.drivetrain,
-    powertrain: search.powertrain,
-    color: search.color,
-    interior: search.interior,
-    status: search.status,
-    minPrice: search.minPrice ? Number(search.minPrice) : undefined,
-    maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
-    sort: search.sort,
-  };
+  const filters = useMemo<InventoryFilters>(
+    () => ({
+      model: search.model,
+      body: search.body,
+      trim: search.trim,
+      drivetrain: search.drivetrain,
+      powertrain: search.powertrain,
+      color: search.color,
+      interior: search.interior,
+      status: search.status,
+      minPrice: search.minPrice ? Number(search.minPrice) : undefined,
+      maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
+      sort: search.sort,
+    }),
+    [search],
+  );
   const filtered = useMemo(() => applyInventoryFilters(state.vehicles, filters), [state.vehicles, filters]);
   const ranked = useMemo(
     () =>
