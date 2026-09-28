@@ -26,9 +26,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <SiteHeader />
-      <div id="main" className={cn("site-main", "pad-tabbar md:pb-0")}>
+      <main id="main" tabIndex={-1} className={cn("site-main", "pad-tabbar md:pb-0", "focus:outline-none")}>
         {children}
-      </div>
+      </main>
       <div className="hidden md:block">
         <SiteFooter />
       </div>
