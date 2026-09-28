@@ -41,6 +41,7 @@ import { CustomizationButton } from "./CustomizationButton";
 import { PaintStudioPanel } from "./PaintStudioPanel";
 import { CanvasErrorBoundary } from "./CanvasErrorBoundary";
 import { getVehicle, pageUrl } from "@/showroom/api/client";
+import { publicUrl } from "@/lib/public-url";
 import * as configurationsApi from "@/showroom/api/configurations";
 import { configurationStore, useConfiguration, usePersistenceMode } from "@/showroom/state/useConfiguration";
 import { isOptionAvailableForGrade } from "@/showroom/data/options";
@@ -599,8 +600,8 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
           <button className="active" type="button" aria-current="page">
             Build
           </button>
-          <button onClick={() => window.location.assign(pageUrl("explore"))}>Explore</button>
-          <button onClick={() => window.location.assign(pageUrl("garage"))}>Garage</button>
+          <button onClick={() => window.location.assign(publicUrl(pageUrl("explore")))}>Explore</button>
+          <button onClick={() => window.location.assign(publicUrl(pageUrl("garage")))}>Garage</button>
         </nav>
         <div className="top-actions">
           <button className="ghost icon-action" title="Undo (Ctrl/⌘ Z)" disabled={!historyAvailability.canUndo} onClick={() => void restoreHistory("undo")}><Undo2 size={16} /></button>
@@ -620,7 +621,7 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
               const paint = configuration?.selections?.paint?.[0];
               if (paint) params.set("color", paint);
               patchWorkspace({ slug: vehicleSlug });
-              window.location.assign(`/shop/inventory?${params.toString()}`);
+              window.location.assign(publicUrl(`/shop/inventory?${params.toString()}`));
             }}
           >
             Find matching inventory
@@ -713,7 +714,7 @@ export function BuilderApp({ vehicleSlug = DEFAULT_VEHICLE_SLUG }: Props) {
           <button className={`rail-item ${activeCategory === "decal" ? "active" : ""}`} onClick={() => setActiveCategory("decal")}><Box size={18} /> Accessories</button>
           <button className={`rail-item ${activeCategory === "interior" ? "active" : ""}`} onClick={() => setActiveCategory("interior")}><Armchair size={18} /> Interior</button>
 
-          <div className="garage-card"><div><Save size={15} /><span>Garage</span></div><small>{garageMessage}</small>{isLocalPersistence ? <p className="garage-local-hint">Local demo — not synced to Worker/D1</p> : null}<button onClick={() => void saveToGarage()}>Save build</button><button className="garage-open" onClick={() => window.location.assign(pageUrl("garage"))}>Open garage</button></div>
+          <div className="garage-card"><div><Save size={15} /><span>Garage</span></div><small>{garageMessage}</small>{isLocalPersistence ? <p className="garage-local-hint">Local demo — not synced to Worker/D1</p> : null}<button onClick={() => void saveToGarage()}>Save build</button><button className="garage-open" onClick={() => window.location.assign(publicUrl(pageUrl("garage")))}>Open garage</button></div>
           <div className="quick-tools"><button onClick={() => void surpriseMe()}><Shuffle size={14} /> Surprise me</button><button onClick={downloadSummary}><Download size={14} /> Download specs</button><button onClick={() => window.print()}><Printer size={14} /> Print build</button></div>
 
           <div className="tech-stack">

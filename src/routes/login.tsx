@@ -12,6 +12,7 @@ import { SiteShell } from "@/components/layout/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/forms/IntakeForm";
+import { publicUrl } from "@/lib/public-url";
 
 export const Route = createFileRoute("/login")({ component: Login });
 
@@ -35,7 +36,7 @@ function Login() {
         const result = await authClient.signIn.email({ email, password });
         if (result.error) throw new Error(result.error.message ?? "Could not sign in.");
       }
-      window.location.assign("/account");
+      window.location.assign(publicUrl("/account"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign-in failed.");
     } finally {
