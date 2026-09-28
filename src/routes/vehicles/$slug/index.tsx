@@ -170,7 +170,7 @@ function CatalogVehiclePage({ vehicle, lineup }: { vehicle: Vehicle; lineup?: Li
           <ul className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
             {gallery.map((asset) => (
               <li key={asset.url} className="overflow-hidden rounded-xl border border-border bg-surface-2">
-                <img src={asset.url} alt={asset.alt} className="h-28 w-full object-cover" />
+                <img loading="lazy" decoding="async" src={asset.url} alt={asset.alt} className="h-28 w-full object-cover" />
               </li>
             ))}
           </ul>

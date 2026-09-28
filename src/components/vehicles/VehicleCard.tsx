@@ -21,6 +21,8 @@ export function VehicleCard({ vehicle }: { vehicle: VehicleSummary }) {
         <div className="relative aspect-[16/10] overflow-hidden bg-surface-2">
           {photo ? (
             <img
+              loading="lazy"
+              decoding="async"
               src={photo}
               alt={vehicle.thumbnail.alt}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"

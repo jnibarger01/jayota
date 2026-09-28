@@ -203,7 +203,7 @@ function QuizPage() {
           <ol className="mt-12 grid gap-6">
             {results.map((match, index) => (
               <li key={match.model.slug} className="overflow-hidden rounded-2xl border border-border bg-surface">
-                <img src={match.model.image.src} alt={match.model.image.alt} className="aspect-video w-full object-cover" />
+                <img loading="lazy" decoding="async" src={match.model.image.src} alt={match.model.image.alt} className="aspect-video w-full object-cover" />
                 <div className="p-5">
                   <p className="text-xs uppercase tracking-widest text-muted">Rank {index + 1} · score {match.total}</p>
                   <h2 className="mt-1 text-2xl font-semibold">{match.model.name}</h2>

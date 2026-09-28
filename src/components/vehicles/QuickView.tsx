@@ -57,7 +57,7 @@ export function QuickView({
             </button>
           </div>
         </div>
-        <img src={model.image.src} alt={model.image.alt} className="aspect-video w-full rounded-2xl object-cover" />
+        <img loading="lazy" decoding="async" src={model.image.src} alt={model.image.alt} className="aspect-video w-full rounded-2xl object-cover" />
         <p className="mt-4 text-muted">{model.tagline}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {eLabel ? <span className="rounded-full bg-surface-2 px-3 py-1 text-xs">{eLabel}</span> : null}

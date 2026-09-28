@@ -27,7 +27,7 @@ export function ExplorerCard({
   return (
     <article className={cn("flex flex-col overflow-hidden rounded-2xl bg-surface", selected && "ring-2 ring-accent")}>
       <button type="button" onClick={() => onQuick(model)} className="relative text-left">
-        <img src={model.image.src} alt={model.image.alt} className="aspect-video w-full object-cover" />
+        <img loading="lazy" decoding="async" src={model.image.src} alt={model.image.alt} className="aspect-video w-full object-cover" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-1">
           {model.has3d ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-ink/55 px-2 py-1 text-xs text-fg">

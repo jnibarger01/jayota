@@ -65,7 +65,7 @@ function SavedPage() {
               {[...accountFavs.map((item) => ({ ...item, source: "account" as const })), ...localFavs.map((item) => ({ slug: item!.slug, name: item!.name, image: item!.image, source: "local" as const }))].map((item) => (
                 <li key={`${item.source}-${item.slug}`} className="overflow-hidden rounded-2xl border border-border bg-surface">
                   <Link to="/vehicles/$slug" params={{ slug: item.slug }} className="block">
-                    {item.image ? <img src={item.image.src} alt={item.image.alt} className="aspect-video w-full object-cover" /> : null}
+                    {item.image ? <img loading="lazy" decoding="async" src={item.image.src} alt={item.image.alt} className="aspect-video w-full object-cover" /> : null}
                     <div className="p-4">
                       <p className="font-semibold">{item.name}</p>
                       <p className="text-xs text-muted">{item.source === "account" ? "Account" : "This device"}</p>
@@ -119,7 +119,7 @@ function SavedPage() {
                 return (
                   <li key={item.slug} className="w-40 shrink-0">
                     <Link to="/vehicles/$slug" params={{ slug: model.slug }}>
-                      <img src={model.image.src} alt="" className="aspect-video w-full rounded-xl object-cover" />
+                      <img loading="lazy" decoding="async" src={model.image.src} alt="" className="aspect-video w-full rounded-xl object-cover" />
                       <p className="mt-1 text-sm">{model.name}</p>
                     </Link>
                     <button type="button" className="text-xs text-muted" onClick={() => removeRecent(item.slug)}>Remove</button>

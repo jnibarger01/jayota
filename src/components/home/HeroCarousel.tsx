@@ -49,6 +49,7 @@ export function HeroCarousel({
     >
       {hero.mobileSrc ? (
         <img
+          fetchPriority="high"
           key={`${current.slug}-m`}
           src={hero.mobileSrc}
           alt={hero.alt}
@@ -56,6 +57,7 @@ export function HeroCarousel({
         />
       ) : (
         <img
+          fetchPriority="high"
           key={`${current.slug}-m`}
           src={hero.src}
           alt={hero.alt}
@@ -63,6 +65,7 @@ export function HeroCarousel({
         />
       )}
       <img
+        fetchPriority="high"
         key={`${current.slug}-d`}
         src={hero.src}
         alt=""
