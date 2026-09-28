@@ -1,20 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { forbidden, invalidBody, notFound } from "@/showroom/api/errors";
+import { forbidden, notFound } from "@/showroom/api/errors";
 import { getConfigurationRepository } from "@/showroom/server/configurationRepository";
 import { priceConfiguration, validatePatchConfiguration } from "@/showroom/validation/configuration";
 import { CUSTOMIZATION_SCHEMA_VERSION } from "@/showroom/types/customization";
 import { enforceConfigWriteRateLimit } from "@/showroom/server/rateLimit";
 import { errorResponse, jsonResponse } from "@/showroom/server/apiResponse";
+import { readJsonBody } from "@/showroom/server/readJsonBody";
 
 const OWNER_HEADER = "x-owner-token";
-
-async function readJson(request: Request): Promise<unknown> {
-  try {
-    return await request.json();
-  } catch {
-    throw invalidBody("Request body must be valid JSON.");
-  }
-}
 
 export const Route = createFileRoute("/api/v1/configurations/$configurationId")({
   server: {
@@ -48,7 +41,7 @@ export const Route = createFileRoute("/api/v1/configurations/$configurationId")(
           if (!token) throw forbidden("Owner token required.");
           const existing = await getConfigurationRepository().get(params.configurationId);
           if (!existing) throw notFound(`No configuration found with id "${params.configurationId}".`);
-          const patch = validatePatchConfiguration(await readJson(request), {
+          const patch = validatePatchConfiguration(await readJsonBody(request), {
             vehicleId: existing.vehicleId,
             gradeId: existing.gradeId,
             selections: existing.selections,

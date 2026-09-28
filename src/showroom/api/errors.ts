@@ -44,6 +44,11 @@ export function invalidBody(message: string): ApiError {
   return new ApiError(422, "invalid_body", message);
 }
 
+/** Request body exceeds the route's size limit (`src/showroom/server/readJsonBody.ts`). */
+export function payloadTooLarge(message: string): ApiError {
+  return new ApiError(413, "payload_too_large", message);
+}
+
 /** The client's `expectedRevision` no longer matches the stored record. */
 export function revisionConflict(message: string): ApiError {
   return new ApiError(409, "revision_conflict", message);
