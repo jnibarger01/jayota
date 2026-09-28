@@ -66,3 +66,4 @@ print("asset_check_ok")
 print("js_count", len(list((root / "assets").glob("*.js"))))
 PY
 test -f "$STATIC_DIR/favicon.svg"
+node --experimental-strip-types scripts/absolutize-sitemap.mjs "$STATIC_DIR"
