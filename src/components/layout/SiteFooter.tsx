@@ -56,7 +56,7 @@ export function SiteFooter() {
           <p>© {new Date().getFullYear()} {DEALER.name}. Toyota and related marks are trademarks of Toyota Motor Corporation.</p>
           <nav className="flex flex-wrap gap-4">
             <Link to="/privacy">Privacy</Link>
-            <a href="/privacy#cookies">Cookies</a>
+            <Link to="/privacy" hash="cookies">Cookies</Link>
             <Link to="/accessibility">Accessibility</Link>
             <Link to="/legal/disclosures">Disclosures</Link>
             <Link to="/dealership">Contact</Link>

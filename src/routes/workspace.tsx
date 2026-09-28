@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getLineupBySlug } from "@/lib/lineup";
 import { resetWorkspace, useShopper } from "@/lib/shopper";
 import { pageHead } from "@/lib/seo";
+import { publicUrl } from "@/lib/public-url";
 
 export const Route = createFileRoute("/workspace")({
   head: () => pageHead("Deal workspace", "A shopping jacket for this visit — not a finalized dealership transaction."),
@@ -40,12 +41,12 @@ function WorkspacePage() {
             <img src={model.image.src} alt={model.image.alt} className="aspect-video w-full object-cover" />
             <div className="grid gap-4 p-5">
               <h2 className="text-2xl font-semibold">{model.name}</h2>
-              <Row label="Configuration" value={shopper.workspace.configurationHref ? "Build saved" : "Not selected"} href={shopper.workspace.configurationHref} />
-              <Row label="Matching inventory" value={shopper.workspace.inventoryVin ?? "Feed not connected"} href="/shop/inventory" />
-              <Row label="Trade-in" value={shopper.workspace.tradeNote ?? "No request yet"} href="/shop/trade-in" />
-              <Row label="Payment scenario" value={shopper.workspace.scenarioId ?? "Open estimator"} href="/shop/finance" />
-              <Row label="Test drive" value={shopper.workspace.testDriveHref ? "Request started" : "Not requested"} href={shopper.workspace.testDriveHref ?? "/shop/test-drive"} />
-              <Row label="Favorite" value={shopper.favorites.includes(model.slug) ? "Saved" : "Not saved"} href="/owners/saved" />
+              <Row label="Configuration" value={shopper.workspace.configurationHref ? "Build saved" : "Not selected"} path={shopper.workspace.configurationHref} />
+              <Row label="Matching inventory" value={shopper.workspace.inventoryVin ?? "Feed not connected"} path="/shop/inventory" />
+              <Row label="Trade-in" value={shopper.workspace.tradeNote ?? "No request yet"} path="/shop/trade-in" />
+              <Row label="Payment scenario" value={shopper.workspace.scenarioId ?? "Open estimator"} path="/shop/finance" />
+              <Row label="Test drive" value={shopper.workspace.testDriveHref ? "Request started" : "Not requested"} path={shopper.workspace.testDriveHref ?? "/shop/test-drive"} />
+              <Row label="Favorite" value={shopper.favorites.includes(model.slug) ? "Saved" : "Not saved"} path="/owners/saved" />
             </div>
           </div>
         )}
@@ -64,12 +65,12 @@ function WorkspacePage() {
   );
 }
 
-function Row({ label, value, href }: { label: string; value: string; href?: string | null }) {
+function Row({ label, value, path }: { label: string; value: string; path?: string | null }) {
   const inner = (
     <div className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 last:border-0">
       <span className="text-sm text-muted">{label}</span>
       <span className="text-sm">{value}</span>
     </div>
   );
-  return href ? <a href={href}>{inner}</a> : inner;
+  return path ? <a href={publicUrl(path)}>{inner}</a> : inner;
 }

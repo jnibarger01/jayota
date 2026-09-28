@@ -3,6 +3,7 @@ import { useFocusTrap } from "@/lib/a11y/focus-trap";
 import { highlightMatch, searchShowroom } from "@/lib/search-engine";
 import { rememberQuery, useShopper } from "@/lib/shopper";
 import { track } from "@/lib/analytics";
+import { publicUrl } from "@/lib/public-url";
 
 export function SearchDialog({
   open,
@@ -36,7 +37,7 @@ export function SearchDialog({
         event.preventDefault();
         rememberQuery(query);
         onOpenChange(false);
-        window.location.assign(flat[active]!.href);
+        window.location.assign(publicUrl(flat[active]!.href));
       }
     };
     window.addEventListener("keydown", onKey);
@@ -100,7 +101,7 @@ export function SearchDialog({
                 {results.vehicles.map((hit, index) => (
                   <li key={hit.href}>
                     <a
-                      href={hit.href}
+                      href={publicUrl(hit.href)}
                       className={`flex min-h-11 items-center justify-between rounded-lg px-2 ${index === active ? "bg-surface-2" : "hover:bg-surface-2"}`}
                       onClick={() => {
                         rememberQuery(query);
@@ -126,7 +127,7 @@ export function SearchDialog({
                 {results.destinations.map((hit, index) => (
                   <li key={hit.href}>
                     <a
-                      href={hit.href}
+                      href={publicUrl(hit.href)}
                       className={`block min-h-11 rounded-lg px-2 py-2 ${results.vehicles.length + index === active ? "bg-surface-2" : "hover:bg-surface-2"}`}
                       onClick={() => {
                         rememberQuery(query);
