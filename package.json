@@ -22,7 +22,7 @@
     "test:pages-base": "node scripts/pages-base-asset-smoke.mjs http://127.0.0.1:4175/jayota/",
     "preview:pages": "vite preview --config vite.pages-preview.config.mjs",
     "test:scripts": "node --test 'scripts/**/*.test.mjs'",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "build:pages": "bash scripts/build-github-pages.sh",
     "db:backup": "node scripts/pglite-backup.mjs export",

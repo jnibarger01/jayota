@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { CATALOG_DISCLAIMER } from "@/lib/dealer";
-import { formatUsd, formatUsdExact } from "@/lib/utils";
+import { formatUsdExact } from "@/lib/utils";
 import { getLineupBySlug, LINEUP, type LineupModel } from "@/lib/lineup";
 import { MAX_COMPARE, MIN_COMPARE } from "@/showroom/api/client";
 import { buildCompareRows, winnerLabel } from "@/lib/compare-intel";

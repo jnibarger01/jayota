@@ -1,6 +1,5 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
@@ -98,8 +97,4 @@ export function SubmitBar({ busy, label }: { busy: boolean; label: string }) {
       {busy ? "Sending…" : label}
     </Button>
   );
-}
-
-export function preventInvalid(event: FormEvent<HTMLFormElement>, ok: boolean) {
-  if (!ok) event.preventDefault();
 }
