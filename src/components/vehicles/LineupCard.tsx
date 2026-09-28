@@ -30,6 +30,8 @@ export function LineupCard({
       >
         <div className="relative">
           <img
+            loading="lazy"
+            decoding="async"
             src={model.image.src}
             alt={model.image.alt}
             className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
@@ -64,6 +66,8 @@ export function LineupCard({
       )}
     >
       <img
+        loading="lazy"
+        decoding="async"
         src={model.image.src}
         alt={model.image.alt}
         className="absolute inset-0 h-full w-full object-cover object-[70%_center] transition-transform duration-500 group-hover:scale-[1.03]"

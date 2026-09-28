@@ -34,7 +34,7 @@ export function RecentlyViewed({
             return (
               <li key={item.slug} className="w-52 shrink-0">
                 <Link to="/vehicles/$slug" params={{ slug: model.slug }} className="block overflow-hidden rounded-2xl bg-surface">
-                  <img src={model.image.src} alt="" className="aspect-video w-full object-cover" />
+                  <img loading="lazy" decoding="async" src={model.image.src} alt="" className="aspect-video w-full object-cover" />
                   <p className="px-3 py-2 text-sm font-medium">{model.name}</p>
                 </Link>
                 <button type="button" className="mt-1 min-h-11 px-1 text-xs text-muted" onClick={() => onRemove(item.slug)}>
