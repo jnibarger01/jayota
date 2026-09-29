@@ -23,10 +23,13 @@ export interface EmailSendResult {
 }
 
 export interface EmailProvider {
+  /** Adapter name, e.g. "unconfigured" — mirrors InventoryProvider / OffersProvider. */
+  readonly name: string;
   send(message: EmailMessage): Promise<EmailSendResult>;
 }
 
 class UnconfiguredEmailProvider implements EmailProvider {
+  readonly name = "unconfigured";
   async send(): Promise<EmailSendResult> {
     return {
       accepted: false,
